@@ -1,6 +1,11 @@
 import { IsEnum, IsNumber, IsOptional } from 'class-validator';
-import { PhotoPrivacy } from '@prisma/client';
 import { Type } from 'class-transformer';
+
+// 🚀 We define the enum directly here so TypeScript doesn't rely on Prisma to build!
+export enum PhotoPrivacy {
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE'
+}
 
 export class UploadPhotoDto {
   @IsNumber() @IsOptional() @Type(() => Number) cropX?: number;
