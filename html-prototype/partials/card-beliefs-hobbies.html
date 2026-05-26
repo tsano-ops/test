@@ -1,0 +1,35 @@
+<!--
+    Beliefs, Hobbies & Interests card — three category groups in one card.
+    Beliefs (religious / spiritual affiliations + baptism docs), Hobbies (with
+    achievement dates / tournaments), Interests (cuisine, travel, etc.).
+-->
+<div class="accordion-section beliefs-hobbies-card">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div>
+            <div class="accordion-title">Beliefs, Hobbies &amp; Interests</div>
+            <div class="accordion-subtitle" data-bh-subtitle>Personal values &amp; interests</div>
+        </div>
+        <div class="accordion-header-right">
+            <svg class="accordion-chevron" width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M0.5 0.5L4 3.5L7.5 0.5"/></svg>
+        </div>
+    </div>
+    <div class="accordion-body">
+        <div class="accordion-inner">
+            <p class="section-desc" data-bh-narrative>Values, interests and cultural background are collected here in one organised space.</p>
+
+            <div class="ei-entries-section" data-bh-entries></div>
+
+            <div class="emc-add-entry-btn" onclick="openEntryForm && openEntryForm('beliefs')">
+                <div class="emc-add-entry-label">Add New Entry</div>
+                <div class="emc-add-entry-row">
+                    <div class="emc-add-entry-line"></div>
+                    <div class="emc-add-entry-plus-wrap">
+                        <div class="emc-add-entry-plus-inner"></div>
+                        <svg class="emc-add-entry-plus-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"><path d="M10 3v14M3 10h14"/></svg>
+                    </div>
+                    <div class="emc-add-entry-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

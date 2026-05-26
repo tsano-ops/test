@@ -1,0 +1,1579 @@
+@import './dashboard.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* XD scaling factor: 1440 baseline, min 0.65, max 1.
+       tan(atan2()) converts viewport width into a unitless ratio
+       so calc(Xpx * var(--s)) works correctly. */
+    --s: clamp(0.65, tan(atan2(100vw, 1440px)), 1);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply font-sans text-text-primary bg-surface;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* Glass card effect used throughout PlanAfter */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-glass rounded-2xl shadow-card border border-white/40;
+  }
+
+  /* ─── Auth page — full-screen cloud background ─── */
+  .auth-bg {
+    background-image: url('/images/onboarding-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* ─── Logo pill (XD: 215×60, two states: Default + Hover) ─── */
+  .auth-logo-pill {
+    width: calc(215px * var(--s));
+    height: calc(60px * var(--s));
+    background-color: rgba(255, 255, 255, 0.45);
+    background-image: url('/icons/pad-outline@2x.png');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    border: none;
+    border-radius: calc(30px * var(--s));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0s, box-shadow 0s;
+  }
+
+  /* Hover-Tap-Hold state (XD: Auto-Animate, None easing, 0s) */
+  .auth-logo-pill:hover {
+    background: #FFFFFF;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .auth-logo-pill img {
+    width: calc(155px * var(--s));
+    height: calc(20px * var(--s));
+  }
+
+  /* ─── Auth card (glassmorphic, from XD: 600×836, radius 30, blur 10) ─── */
+  .auth-card {
+    width: calc(600px * var(--s));
+    max-width: 96vw;
+    background: rgba(255, 255, 255, 0.33);
+    border: 1px solid #FFFFFF;
+    border-radius: calc(30px * var(--s));
+    box-shadow: 0px 10px 30px #00000029;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 1;
+    position: relative;
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  /* Gradient overlay on top portion of card (XD: 600×418, gradient white→transparent) */
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF00 100%);
+    border-radius: calc(30px * var(--s)) calc(30px * var(--s)) 0 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .auth-card-inner {
+    position: relative;
+    z-index: 1;
+    padding: calc(50px * var(--s)) calc(30px * var(--s)) calc(30px * var(--s));
+  }
+
+  /* ─── Auth form components (pixel-perfect from XD specs) ─── */
+
+  /* ─── Input wrapper (XD: 400×60, centered in card) ─── */
+  .auth-input-wrap {
+    position: relative;
+    width: calc(400px * var(--s));
+    margin: 0 auto;
+  }
+
+  /* ─── Password toggle button (eye/eye-slash icon) ─── */
+  .auth-password-toggle {
+    position: absolute;
+    right: calc(16px * var(--s));
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(20px * var(--s));
+    height: calc(18px * var(--s));
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease-out;
+  }
+
+  .auth-password-toggle:hover {
+    opacity: 0.7;
+  }
+
+  .auth-password-toggle:active {
+    opacity: 0.5;
+  }
+
+  /* XD: Input field = 400×60, transparent bg, bottom-line states */
+  /* Label text ("E-mail *") is the placeholder INSIDE the field */
+  .auth-input {
+    width: 100%;
+    height: calc(60px * var(--s));
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #CCCCCC;
+    border-radius: 0;
+    padding: calc(20px * var(--s));
+    font: normal normal 600 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease-out;
+  }
+  /* XD: placeholder = Inter SemiBold 16px/24px, #000, acts as label inside field */
+  .auth-input::placeholder {
+    font: normal normal 600 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    opacity: 1;
+  }
+  .auth-input:focus::placeholder {
+    opacity: 0;
+  }
+  .auth-input:hover {
+    border-bottom-color: #000000;
+  }
+  .auth-input:focus {
+    border-bottom-color: #000000;
+  }
+  .auth-input.error,
+  .auth-input.error:hover,
+  .auth-input.error:focus {
+    border-bottom-color: #FF0000;
+  }
+
+  /* Autofill fix — paint over browser's blue with white to match card bg */
+  .auth-input:-webkit-autofill,
+  .auth-input:-webkit-autofill:hover,
+  .auth-input:-webkit-autofill:focus,
+  input[type="password"]:-webkit-autofill,
+  input[type="password"]:-webkit-autofill:hover,
+  input[type="password"]:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: #000000 !important;
+    border-bottom: 1px solid #CCCCCC !important;
+  }
+
+  /* XD: Hint text below line — Inter Regular 12px/15px, #000 opacity 50% */
+  .auth-input-hint {
+    font: normal normal normal calc(12px * var(--s))/calc(15px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+    padding-left: calc(20px * var(--s));
+    padding-top: calc(4px * var(--s));
+  }
+
+  .auth-input-error {
+    font: normal normal normal calc(12px * var(--s))/calc(15px * var(--s)) 'Inter', sans-serif;
+    color: #FF0000;
+    padding-left: calc(20px * var(--s));
+    padding-top: calc(4px * var(--s));
+  }
+
+  /* Auth form-level messages */
+  /* ─── System Messages (error/success) — 400px box, centered ─── */
+  .auth-error-message {
+    width: calc(400px * var(--s));
+    margin: calc(20px * var(--s)) auto;
+    background: rgba(255, 44, 85, 0.08);
+    border: 1px solid #FF2C55;
+    border-radius: calc(10px * var(--s));
+    padding: calc(12px * var(--s)) calc(20px * var(--s));
+    font: normal normal normal calc(14px * var(--s))/calc(20px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #FF2C55;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .auth-error-message a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .auth-success-message {
+    width: calc(400px * var(--s));
+    margin: calc(20px * var(--s)) auto;
+    background: rgba(97, 197, 83, 0.08);
+    border: 1px solid #61C553;
+    border-radius: calc(10px * var(--s));
+    padding: calc(12px * var(--s)) calc(20px * var(--s));
+    font: normal normal normal calc(14px * var(--s))/calc(20px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #61C553;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* ─── LEGACY .auth-btn-continue and .auth-btn-back REMOVED ─── */
+  /* Replaced by BtnSubmit.tsx (.btn-submit) and BtnBack.tsx (.btn-back) */
+
+  .auth-btn-continue {
+    display: none; /* legacy — use BtnSubmit component */
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    height: calc(60px * var(--s));
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  /* Pill — ::before, starts at circle position, grows LEFT on hover */
+  .auth-btn-continue::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: calc(100% - 60px * var(--s));
+    height: calc(60px * var(--s));
+    border-radius: calc(30px * var(--s));
+    background: #FFFFFF00;
+    z-index: 0;
+    pointer-events: none;
+    transition: left 0.2s ease-out, background 0.2s ease-out;
+  }
+  .auth-btn-continue .btn-text {
+    position: relative;
+    z-index: 1;
+    font: normal 600 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    color: #000;
+    white-space: nowrap;
+    text-align: right;
+    letter-spacing: 0px;
+  }
+  .auth-btn-continue .btn-dash {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: calc(10px * var(--s));
+    height: 0;
+    border-top: 1px solid #000;
+    margin: 0 calc(10px * var(--s));
+    flex-shrink: 0;
+    transition: width 0.2s ease-out, margin-right 0.2s ease-out;
+  }
+  .auth-btn-continue .btn-circle {
+    position: relative;
+    z-index: 1;
+    width: calc(60px * var(--s));
+    height: calc(60px * var(--s));
+    border-radius: 50%;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    flex-shrink: 0;
+    transition: border-color 0.2s ease-out;
+  }
+  .auth-btn-continue .btn-circle svg,
+  .auth-btn-continue .btn-circle img {
+    width: calc(9px * var(--s)) !important;
+    height: calc(16px * var(--s)) !important;
+    display: block;
+    flex-shrink: 0;
+    transition: transform 0.2s ease-out;
+  }
+
+  /* ── Hover: pill grows left, dash extends right, circle fades, arrow nudges ── */
+  .auth-btn-continue:hover::before { left: calc(-30px * var(--s)); background: #FFFFFF; }
+  .auth-btn-continue:hover .btn-dash { width: calc(30px * var(--s)); margin-right: calc(-10px * var(--s)); }
+  .auth-btn-continue:hover .btn-circle { border-color: transparent; }
+  .auth-btn-continue:hover .btn-circle svg,
+  .auth-btn-continue:hover .btn-circle img { transform: translateX(calc(-5px * var(--s))); }
+
+  /* ── Disabled ── */
+  .auth-btn-continue:disabled {
+    cursor: default;
+    pointer-events: none;
+  }
+  .auth-btn-continue:disabled .btn-text,
+  .auth-btn-continue:disabled .btn-dash,
+  .auth-btn-continue:disabled .btn-circle,
+  .auth-btn-continue:disabled .btn-circle svg {
+    opacity: 0.33;
+  }
+
+  /* ─── Back button: circle + dash + "Back" text (XD: same as continue, mirror layout) ─── */
+  .auth-btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(157px * var(--s));
+    height: calc(60px * var(--s));
+    gap: calc(8px * var(--s));
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: calc(16px * var(--s));
+    color: #000;
+    transition: width 0.2s ease-out, gap 0.2s ease-out;
+    flex-direction: row;
+  }
+  .auth-btn-back .btn-text {
+    font-size: calc(16px * var(--s));
+    font-weight: 600;
+    color: #000;
+    max-width: calc(50px * var(--s));
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 1;
+    text-align: left;
+    transition: max-width 0.2s ease-out, opacity 0.2s ease-out;
+    margin-left: 0;
+    flex-shrink: 0;
+  }
+  .auth-btn-back .btn-dash {
+    width: calc(10px * var(--s));
+    height: 0;
+    border: 1px solid #000;
+    transition: width 0.2s ease-out, margin 0.2s ease-out;
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .auth-btn-back .btn-circle {
+    width: calc(60px * var(--s));
+    height: calc(60px * var(--s));
+    border-radius: 50%;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    transition: border-color 0.6s ease-out;
+    flex-shrink: 0;
+    padding: calc(30px * var(--s));
+  }
+  .auth-btn-back .btn-circle svg,
+  .auth-btn-back .btn-circle img {
+    width: calc(18px * var(--s)) !important;
+    height: calc(18px * var(--s)) !important;
+    display: block;
+    flex-shrink: 0;
+    transition: transform 0.2s ease-out;
+    transform: rotate(0deg);
+  }
+  .auth-btn-back:hover {
+    background: #FFFFFF;
+    width: calc(187px * var(--s));
+    border-radius: calc(30px * var(--s));
+    transition: width 0.6s ease-out, background 0.6s ease-out;
+  }
+  .auth-btn-back:hover .btn-text {
+    max-width: calc(50px * var(--s));
+    opacity: 1;
+    margin-left: 0;
+    color: #000000;
+    transition: max-width 0.2s ease-out, opacity 0.2s ease-out;
+  }
+  .auth-btn-back:hover .btn-dash {
+    width: calc(30px * var(--s));
+    margin: 0 calc(4px * var(--s));
+    transition: width 0.2s ease-out, margin 0.2s ease-out;
+  }
+  .auth-btn-back:hover .btn-circle {
+    border-color: transparent;
+    transition: border-color 0.6s ease-out;
+  }
+  .auth-btn-back:hover .btn-circle svg,
+  .auth-btn-back:hover .btn-circle img {
+    transform: rotate(-8deg);
+  }
+
+  /* Pressed/Tap state: arrow shifts 5px right (for back button, shift is opposite) */
+  .auth-btn-back:active .btn-circle svg,
+  .auth-btn-back:active .btn-circle img {
+    transform: rotate(-8deg) translateX(calc(5px * var(--s)));
+    transition: transform 0.6s ease-out;
+  }
+
+  /* Disabled/inactive state: opacity 0.33 per XD */
+  .auth-btn-back:disabled {
+    cursor: default;
+    pointer-events: none;
+    transition: opacity 0.6s ease-out;
+  }
+  .auth-btn-back:disabled .btn-text,
+  .auth-btn-back:disabled .btn-dash,
+  .auth-btn-back:disabled .btn-circle {
+    opacity: 0.33;
+  }
+  .auth-btn-back:disabled .btn-circle svg {
+    opacity: 0.33;
+  }
+
+  /* ─── BtnSubmit — universal right-action button ─── */
+  /* Structure: pill(abs) · text · dash · circle+arrow */
+  /* Text does NOT move. Dash grows rightward. Circle stays fixed. */
+  /* Pill = circle growing leftward on hover. */
+
+  .btn-submit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    height: calc(60px * var(--s));
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  /* Pill — starts at circle position, grows LEFT on hover */
+  /* right:0 anchors to circle right edge (never moves) */
+  /* left animates from circle-left to -30px */
+  .btn-submit-pill {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: calc(100% - 60px * var(--s));
+    height: calc(60px * var(--s));
+    border-radius: calc(30px * var(--s));
+    background: #FFFFFF00;
+    z-index: 0;
+    pointer-events: none;
+    transition: left 0.2s ease-out, background 0.2s ease-out;
+  }
+
+  /* Text — dynamic width, never moves */
+  .btn-submit-text {
+    position: relative;
+    z-index: 1;
+    font: normal 400 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    white-space: nowrap;
+    letter-spacing: 0px;
+    text-align: right;
+  }
+
+  /* Dash — grows 10→30 rightward, negative margin-right compensates so circle stays fixed */
+  .btn-submit-dash {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: calc(10px * var(--s));
+    height: 0;
+    border-top: 1px solid #000000;
+    margin: 0 calc(10px * var(--s));
+    flex-shrink: 0;
+    transition: width 0.2s ease-out, margin-right 0.2s ease-out;
+  }
+
+  /* Circle — 60×60, stays fixed, border fades on hover */
+  .btn-submit-circle {
+    position: relative;
+    z-index: 1;
+    width: calc(60px * var(--s));
+    height: calc(60px * var(--s));
+    border-radius: 50%;
+    border: 1px solid #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.2s ease-out;
+  }
+
+  /* Arrow — 9×16, centered in circle */
+  .btn-submit-circle svg {
+    width: calc(9px * var(--s));
+    height: calc(16px * var(--s));
+    display: block;
+    transition: transform 0.2s ease-out;
+  }
+
+  /* Spinner (loading state) */
+  .btn-submit-spinner {
+    width: calc(16px * var(--s));
+    height: calc(16px * var(--s));
+    animation: btn-submit-spin 1s linear infinite;
+    color: #000000;
+  }
+
+  /* ── Hover: pill grows left, dash extends right, circle fades, arrow nudges ── */
+  .btn-submit:hover .btn-submit-pill       { left: calc(-30px * var(--s)); background: #FFFFFF; }
+  .btn-submit:hover .btn-submit-dash       { width: calc(30px * var(--s)); margin-right: calc(-10px * var(--s)); }
+  .btn-submit:hover .btn-submit-circle     { border-color: transparent; }
+  .btn-submit:hover .btn-submit-circle svg { transform: translateX(calc(-5px * var(--s))); }
+
+  /* ── Disabled ── */
+  .btn-submit:disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+  .btn-submit:disabled .btn-submit-text,
+  .btn-submit:disabled .btn-submit-dash,
+  .btn-submit:disabled .btn-submit-circle,
+  .btn-submit:disabled .btn-submit-circle svg {
+    opacity: 0.33;
+  }
+
+  /* ─── BtnBack — universal left-action button ─── */
+  /* Structure: pad[arrow] · text */
+  /* Text shifts 20px right on hover. Pad reveals white bg. Arrow stays fixed. */
+
+  .btn-back {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: calc(60px * var(--s));
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  /* Pad — 60×60 circle, bg invisible by default, reveals white on hover */
+  .btn-back-pad {
+    width: calc(60px * var(--s));
+    height: calc(60px * var(--s));
+    border-radius: 50%;
+    background: #FFFFFF00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s ease-out;
+  }
+
+  /* Arrow — 9×16, left-facing, always visible */
+  .btn-back-pad svg {
+    width: calc(9px * var(--s));
+    height: calc(16px * var(--s));
+    display: block;
+    color: #000000;
+  }
+
+  /* Text — shifts 20px right on hover */
+  .btn-back-text {
+    font: normal 400 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    white-space: nowrap;
+    letter-spacing: 0px;
+    margin-left: calc(7px * var(--s));
+    transition: margin-left 0.2s ease-out;
+  }
+
+  /* ── Hover: pad reveals, text shifts right ── */
+  .btn-back:hover .btn-back-pad { background: #FFFFFF; }
+  .btn-back:hover .btn-back-text { margin-left: calc(27px * var(--s)); }
+
+  /* ── Disabled ── */
+  .btn-back:disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+  .btn-back:disabled .btn-back-pad,
+  .btn-back:disabled .btn-back-text,
+  .btn-back:disabled .btn-back-pad svg {
+    opacity: 0.33;
+  }
+
+  /* ─── Source selection option (XD: 270×50, radio pill) ─── */
+  /* ─── Source option button (XD: 270×50, two states) ─── */
+  .auth-source-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: calc(270px * var(--s));
+    height: calc(50px * var(--s));
+    padding: 0 calc(30px * var(--s));
+    border: none;
+    border-radius: 0;
+    background: none;
+    cursor: pointer;
+    font: normal normal 600 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    text-align: left;
+  }
+
+  /* Default: dot black 8×8 */
+  .auth-source-option .radio-dot {
+    width: calc(8px * var(--s));
+    height: calc(8px * var(--s));
+    border-radius: 50%;
+    background: #000000;
+    flex-shrink: 0;
+    margin-right: calc(20px * var(--s));
+    transition: background 0.2s ease-out;
+  }
+
+  .auth-source-option .btn-label {
+    transition: transform 0.2s ease-out;
+  }
+
+  /* Hover: dot → green, text shifts 10px right */
+  .auth-source-option:hover .radio-dot {
+    background: #61C553;
+  }
+  .auth-source-option:hover .btn-label {
+    transform: translateX(calc(10px * var(--s)));
+  }
+
+  /* ─── Auth card title (XD: Inter SemiBold 24px/29px, #000, center) ─── */
+  .auth-title {
+    width: calc(540px * var(--s));
+    max-width: 100%;
+    margin: 0 auto calc(30px * var(--s));
+    text-align: center;
+    font: normal normal 600 calc(24px * var(--s))/calc(29px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 1;
+  }
+
+  /* XD: subtitle = Inter Regular 16px/24px, #000, opacity 50% */
+  .auth-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: calc(16px * var(--s));
+    color: #000;
+    opacity: 0.5;
+    line-height: calc(24px * var(--s));
+    margin-bottom: calc(28px * var(--s));
+    text-align: center;
+  }
+
+  /* ─── Password Strength (XD: 400×96, radius 20, glassmorphic) ─── */
+  .auth-pw-strength {
+    width: calc(400px * var(--s));
+    height: calc(96px * var(--s));
+    margin: calc(10px * var(--s)) auto 0;
+    padding: calc(20px * var(--s));
+    background: rgba(255,255,255,0.33);
+    border: 1px solid #FFFFFF;
+    border-radius: calc(20px * var(--s));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-sizing: border-box;
+  }
+  .auth-pw-strength .pw-title {
+    font: normal normal normal calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    margin: 0 0 calc(10px * var(--s)) 0;
+  }
+  .auth-pw-strength .pw-bar-track {
+    width: 100%;
+    height: calc(4px * var(--s));
+    background: rgba(0,0,0,0.08);
+    border-radius: calc(4px * var(--s));
+    margin-bottom: calc(10px * var(--s));
+  }
+  .auth-pw-strength .pw-bar-fill {
+    height: 100%;
+    border-radius: calc(4px * var(--s));
+    transition: width 0.3s ease-out, background 0.3s ease-out, box-shadow 0.3s ease-out;
+  }
+  .auth-pw-strength .pw-status {
+    font: normal normal normal calc(12px * var(--s))/calc(15px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+    margin: 0;
+  }
+
+  /* ─── Password hint below PW Strength (XD: 360×45, Inter 12/15, #000, 50%) ─── */
+  .auth-pw-hint {
+    width: calc(360px * var(--s));
+    margin: calc(-10px * var(--s)) auto 0;
+    font: normal normal normal calc(12px * var(--s))/calc(15px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+    text-align: left;
+  }
+
+  /* ─── Auth terms text (XD: Inter 12px, #000, opacity 50%, center) ─── */
+  .auth-terms {
+    font-family: 'Inter', sans-serif;
+    font-size: calc(12px * var(--s));
+    color: #000;
+    opacity: 0.5;
+    line-height: calc(15px * var(--s));
+    text-align: center;
+  }
+  .auth-terms a {
+    color: #000;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  /* ─── Auth bottom link (XD: Inter 14px/17px, #000, center, below card) ─── */
+  .auth-bottom-link {
+    font: normal normal normal calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    text-align: center;
+    margin: 0;
+  }
+  .auth-bottom-link a {
+    color: #000000;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* ─── Auth checkbox (XD: 20×20, 1px solid #000, radius 4px) ─── */
+  .auth-checkbox-wrap {
+    display: flex;
+    align-items: center;
+    gap: calc(20px * var(--s));
+    width: calc(400px * var(--s));
+    margin: calc(10px * var(--s)) auto calc(10px * var(--s));
+    padding-left: calc(20px * var(--s));
+    font: normal 400 calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    opacity: 1;
+    cursor: pointer;
+  }
+  /* Hide native checkbox */
+  .auth-checkbox-wrap input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+  /* Custom checkbox box — 20×20, 1px solid #000, radius 4px */
+  .auth-checkbox-box {
+    width: calc(20px * var(--s));
+    height: calc(20px * var(--s));
+    border: 1px solid #000000;
+    border-radius: calc(4px * var(--s));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  /* Checked dot — 12×12, bg #000, radius 3px */
+  .auth-checkbox-box::after {
+    content: '';
+    width: calc(12px * var(--s));
+    height: calc(12px * var(--s));
+    background: #000000;
+    border-radius: calc(3px * var(--s));
+    opacity: 0;
+    transition: opacity 0s;
+  }
+  .auth-checkbox-wrap input[type="checkbox"]:checked + .auth-checkbox-box::after {
+    opacity: 1;
+  }
+
+  /* ─── Verify Email Page ─── */
+
+  /* Subtitle: "We've sent a verification code to:" */
+  .verify-subtitle {
+    width: calc(400px * var(--s));
+    margin: 0 auto;
+    text-align: center;
+    font: normal normal normal calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+  }
+
+  /* Email address — bold, full black */
+  .verify-email {
+    width: calc(400px * var(--s));
+    margin: 0 auto;
+    text-align: center;
+    font: normal normal 600 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 1;
+  }
+
+  /* Code input card — XD: 400×147, radius 20, glassmorphic */
+  .verify-code-card {
+    width: calc(400px * var(--s));
+    margin: calc(30px * var(--s)) auto 0 auto;
+    padding: calc(20px * var(--s));
+    background: rgba(255, 255, 255, 0.33);
+    border: 1px solid #FFFFFF;
+    border-radius: calc(20px * var(--s));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-sizing: border-box;
+  }
+
+  /* Code label */
+  .verify-code-label {
+    font: normal normal normal calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 1;
+    margin-bottom: calc(16px * var(--s));
+  }
+
+  /* Code inputs container */
+  .verify-code-inputs {
+    display: flex;
+    gap: calc(12px * var(--s));
+    justify-content: flex-start;
+  }
+
+  /* ─── Digit Box Component (XD: 50×60, 4 states) ─── */
+  /* Default: transparent, subtle border */
+  .verify-code-box {
+    width: calc(50px * var(--s));
+    height: calc(60px * var(--s));
+    text-align: center;
+    font: normal normal 600 calc(24px * var(--s))/calc(60px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    background: #FFFFFF00;
+    border: 1px solid #00000029;
+    border-radius: calc(10px * var(--s));
+    outline: none;
+    opacity: 1;
+    box-sizing: border-box;
+    transition: background 0s, border 0s, box-shadow 0s;
+    caret-color: #000000;
+  }
+  /* Hover: border becomes full black */
+  .verify-code-box:hover {
+    background: #FFFFFF00;
+    border: 1px solid #000000;
+    box-shadow: none;
+  }
+  /* Focus: white bg, inner shadow, no border */
+  .verify-code-box:focus {
+    background: #FFFFFF;
+    border: 1px solid transparent;
+    box-shadow: inset 0px 2px 3px #00000029;
+  }
+  /* Active (filled): white bg, inner shadow, no border */
+  .verify-code-box.filled {
+    background: #FFFFFF;
+    border: 1px solid transparent;
+    box-shadow: inset 0px 2px 3px #00000029;
+  }
+
+  /* Help section — two columns with divider, full card width (540px content) */
+  .verify-help-section {
+    display: flex;
+    width: calc(540px * var(--s));
+    margin: calc(30px * var(--s)) auto 0 auto;
+    min-height: calc(207px * var(--s));
+    align-items: stretch;
+  }
+
+  /* Left column: question text — XD: 240px, right-aligned, 600 16px/24px */
+  .verify-help-left {
+    width: calc(240px * var(--s));
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+  .verify-help-question {
+    font: normal normal 600 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 1;
+    text-align: right;
+    width: 100%;
+  }
+
+  /* Vertical divider */
+  .verify-help-divider {
+    width: 0;
+    border-left: 1px solid #000000;
+    opacity: 0.16;
+    align-self: stretch;
+    flex-shrink: 0;
+    margin: 0 calc(30px * var(--s));
+  }
+
+  /* Right column: bullet list */
+  .verify-help-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .verify-help-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: calc(15px * var(--s));
+    font: normal normal normal calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 1;
+  }
+  .verify-help-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: calc(12px * var(--s));
+  }
+  .verify-help-list li::before {
+    content: '';
+    width: calc(4px * var(--s));
+    height: calc(4px * var(--s));
+    background: #000000;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: calc(7px * var(--s));
+  }
+  /* Extra gap before Change E-mail (30px instead of 15px) */
+  .verify-help-list li.extra-gap {
+    margin-top: calc(15px * var(--s));
+  }
+
+  /* Action items in help list — interactive, green dot + text shift on hover */
+  .verify-help-list li.interactive {
+    cursor: pointer;
+  }
+  .verify-help-list li.interactive::before {
+    transition: background 0.2s ease-out;
+  }
+  .verify-help-list li.interactive:hover::before {
+    background: #61C553;
+  }
+  .verify-help-action {
+    font: normal normal 600 calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    opacity: 1;
+    text-decoration: none;
+    transition: transform 0.2s ease-out;
+  }
+  .verify-help-list li.interactive:hover .verify-help-action {
+    transform: translateX(calc(10px * var(--s)));
+  }
+  .verify-help-action:disabled {
+    cursor: default;
+  }
+
+  /* Countdown text — XD: 12px/15px, opacity 0.5, 4px below Resend Code */
+  .verify-countdown {
+    display: block;
+    font: normal normal normal calc(12px * var(--s))/calc(15px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+    margin-top: calc(4px * var(--s));
+  }
+
+  /* "Why verify?" text — XD: 12px/15px, centered, #000, opacity 1 */
+  .verify-why {
+    width: calc(400px * var(--s));
+    margin: calc(30px * var(--s)) auto calc(20px * var(--s)) auto;
+    text-align: center;
+    font: normal normal normal calc(12px * var(--s))/calc(15px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+  }
+  .verify-why strong {
+    font-weight: 600;
+  }
+
+  /* ─── Forgot password link (Login page) ─── */
+  .auth-forgot-link {
+    font-family: 'Inter', sans-serif;
+    font-size: calc(14px * var(--s));
+    font-weight: 600;
+    color: #000000;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  /* ─── Auth help section (Verification page) ─── */
+  .auth-help {
+    font-family: 'Inter', sans-serif;
+    font-size: calc(12px * var(--s));
+    color: #000;
+    opacity: 0.5;
+  }
+  .auth-help strong {
+    font-weight: 600;
+    opacity: 1;
+  }
+  .auth-help a, .auth-help button {
+    font-weight: 600;
+    color: #000;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    padding: 0;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply h-1.5 rounded-full overflow-hidden bg-surface-tertiary;
+  }
+  .progress-bar-fill {
+    @apply h-full rounded-full transition-all duration-500 ease-out;
+    background: linear-gradient(90deg, #27AE60, #2ECC71);
+  }
+
+  /* ─── Onboarding Welcome Screen ─── */
+  /* XD artboard: 1920×1080. Scaling var --s is based on 1440px.       */
+  /* Horizontal positions → % of viewport (Xpx / 1920).                */
+  /* Vertical positions   → % of viewport height (Ypx / 1080).         */
+  /* Sizes (w, h, font, pad, gap, radius) → calc(Xpx * var(--s)).     */
+
+  /* Full-screen background — overflow hidden crops the woman image */
+  .welcome-bg {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: url('/images/onboarding-bg.png') center / cover no-repeat;
+    overflow: hidden;
+  }
+
+  /* Woman — XD: top 20, left 620, W 680, H 1746 (taller than viewport) */
+  .welcome-woman {
+    position: absolute;
+    top: 1.85%;       /* 20 / 1080 */
+    left: 32.29%;     /* 620 / 1920 */
+    width: 35.42%;    /* 680 / 1920 — scales with viewport width */
+    height: auto;     /* natural aspect ratio; overflows below viewport */
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Logo pill — 20px from viewport top, centered above card */
+  /* Card left: 50%, card width: 300px → center = 50% + 150px */
+  .welcome-logo-wrap {
+    position: absolute;
+    top: calc(20px * var(--s));
+    left: calc(50% + calc(150px * var(--s)));
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  /* Card — XD: top 100, left 960, W 300, H auto (content-driven) */
+  .welcome-card {
+    position: absolute;
+    top: calc(100px * var(--s));  /* pill 20px + pill ~60px + gap 20px = 100px */
+    left: 50%;        /* 960 / 1920 */
+    width: calc(300px * var(--s));
+    background: rgba(255, 255, 255, 0.33);
+    border: 1px solid #FFFFFF;
+    border-radius: calc(30px * var(--s));
+    box-shadow: 0px 10px 30px #00000029;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 5;
+  }
+
+  /* Card gradient overlay — XD: same position/width as card, H 376 */
+  .welcome-card-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(376px * var(--s));
+    background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF00 100%);
+    border-radius: calc(30px * var(--s)) calc(30px * var(--s)) 0 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Card inner content — padding matches XD offsets from card edges */
+  /* Title is 50px below card top, 30px from card left/right */
+  .welcome-card-inner {
+    position: relative;
+    z-index: 1;
+    padding: calc(50px * var(--s)) calc(30px * var(--s)) calc(30px * var(--s));
+  }
+
+  /* Title — XD: 240×58, 600 24/29, centered in card */
+  .welcome-title {
+    width: calc(240px * var(--s));
+    margin: 0 auto calc(30px * var(--s));
+    text-align: center;
+    font: normal normal 600 calc(24px * var(--s))/calc(29px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+  }
+
+  /* Subtitle — XD: 240×92, 400 16/24, opacity 0.5, 30px below title */
+  .welcome-subtitle {
+    width: calc(240px * var(--s));
+    margin: 0 auto calc(30px * var(--s));
+    text-align: center;
+    font: normal normal normal calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+  }
+
+  /* Green checkmark — ~100px, centered horizontally */
+  .welcome-checkmark {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto calc(30px * var(--s));
+  }
+  .welcome-checkmark img {
+    width: calc(100px * var(--s));
+    height: calc(100px * var(--s));
+  }
+
+  /* Info rows — icon + text side by side */
+  /* XD: icon left-aligned ~30px from card left (handled by card padding) */
+  /* XD: ~70px vertical gap between the two rows (538→608 = 70px) */
+  .welcome-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: calc(12px * var(--s));
+    margin-bottom: calc(40px * var(--s));
+  }
+  .welcome-info-icon {
+    width: calc(24px * var(--s));
+    height: calc(24px * var(--s));
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+  .welcome-info-text {
+    font: normal normal 600 calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    margin: 0;
+  }
+
+  /* Help text — centered, 14/17, normal weight, strong for links */
+  .welcome-help {
+    text-align: center;
+    font: normal normal normal calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+    margin: calc(20px * var(--s)) 0 calc(30px * var(--s));
+  }
+  .welcome-help strong {
+    font-weight: 600;
+  }
+
+/* ═══ Onboarding Q1 — Personal Information ═══ */
+
+.onboarding-q-page {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.onboarding-q-bg {
+    position: fixed;
+    inset: 0;
+    background: url('/images/onboarding-bg.png') center/cover no-repeat;
+    z-index: 0;
+}
+
+/* Logo Pill — 20px from viewport top, centered at page center (960px in 1920) */
+.onboarding-q-pill {
+    position: absolute;
+    z-index: 3;
+    top: calc(20px * var(--s));
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: calc(10px * var(--s));
+    padding: calc(15px * var(--s)) calc(25px * var(--s));
+    background: rgba(255, 255, 255, 0.33);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid #FFFFFF;
+    border-radius: calc(30px * var(--s));
+    cursor: pointer;
+    transition: background 0.2s ease-out;
+}
+.onboarding-q-pill:hover {
+    background: #FFFFFF;
+}
+.onboarding-q-pill .auth-logo-pad {
+    width: calc(28px * var(--s));
+    height: calc(28px * var(--s));
+}
+.onboarding-q-pill .auth-logo-text {
+    height: calc(18px * var(--s));
+}
+
+/* Progress Bar Card — 20px under pill bottom (pill ~60px + 20px = 100px from top) */
+/* XD: top 100, left 760, W 400, H 96, radius 20, shadow 0 10 20 #00000014, blur 10, fill 33% */
+.onboarding-q-progress-card {
+    position: absolute;
+    z-index: 2;
+    top: calc(100px * var(--s));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(400px * var(--s));
+    background: rgba(255, 255, 255, 0.33);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid #FFFFFF;
+    border-radius: calc(20px * var(--s));
+    box-shadow: 0px 10px 20px #00000014;
+    /* Inner layout: 20px all sides */
+    padding: calc(20px * var(--s));
+}
+
+/* "Your Progress" left + "5%" right — 7px above track */
+.onboarding-q-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: calc(7px * var(--s));
+}
+
+/* XD: 400 14px/17px Inter Regular */
+.onboarding-q-progress-label {
+    font: normal normal 400 calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    letter-spacing: 0px;
+}
+
+/* XD: 600 16px/20px Inter SemiBold, text-align right */
+.onboarding-q-progress-percent {
+    font: normal normal 600 calc(16px * var(--s))/calc(20px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    text-align: right;
+    letter-spacing: 0px;
+}
+
+/* XD: % is Superscript format — smaller, raised */
+.onboarding-q-progress-percent sup {
+    font-size: 0.55em;
+    font-weight: 600;
+    vertical-align: baseline;
+    position: relative;
+    top: calc(-5px * var(--s));
+    line-height: 1;
+}
+
+/* XD: W 360, H 4, bg #FFFFFF, radius 2 — 10px above "Complete" */
+.onboarding-q-progress-track {
+    width: calc(360px * var(--s));
+    height: 4px;
+    background: #FFFFFF;
+    border-radius: 2px;
+    margin-bottom: calc(7px * var(--s));
+    overflow: visible;
+}
+
+/* Fill: #61C553, inner shadow + outer glow */
+.onboarding-q-progress-fill {
+    height: 4px;
+    border-radius: 2px;
+    background: #61C553;
+    box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.47), 0px 0px 6px rgba(97, 197, 83, 0.5);
+    transition: width 0.6s ease-out;
+    min-width: calc(18px * var(--s)); /* XD: 18px at 5% */
+}
+
+/* XD: 400 12px/15px Inter, #000, opacity 0.5 — 20px above card bottom */
+.onboarding-q-progress-status {
+    font: normal normal 400 calc(12px * var(--s))/calc(15px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    opacity: 0.5;
+    letter-spacing: 0px;
+}
+
+/* Form Card — 20px under progress bar (progress bottom: 196px, card top: 216px) */
+.onboarding-q-card {
+    position: absolute;
+    z-index: 1;
+    top: calc(216px * var(--s));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(600px * var(--s));
+    min-height: calc(818px * var(--s));
+    background: rgba(255, 255, 255, 0.33);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid #FFFFFF;
+    border-radius: calc(30px * var(--s));
+    box-shadow: 0px 10px 30px #00000029;
+    overflow: hidden;
+}
+
+.onboarding-q-card-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(376px * var(--s));
+    background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF00 100%);
+    border-radius: calc(30px * var(--s)) calc(30px * var(--s)) 0 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.onboarding-q-card-inner {
+    position: relative;
+    z-index: 1;
+    padding: calc(50px * var(--s)) calc(30px * var(--s)) calc(30px * var(--s));
+}
+
+/* Title */
+.onboarding-q-title {
+    width: calc(540px * var(--s));
+    margin: 0 auto calc(30px * var(--s));
+    text-align: center;
+    font: normal normal 600 calc(24px * var(--s))/calc(29px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+}
+
+/* Subtitle */
+.onboarding-q-subtitle {
+    width: calc(400px * var(--s));
+    margin: 0 auto calc(10px * var(--s));
+    text-align: center;
+    font: normal normal 400 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+}
+
+/* Section subtitle (Date of Birth, Your Location) */
+.onboarding-q-section-subtitle {
+    width: calc(400px * var(--s));
+    margin: calc(30px * var(--s)) auto calc(10px * var(--s));
+    text-align: center;
+    font: normal normal 400 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+}
+
+/* Section hint — e.g. "(helps us provide relevant information)" */
+.onboarding-q-section-hint {
+    width: calc(400px * var(--s));
+    margin: calc(-6px * var(--s)) auto calc(10px * var(--s));
+    text-align: center;
+    font: normal normal 400 calc(12px * var(--s))/calc(15px * var(--s)) 'Inter', sans-serif;
+    letter-spacing: 0px;
+    color: #000000;
+    opacity: 0.5;
+}
+
+/* Form fields container */
+.onboarding-q-fields {
+    width: calc(400px * var(--s));
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: calc(20px * var(--s));
+}
+
+/* Date of Birth row — 3 dropdowns side by side */
+.onboarding-q-dob-row {
+    width: calc(400px * var(--s));
+    margin: 0 auto;
+    display: flex;
+    gap: calc(20px * var(--s));
+}
+
+/* Dropdown component */
+.onboarding-q-dropdown {
+    position: relative;
+    height: calc(60px * var(--s));
+}
+
+.onboarding-q-dropdown-trigger {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #CCCCCC;
+    padding: 0 calc(20px * var(--s));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    outline: none;
+}
+
+.onboarding-q-dropdown-trigger:hover {
+    border-bottom-color: #000000;
+}
+
+.onboarding-q-dropdown.open .onboarding-q-dropdown-trigger {
+    border-bottom-color: #000000;
+}
+
+.onboarding-q-dropdown-placeholder {
+    font: normal normal 600 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.onboarding-q-dropdown-value {
+    font: normal normal 600 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.onboarding-q-dropdown-arrow {
+    width: calc(8px * var(--s));
+    height: auto;
+    pointer-events: none;
+    transition: transform 0.2s ease-out;
+    transform: rotate(180deg);
+    flex-shrink: 0;
+}
+
+/* Arrow rotates down (back to original) when dropdown is open */
+.onboarding-q-dropdown.open .onboarding-q-dropdown-arrow {
+    transform: rotate(0deg);
+}
+
+/* Full-width dropdown (Country, State) */
+.onboarding-q-dropdown-full {
+    width: 100%;
+}
+
+/* Dropdown panel — 5px gap, fixed 210px, scrollable, hidden scrollbar */
+.onboarding-q-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    height: calc(210px * var(--s));
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0px 10px 30px #00000029;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 10;
+    padding: calc(20px * var(--s)) 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.onboarding-q-dropdown-panel::-webkit-scrollbar {
+    display: none;
+}
+
+.onboarding-q-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0 calc(20px * var(--s));
+    height: calc(20px * var(--s));
+    line-height: calc(20px * var(--s));
+    font: normal normal 400 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.onboarding-q-dropdown-item + .onboarding-q-dropdown-item {
+    margin-top: 10px;
+}
+
+.onboarding-q-dropdown-item {
+    opacity: 0.7;
+}
+
+.onboarding-q-dropdown-item:hover {
+    opacity: 1;
+}
+
+.onboarding-q-dropdown-item.selected {
+    opacity: 1;
+    font-weight: 600;
+}
+
+/* Searchable dropdown input */
+.onboarding-q-dropdown-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font: normal normal 600 calc(16px * var(--s))/calc(24px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    outline: none;
+    padding: 0;
+}
+.onboarding-q-dropdown-input::placeholder {
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Empty state */
+.onboarding-q-dropdown-empty {
+    padding: calc(10px * var(--s)) calc(20px * var(--s));
+    font: normal normal 400 calc(14px * var(--s))/calc(17px * var(--s)) 'Inter', sans-serif;
+    color: #000000;
+    opacity: 0.5;
+}
+
+/* Buttons — right-aligned, 30px from card bottom */
+.onboarding-q-buttons {
+    width: calc(400px * var(--s));
+    margin: calc(30px * var(--s)) auto 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+} /* end @layer base */
+
+/* ─── Keyframes (outside @layer — required for animations) ─── */
+@keyframes btn-submit-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

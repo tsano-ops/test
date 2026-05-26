@@ -1,0 +1,1411 @@
+/* ============================================================
+   ProfilePrint.css — PlanAfter "My Profile" Print/Download
+   XD source: https://xd.adobe.com/view/93d4cf9a-3c3e-495f-b30a-5a4b4a860764-c687/
+   Artboard: 1200 × 1920px portrait per page
+   Print target: A4 portrait (210mm × 297mm)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Root wrapper (screen: hidden; print: shown) ─────────── */
+.pp-root {
+  display: none;
+  font-family: 'Inter', sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  color: #000000;
+}
+
+/* ── Print trigger ────────────────────────────────────────── */
+@media print {
+  .pp-root {
+    display: block !important;
+  }
+
+  .pp-screen-only {
+    display: none !important;
+  }
+}
+
+/* ── Each A4 page ─────────────────────────────────────────── */
+.pp-page {
+  width: 210mm;
+  min-height: 297mm;
+  background: #F8F8F8;
+  position: relative;
+  overflow: hidden;
+  break-after: page;
+  page-break-after: always;
+}
+
+.pp-page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+/* ── @page rule ───────────────────────────────────────────── */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+/* ============================================================
+   COVER PAGE
+   ============================================================ */
+.pp-cover {
+  background: #F0F0EE;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Geometric background */
+.pp-cover-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #FFFFFF 0%, #E8E8E6 40%, #D5D5D2 100%);
+}
+
+.pp-cover-triangle {
+  position: absolute;
+  bottom: 80mm;
+  left: -10mm;
+  width: 120mm;
+  height: 180mm;
+  border: 0.5mm solid rgba(0,0,0,0.08);
+  transform: rotate(-15deg) translateX(-30mm);
+  border-radius: 2mm;
+}
+
+.pp-cover-triangle2 {
+  position: absolute;
+  bottom: 60mm;
+  left: 20mm;
+  width: 90mm;
+  height: 150mm;
+  border: 0.5mm solid rgba(0,0,0,0.06);
+  transform: rotate(-8deg);
+  border-radius: 2mm;
+}
+
+/* Cover header */
+.pp-cover-header {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10mm 14mm 0;
+  z-index: 1;
+}
+
+.pp-cover-logo {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+}
+
+.pp-cover-logo-icon {
+  width: 6mm;
+  height: 6mm;
+}
+
+.pp-cover-logo-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 5.5mm;
+  font-weight: 600;
+  color: #000000;
+  letter-spacing: -0.1mm;
+}
+
+/* Cover body */
+.pp-cover-body {
+  position: relative;
+  flex: 1;
+  display: flex;
+  z-index: 1;
+}
+
+/* Left: profile photo */
+.pp-cover-left {
+  width: 75mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-left: 12mm;
+}
+
+.pp-cover-photo-wrap {
+  width: 32mm;
+  height: 32mm;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #CCCCCC;
+  border: 1mm solid rgba(0,0,0,0.1);
+}
+
+.pp-cover-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pp-cover-name {
+  margin-top: 5mm;
+  font-size: 5.5mm;
+  font-weight: 600;
+  color: #000000;
+  text-align: center;
+}
+
+.pp-cover-role {
+  margin-top: 1mm;
+  font-size: 3.5mm;
+  font-weight: 400;
+  color: #555555;
+  text-align: center;
+}
+
+/* Right: title */
+.pp-cover-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 14mm;
+  align-items: flex-end;
+}
+
+.pp-cover-title {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 28mm;
+  font-weight: 600;
+  color: #000000;
+  line-height: 0.9;
+  text-align: right;
+  letter-spacing: -0.5mm;
+}
+
+.pp-cover-subtitle {
+  margin-top: 4mm;
+  font-size: 4mm;
+  font-weight: 400;
+  color: #888888;
+  text-align: right;
+  letter-spacing: 0.3mm;
+}
+
+/* Cover footer */
+.pp-cover-footer {
+  position: relative;
+  background: #61C553;
+  padding: 5mm 14mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1;
+}
+
+.pp-cover-footer-created {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #FFFFFF;
+}
+
+.pp-cover-footer-date {
+  font-size: 3.5mm;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-top: 0.5mm;
+}
+
+.pp-cover-footer-divider {
+  width: 0.3mm;
+  height: 8mm;
+  background: rgba(255,255,255,0.5);
+  margin: 0 3mm;
+}
+
+.pp-cover-footer-disclaimer {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #FFFFFF;
+  max-width: 90mm;
+  text-align: right;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   TWO-COLUMN LAYOUT (all section pages)
+   ============================================================ */
+.pp-layout {
+  display: flex;
+  width: 100%;
+  min-height: 297mm;
+}
+
+/* Left sidebar */
+.pp-sidebar {
+  width: 72mm;
+  min-height: 297mm;
+  border-right: 0.3mm solid rgba(0,0,0,0.06);
+  padding: 8mm 6mm 8mm 8mm;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* Logo in sidebar */
+.pp-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  margin-bottom: 5mm;
+}
+
+.pp-sidebar-logo-icon {
+  width: 5mm;
+  height: 5mm;
+}
+
+.pp-sidebar-logo-text {
+  font-size: 4.5mm;
+  font-weight: 600;
+  color: #000000;
+  letter-spacing: -0.1mm;
+}
+
+/* Profile card in sidebar */
+.pp-profile-card {
+  background: #FFFFFF;
+  border-radius: 5mm;
+  padding: 4mm;
+  box-shadow: 0 1mm 4mm rgba(0,0,0,0.08);
+  margin-bottom: 5mm;
+}
+
+.pp-profile-photo-wrap {
+  width: 42mm;
+  height: 42mm;
+  border-radius: 3mm;
+  overflow: hidden;
+  background: #E8E8E8;
+  margin: 0 auto 3mm;
+}
+
+.pp-profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.pp-profile-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #E8E8E8, #D0D0D0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10mm;
+  color: #888;
+}
+
+.pp-profile-name {
+  font-size: 4mm;
+  font-weight: 600;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 0.5mm;
+}
+
+.pp-profile-role {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #555555;
+  text-align: center;
+  margin-bottom: 2mm;
+}
+
+.pp-verified-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1mm;
+  margin-bottom: 2mm;
+}
+
+.pp-verified-text {
+  font-size: 2.5mm;
+  font-weight: 400;
+  color: #000000;
+}
+
+.pp-verified-icon {
+  width: 3.5mm;
+  height: 3.5mm;
+  background: #61C553;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pp-verified-icon svg {
+  width: 2mm;
+  height: 2mm;
+}
+
+.pp-plan-badge {
+  background: #61C553;
+  border-radius: 2mm;
+  padding: 1.5mm 3mm;
+  font-size: 2.8mm;
+  font-weight: 600;
+  color: #FFFFFF;
+  text-align: center;
+  width: 100%;
+}
+
+/* Section label in sidebar */
+.pp-section-label {
+  margin-top: auto;
+}
+
+.pp-section-label-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 6mm;
+  font-weight: 700;
+  color: #000000;
+  line-height: 1.1;
+  margin-bottom: 2.5mm;
+}
+
+.pp-section-label-desc {
+  font-size: 2.8mm;
+  font-weight: 400;
+  color: #333333;
+  line-height: 1.5;
+}
+
+/* Right content area */
+.pp-content {
+  flex: 1;
+  padding: 8mm 8mm 8mm 7mm;
+  min-height: 297mm;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page title (top right) */
+.pp-page-title {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 7mm;
+  font-weight: 600;
+  color: #000000;
+  text-align: right;
+  margin-bottom: 5mm;
+}
+
+/* ============================================================
+   FIELD ROWS (Essential Info, Contact Info)
+   ============================================================ */
+.pp-field {
+  margin-bottom: 3mm;
+  padding-bottom: 3mm;
+  border-bottom: 0.2mm solid rgba(0,0,0,0.06);
+}
+
+.pp-field:last-child {
+  border-bottom: none;
+}
+
+.pp-field-value {
+  font-size: 4mm;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 0.5mm;
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+}
+
+.pp-field-label {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #777777;
+}
+
+/* Profile photo next to name row */
+.pp-name-row {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  margin-bottom: 3mm;
+}
+
+.pp-name-avatar {
+  width: 10mm;
+  height: 10mm;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #E8E8E8;
+  flex-shrink: 0;
+}
+
+.pp-name-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pp-name-dot {
+  width: 2mm;
+  height: 2mm;
+  border-radius: 50%;
+  background: #61C553;
+  display: inline-block;
+}
+
+/* ============================================================
+   CONTACT INFO SECTIONS
+   ============================================================ */
+.pp-contact-section {
+  margin-bottom: 5mm;
+}
+
+.pp-contact-section-header {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+  margin-bottom: 2.5mm;
+}
+
+.pp-contact-section-icon {
+  width: 4mm;
+  height: 4mm;
+  color: #000000;
+}
+
+.pp-contact-section-title {
+  font-size: 4mm;
+  font-weight: 600;
+  color: #000000;
+}
+
+.pp-contact-item {
+  background: #FFFFFF;
+  border-radius: 2.5mm;
+  padding: 3mm 4mm;
+  margin-bottom: 2mm;
+  box-shadow: 0 0.5mm 2mm rgba(0,0,0,0.06);
+}
+
+.pp-contact-item-primary {
+  font-size: 3.5mm;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 0.5mm;
+}
+
+.pp-contact-item-label {
+  font-size: 2.8mm;
+  font-weight: 400;
+  color: #777777;
+}
+
+.pp-contact-item-multi {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #555555;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   DOCUMENT ROWS (list view, per section)
+   ============================================================ */
+.pp-doc-section-title {
+  font-size: 4mm;
+  font-weight: 700;
+  color: #000000;
+  margin: 4mm 0 2mm;
+  padding-bottom: 1mm;
+  border-bottom: 0.3mm solid rgba(0,0,0,0.1);
+}
+
+.pp-doc-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 3mm;
+  padding: 2.5mm 0;
+  border-bottom: 0.2mm solid rgba(0,0,0,0.05);
+}
+
+.pp-doc-row:last-child {
+  border-bottom: none;
+}
+
+.pp-doc-icon {
+  width: 9mm;
+  height: 9mm;
+  border-radius: 50%;
+  border: 0.5mm solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pp-doc-icon--green  { border-color: #61C553; color: #61C553; }
+.pp-doc-icon--blue   { border-color: #667EEA; color: #667EEA; }
+.pp-doc-icon--orange { border-color: #FF9500; color: #FF9500; }
+.pp-doc-icon--red    { border-color: #FF2C55; color: #FF2C55; }
+
+.pp-doc-icon svg {
+  width: 4mm;
+  height: 4mm;
+}
+
+.pp-doc-info {
+  flex: 1;
+}
+
+.pp-doc-title {
+  font-size: 3.5mm;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 0.5mm;
+}
+
+.pp-doc-type {
+  font-size: 2.8mm;
+  font-weight: 400;
+  color: #555555;
+}
+
+.pp-doc-meta {
+  font-size: 2.5mm;
+  font-weight: 400;
+  color: #888888;
+  margin-top: 0.5mm;
+}
+
+.pp-doc-status {
+  display: flex;
+  align-items: center;
+  gap: 1mm;
+  flex-shrink: 0;
+}
+
+.pp-doc-status-label {
+  font-size: 2.5mm;
+  font-weight: 400;
+  color: #777777;
+}
+
+.pp-status-dot {
+  width: 2mm;
+  height: 2mm;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pp-status-dot--green  { background: #61C553; }
+.pp-status-dot--blue   { background: #667EEA; }
+.pp-status-dot--orange { background: #FF9500; }
+
+/* ============================================================
+   FAMILY PERSON CARDS
+   ============================================================ */
+.pp-family-section-title {
+  font-size: 4mm;
+  font-weight: 700;
+  color: #000000;
+  margin: 4mm 0 0.5mm;
+  padding-bottom: 1mm;
+  border-bottom: 0.3mm solid rgba(0,0,0,0.12);
+}
+
+.pp-family-subsection {
+  font-size: 3.5mm;
+  font-weight: 600;
+  color: #333333;
+  margin: 2.5mm 0 1.5mm;
+}
+
+.pp-family-stats {
+  display: flex;
+  gap: 6mm;
+  margin-bottom: 4mm;
+}
+
+.pp-family-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.pp-family-stat-value {
+  font-size: 5mm;
+  font-weight: 700;
+  color: #000000;
+}
+
+.pp-family-stat-label {
+  font-size: 2.8mm;
+  font-weight: 400;
+  color: #777777;
+}
+
+.pp-person-card {
+  background: #FFFFFF;
+  border-radius: 3mm;
+  padding: 3mm 4mm;
+  margin-bottom: 2mm;
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  box-shadow: 0 0.5mm 2mm rgba(0,0,0,0.06);
+  position: relative;
+}
+
+.pp-person-avatar {
+  width: 11mm;
+  height: 11mm;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #E8E8E8, #C8C8C8);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4mm;
+  font-weight: 600;
+  color: #555;
+}
+
+.pp-person-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pp-person-avatar-dot {
+  position: relative;
+}
+
+.pp-person-avatar-dot::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 3mm;
+  height: 3mm;
+  border-radius: 50%;
+  background: #61C553;
+  border: 0.5mm solid #FFFFFF;
+}
+
+.pp-person-info {
+  flex: 1;
+}
+
+.pp-person-name {
+  font-size: 4mm;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 0.5mm;
+}
+
+.pp-person-rel {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #555555;
+}
+
+.pp-person-dob {
+  font-size: 2.8mm;
+  font-weight: 400;
+  color: #777777;
+  margin-top: 0.5mm;
+}
+
+.pp-person-badge {
+  font-size: 2.8mm;
+  font-weight: 400;
+  color: #555555;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.pp-in-memory {
+  color: #FF2C55;
+  font-size: 2.8mm;
+  font-weight: 600;
+}
+
+/* ============================================================
+   MEDICAL INFO
+   ============================================================ */
+.pp-medical-card-title {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+  font-size: 4.5mm;
+  font-weight: 700;
+  color: #FF2C55;
+  margin-bottom: 3mm;
+}
+
+.pp-medical-card-title svg {
+  width: 5mm;
+  height: 5mm;
+  color: #FF2C55;
+}
+
+.pp-blood-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 2mm;
+  padding: 1.5mm 4mm;
+  border: 0.5mm solid #FF2C55;
+  border-radius: 2mm;
+  margin-bottom: 3mm;
+}
+
+.pp-blood-type-value {
+  font-size: 5mm;
+  font-weight: 700;
+  color: #000000;
+}
+
+.pp-blood-drop {
+  color: #FF2C55;
+  font-size: 4mm;
+}
+
+.pp-allergy-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 2mm;
+  padding: 1.5mm 4mm;
+  border-radius: 10mm;
+  margin: 0 1mm 1mm 0;
+  font-size: 3mm;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.pp-allergy-pill--mild   { background: #FF2C55; }
+.pp-allergy-pill--severe { background: #80162B; }
+
+.pp-allergy-dot {
+  width: 2mm;
+  height: 2mm;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.6);
+}
+
+.pp-allergy-level {
+  font-size: 2.5mm;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.pp-condition-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 1.5mm 3.5mm;
+  border-radius: 10mm;
+  border: 0.5mm solid rgba(0,0,0,0.2);
+  margin: 0 1mm 1mm 0;
+  font-size: 3mm;
+  font-weight: 400;
+  color: #000000;
+}
+
+.pp-med-sub {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #333333;
+  margin-bottom: 1mm;
+}
+
+.pp-med-sub::before {
+  content: '• ';
+  color: #000000;
+}
+
+.pp-med-sub strong {
+  font-weight: 600;
+}
+
+.pp-med-label {
+  font-size: 3.5mm;
+  font-weight: 700;
+  color: #FF2C55;
+  margin: 3mm 0 1.5mm;
+}
+
+/* ============================================================
+   DOCUMENT DETAIL PAGE
+   ============================================================ */
+.pp-detail-section {
+  margin-bottom: 4mm;
+}
+
+.pp-detail-label {
+  font-size: 2.5mm;
+  font-weight: 400;
+  color: #888888;
+  margin-bottom: 0.5mm;
+}
+
+.pp-detail-value {
+  font-size: 3.5mm;
+  font-weight: 600;
+  color: #000000;
+}
+
+.pp-location-platform {
+  display: flex;
+  align-items: flex-start;
+  gap: 2mm;
+  margin-bottom: 2mm;
+}
+
+.pp-location-platform svg {
+  width: 3.5mm;
+  height: 3.5mm;
+  color: #777777;
+  margin-top: 0.5mm;
+  flex-shrink: 0;
+}
+
+.pp-location-breadcrumb {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #333333;
+}
+
+.pp-location-breadcrumb li {
+  list-style: disc;
+  list-style-position: inside;
+  margin-bottom: 0.5mm;
+}
+
+.pp-text-box {
+  background: #FFFFFF;
+  border-radius: 2.5mm;
+  border: 0.2mm solid rgba(0,0,0,0.08);
+  padding: 3mm 4mm;
+  font-size: 3.5mm;
+  font-weight: 400;
+  color: #000000;
+  line-height: 1.5;
+  margin-bottom: 0.5mm;
+}
+
+.pp-text-box-empty {
+  color: #AAAAAA;
+  font-style: italic;
+}
+
+.pp-text-box-label {
+  font-size: 2.5mm;
+  font-weight: 400;
+  color: #888888;
+  margin-bottom: 2mm;
+}
+
+.pp-uploaded-file {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+  padding: 2mm 0;
+}
+
+.pp-file-icon {
+  width: 8mm;
+  height: 8mm;
+  border-radius: 1mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 2.5mm;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.pp-file-icon--pdf  { background: #FF2C55; }
+.pp-file-icon--docx { background: #667EEA; }
+.pp-file-icon--xlsx { background: #31632A; }
+.pp-file-icon--jpg  { background: #FF9500; }
+
+.pp-file-name {
+  font-size: 3.5mm;
+  font-weight: 600;
+  color: #000000;
+}
+
+.pp-file-date {
+  font-size: 2.5mm;
+  font-weight: 400;
+  color: #888888;
+  margin-top: 0.3mm;
+}
+
+.pp-doc-divider {
+  height: 0.3mm;
+  background: rgba(0,0,0,0.1);
+  margin: 4mm 0;
+}
+
+.pp-people-title {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #888888;
+  text-align: center;
+  margin-bottom: 2mm;
+}
+
+.pp-people-card {
+  background: #FFFFFF;
+  border-radius: 3mm;
+  padding: 2.5mm 4mm;
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  box-shadow: 0 0.5mm 2mm rgba(0,0,0,0.06);
+  margin-bottom: 2mm;
+}
+
+.pp-people-avatar {
+  width: 10mm;
+  height: 10mm;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D0D0D0, #B0B0B0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5mm;
+  font-weight: 700;
+  color: #555555;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.pp-people-avatar-dot {
+  position: absolute;
+  bottom: -0.5mm;
+  right: -0.5mm;
+  width: 3mm;
+  height: 3mm;
+  border-radius: 50%;
+  background: #61C553;
+  border: 0.3mm solid #FFFFFF;
+}
+
+.pp-people-name {
+  font-size: 4mm;
+  font-weight: 700;
+  color: #000000;
+}
+
+.pp-people-role-net {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #555555;
+}
+
+.pp-people-badge {
+  margin-left: auto;
+  font-size: 2.8mm;
+  font-weight: 600;
+  color: #777777;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   ATTACHED FILES PAGE
+   ============================================================ */
+.pp-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+}
+
+.pp-file-row {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  padding: 1.5mm 0;
+  border-bottom: 0.2mm solid rgba(0,0,0,0.05);
+}
+
+.pp-file-row:last-child {
+  border-bottom: none;
+}
+
+/* ============================================================
+   LINKED PEOPLE / ACCESS PAGE
+   ============================================================ */
+.pp-access-card {
+  background: #FFFFFF;
+  border-radius: 3mm;
+  padding: 4mm;
+  box-shadow: 0 1mm 4mm rgba(0,0,0,0.08);
+  margin-bottom: 4mm;
+}
+
+.pp-access-person {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  margin-bottom: 3mm;
+  padding-bottom: 3mm;
+  border-bottom: 0.2mm solid rgba(0,0,0,0.06);
+}
+
+.pp-access-photo {
+  width: 12mm;
+  height: 12mm;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #E8E8E8;
+}
+
+.pp-access-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pp-access-person-info {
+  flex: 1;
+}
+
+.pp-access-person-name {
+  font-size: 4mm;
+  font-weight: 700;
+  color: #000000;
+}
+
+.pp-access-person-role {
+  font-size: 3mm;
+  font-weight: 400;
+  color: #555555;
+}
+
+.pp-access-person-status {
+  font-size: 2.8mm;
+  font-weight: 400;
+  color: #777777;
+}
+
+.pp-access-badge {
+  font-size: 2.5mm;
+  font-weight: 600;
+  color: #000000;
+  text-align: right;
+}
+
+.pp-access-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2.5mm;
+}
+
+.pp-access-field-label {
+  font-size: 2.5mm;
+  font-weight: 400;
+  color: #888888;
+}
+
+.pp-access-field-value {
+  font-size: 3.5mm;
+  font-weight: 600;
+  color: #000000;
+}
+
+.pp-access-status-accepted {
+  color: #61C553;
+  font-size: 3.5mm;
+  font-weight: 600;
+}
+
+.pp-access-status-pending {
+  color: #FF9500;
+  font-size: 3.5mm;
+  font-weight: 600;
+}
+
+/* ============================================================
+   PAGE FOOTER (document disclaimer)
+   ============================================================ */
+.pp-doc-footer {
+  margin-top: auto;
+  padding-top: 4mm;
+  border-top: 0.2mm solid rgba(0,0,0,0.08);
+}
+
+.pp-doc-footer-text {
+  font-size: 2.5mm;
+  font-weight: 400;
+  color: #777777;
+  line-height: 1.5;
+}
+
+.pp-doc-footer-date {
+  font-size: 2.8mm;
+  font-weight: 600;
+  color: #333333;
+  margin-top: 1mm;
+}
+
+/* ============================================================
+   TIMELINE (for Beliefs/Interests entries)
+   ============================================================ */
+.pp-timeline-label {
+  font-size: 2.5mm;
+  font-weight: 400;
+  color: #888888;
+  margin-bottom: 2mm;
+}
+
+.pp-timeline-event {
+  margin-bottom: 2.5mm;
+}
+
+.pp-timeline-event-title {
+  font-size: 3.5mm;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 0.5mm;
+}
+
+/* ============================================================
+   SCREEN-ONLY: Print Preview + Button
+   ============================================================ */
+.pp-preview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.pp-preview-container {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 794px; /* A4 at 96dpi */
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.pp-preview-toolbar {
+  background: #000000;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.pp-preview-toolbar-title {
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pp-preview-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pp-btn-print {
+  background: #61C553;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pp-btn-print:hover {
+  background: #52B045;
+}
+
+.pp-btn-close {
+  background: rgba(255,255,255,0.15);
+  color: #FFFFFF;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.pp-btn-close:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Screen: each page rendered as scrollable section */
+.pp-preview-container .pp-page {
+  width: 794px;
+  min-height: 1123px; /* A4 at 96dpi */
+  break-after: auto;
+  page-break-after: auto;
+}
+
+.pp-preview-container .pp-layout {
+  min-height: 1123px;
+}
+
+.pp-preview-container .pp-sidebar {
+  width: 270px;
+  min-height: 1123px;
+  padding: 30px 22px 30px 30px;
+}
+
+.pp-preview-container .pp-sidebar-logo { margin-bottom: 18px; }
+.pp-preview-container .pp-sidebar-logo-icon { width: 18px; height: 18px; }
+.pp-preview-container .pp-sidebar-logo-text { font-size: 17px; }
+
+.pp-preview-container .pp-profile-card { padding: 14px; border-radius: 12px; margin-bottom: 18px; }
+.pp-preview-container .pp-profile-photo-wrap { width: 158px; height: 158px; border-radius: 10px; margin: 0 auto 10px; }
+.pp-preview-container .pp-profile-name { font-size: 15px; }
+.pp-preview-container .pp-profile-role { font-size: 11px; margin-bottom: 8px; }
+.pp-preview-container .pp-verified-row { gap: 4px; margin-bottom: 8px; }
+.pp-preview-container .pp-verified-text { font-size: 9px; }
+.pp-preview-container .pp-verified-icon { width: 13px; height: 13px; }
+.pp-preview-container .pp-plan-badge { font-size: 10px; padding: 5px 10px; border-radius: 6px; }
+
+.pp-preview-container .pp-section-label-title { font-size: 22px; }
+.pp-preview-container .pp-section-label-desc { font-size: 11px; line-height: 1.5; }
+
+.pp-preview-container .pp-content { padding: 30px 30px 30px 26px; }
+.pp-preview-container .pp-page-title { font-size: 26px; margin-bottom: 18px; }
+
+.pp-preview-container .pp-field { margin-bottom: 11px; padding-bottom: 11px; }
+.pp-preview-container .pp-field-value { font-size: 15px; gap: 6px; }
+.pp-preview-container .pp-field-label { font-size: 11px; }
+.pp-preview-container .pp-name-avatar { width: 36px; height: 36px; }
+.pp-preview-container .pp-name-dot { width: 7px; height: 7px; }
+
+.pp-preview-container .pp-contact-section { margin-bottom: 18px; }
+.pp-preview-container .pp-contact-section-icon { width: 15px; height: 15px; }
+.pp-preview-container .pp-contact-section-title { font-size: 15px; }
+.pp-preview-container .pp-contact-item { border-radius: 9px; padding: 10px 14px; margin-bottom: 7px; }
+.pp-preview-container .pp-contact-item-primary { font-size: 13px; }
+.pp-preview-container .pp-contact-item-label { font-size: 10px; }
+.pp-preview-container .pp-contact-item-multi { font-size: 11px; }
+
+.pp-preview-container .pp-doc-section-title { font-size: 15px; margin: 15px 0 7px; }
+.pp-preview-container .pp-doc-row { gap: 10px; padding: 9px 0; }
+.pp-preview-container .pp-doc-icon { width: 34px; height: 34px; }
+.pp-preview-container .pp-doc-icon svg { width: 15px; height: 15px; }
+.pp-preview-container .pp-doc-title { font-size: 13px; }
+.pp-preview-container .pp-doc-type { font-size: 10px; }
+.pp-preview-container .pp-doc-meta { font-size: 9px; }
+.pp-preview-container .pp-doc-status-label { font-size: 9px; }
+.pp-preview-container .pp-status-dot { width: 7px; height: 7px; }
+
+.pp-preview-container .pp-family-section-title { font-size: 15px; margin: 15px 0 4px; }
+.pp-preview-container .pp-family-subsection { font-size: 13px; margin: 9px 0 5px; }
+.pp-preview-container .pp-family-stats { gap: 22px; margin-bottom: 15px; }
+.pp-preview-container .pp-family-stat-value { font-size: 19px; }
+.pp-preview-container .pp-family-stat-label { font-size: 10px; }
+.pp-preview-container .pp-person-card { border-radius: 10px; padding: 10px 14px; margin-bottom: 7px; gap: 10px; }
+.pp-preview-container .pp-person-avatar { width: 40px; height: 40px; font-size: 15px; }
+.pp-preview-container .pp-person-name { font-size: 15px; }
+.pp-preview-container .pp-person-rel { font-size: 11px; }
+.pp-preview-container .pp-person-dob { font-size: 10px; }
+.pp-preview-container .pp-person-badge { font-size: 10px; }
+.pp-preview-container .pp-in-memory { font-size: 10px; }
+
+.pp-preview-container .pp-medical-card-title { font-size: 17px; margin-bottom: 10px; }
+.pp-preview-container .pp-medical-card-title svg { width: 18px; height: 18px; }
+.pp-preview-container .pp-blood-type { padding: 5px 14px; margin-bottom: 10px; border-radius: 6px; }
+.pp-preview-container .pp-blood-type-value { font-size: 19px; }
+.pp-preview-container .pp-blood-drop { font-size: 15px; }
+.pp-preview-container .pp-allergy-pill { font-size: 11px; padding: 5px 14px; border-radius: 40px; margin: 0 4px 4px 0; }
+.pp-preview-container .pp-allergy-dot { width: 7px; height: 7px; }
+.pp-preview-container .pp-allergy-level { font-size: 9px; }
+.pp-preview-container .pp-condition-pill { font-size: 11px; padding: 5px 12px; border-radius: 40px; margin: 0 4px 4px 0; }
+.pp-preview-container .pp-med-sub { font-size: 11px; margin-bottom: 4px; }
+.pp-preview-container .pp-med-label { font-size: 13px; margin: 10px 0 5px; }
+
+.pp-preview-container .pp-detail-section { margin-bottom: 15px; }
+.pp-preview-container .pp-detail-label { font-size: 9px; }
+.pp-preview-container .pp-detail-value { font-size: 13px; }
+.pp-preview-container .pp-location-platform { gap: 7px; margin-bottom: 7px; }
+.pp-preview-container .pp-location-platform svg { width: 13px; height: 13px; }
+.pp-preview-container .pp-location-breadcrumb { font-size: 11px; }
+.pp-preview-container .pp-text-box { border-radius: 9px; padding: 10px 14px; font-size: 13px; margin-bottom: 2px; }
+.pp-preview-container .pp-text-box-label { font-size: 9px; margin-bottom: 7px; }
+.pp-preview-container .pp-uploaded-file { gap: 7px; padding: 7px 0; }
+.pp-preview-container .pp-file-icon { width: 30px; height: 30px; border-radius: 4px; font-size: 9px; }
+.pp-preview-container .pp-file-name { font-size: 13px; }
+.pp-preview-container .pp-file-date { font-size: 9px; }
+.pp-preview-container .pp-doc-divider { margin: 15px 0; }
+.pp-preview-container .pp-people-title { font-size: 11px; margin-bottom: 7px; }
+.pp-preview-container .pp-people-card { border-radius: 10px; padding: 9px 14px; gap: 10px; }
+.pp-preview-container .pp-people-avatar { width: 36px; height: 36px; font-size: 13px; }
+.pp-preview-container .pp-people-avatar-dot { width: 10px; height: 10px; bottom: -2px; right: -2px; }
+.pp-preview-container .pp-people-name { font-size: 15px; }
+.pp-preview-container .pp-people-role-net { font-size: 11px; }
+.pp-preview-container .pp-people-badge { font-size: 10px; }
+
+.pp-preview-container .pp-doc-footer { padding-top: 15px; }
+.pp-preview-container .pp-doc-footer-text { font-size: 9px; }
+.pp-preview-container .pp-doc-footer-date { font-size: 10px; }
+
+.pp-preview-container .pp-cover { min-height: 1123px; }
+.pp-preview-container .pp-cover-header { padding: 36px 50px 0; }
+.pp-preview-container .pp-cover-logo-icon { width: 22px; height: 22px; }
+.pp-preview-container .pp-cover-logo-text { font-size: 20px; }
+.pp-preview-container .pp-cover-left { width: 280px; padding-left: 44px; }
+.pp-preview-container .pp-cover-photo-wrap { width: 120px; height: 120px; }
+.pp-preview-container .pp-cover-name { font-size: 20px; }
+.pp-preview-container .pp-cover-role { font-size: 13px; }
+.pp-preview-container .pp-cover-title { font-size: 105px; letter-spacing: -2px; }
+.pp-preview-container .pp-cover-subtitle { font-size: 15px; }
+.pp-preview-container .pp-cover-footer { padding: 18px 50px; }
+.pp-preview-container .pp-cover-footer-created { font-size: 11px; }
+.pp-preview-container .pp-cover-footer-date { font-size: 13px; }
+.pp-preview-container .pp-cover-footer-disclaimer { font-size: 11px; max-width: 340px; }
+.pp-preview-container .pp-cover-triangle { width: 450px; height: 680px; border-radius: 8px; }
+.pp-preview-container .pp-cover-triangle2 { width: 340px; height: 570px; border-radius: 8px; }
+
+.pp-preview-container .pp-files-list { gap: 7px; }
+.pp-preview-container .pp-file-row { gap: 10px; padding: 5px 0; }
+
+.pp-preview-container .pp-access-card { border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+.pp-preview-container .pp-access-person { gap: 10px; margin-bottom: 10px; padding-bottom: 10px; }
+.pp-preview-container .pp-access-photo { width: 44px; height: 44px; }
+.pp-preview-container .pp-access-person-name { font-size: 15px; }
+.pp-preview-container .pp-access-person-role { font-size: 11px; }
+.pp-preview-container .pp-access-person-status { font-size: 10px; }
+.pp-preview-container .pp-access-field { margin-bottom: 9px; }
+.pp-preview-container .pp-access-field-label { font-size: 9px; }
+.pp-preview-container .pp-access-field-value { font-size: 13px; }
+.pp-preview-container .pp-access-status-accepted { font-size: 13px; }
+.pp-preview-container .pp-access-status-pending { font-size: 13px; }

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Network — PlanAfter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="_shared.css?v=20260518fr110">
+</head>
+<body class="page-network-analytics">
+    <!-- ========== BACKGROUND ========== -->
+    <div class="bg-layer"></div>
+
+    <!-- ========== HEADER ========== -->
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-col header-col-left">
+                <div class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
+                    <svg class="btn-outline" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><linearGradient id="circle-grad-ham" x1="0.189" y1="0.126" x2="0.831" y2="0.86" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.133" stop-color="#fff" stop-opacity="0"/><stop offset="0.856" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,29.008,29.008,0,0,0,41.288,3.279,28.818,28.818,0,0,0,30,1m0-1A30,30,0,1,1,0,30,30,30,0,0,1,30,0Z" fill="url(#circle-grad-ham)"/></svg>
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+                </div>
+                <div class="logo-pill" id="logoPill" onclick="goHome()">
+                    <svg class="logo-outline" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="215" height="60" viewBox="0 0 215 60"><defs><linearGradient id="logo-grad" x1="0.463" x2="0.537" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.184" stop-color="#fff" stop-opacity="0"/><stop offset="0.825" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,28.817,28.817,0,0,0,30,59H185A29.008,29.008,0,0,0,196.288,3.279,28.817,28.817,0,0,0,185,1H30m0-1H185a30,30,0,0,1,0,60H30A30,30,0,0,1,30,0Z" fill="url(#logo-grad)"/></svg>
+                    <svg class="logo-text-svg" xmlns="http://www.w3.org/2000/svg" width="155" height="20" viewBox="0 0 155 20"><path d="M-556.741-472.732a8.936,8.936,0,0,1-1.918-2.587l1.134-1.564a7.587,7.587,0,0,0,1.905,1.648,5.108,5.108,0,0,0,2.581.65,3.914,3.914,0,0,0,2.255-.674,4.737,4.737,0,0,0,1.616-1.925,6.788,6.788,0,0,0,.6-2.936,6.44,6.44,0,0,0-.543-2.744,4.5,4.5,0,0,0-1.5-1.817,3.829,3.829,0,0,0-2.2-.65,3.7,3.7,0,0,0-2.316.866,10.8,10.8,0,0,0-2.171,2.443c-.482.71-.989,1.5-1.5,2.347l-1.061,1.769a36.988,36.988,0,0,1-2.2,3.321,10.694,10.694,0,0,1-2.762,2.635,6.147,6.147,0,0,1-3.389.951,5.7,5.7,0,0,1-3.57-1.191,7.644,7.644,0,0,1-2.4-3.309,13.046,13.046,0,0,1-.844-4.886,12.674,12.674,0,0,1,.82-4.8,7.33,7.33,0,0,1,2.316-3.177,5.46,5.46,0,0,1,3.389-1.143,5.918,5.918,0,0,1,4.052,1.769,8.942,8.942,0,0,1,1.918,2.7l-1.085,1.5a8.009,8.009,0,0,0-1.978-1.733,5.107,5.107,0,0,0-2.581-.65,3.947,3.947,0,0,0-2.231.674,4.6,4.6,0,0,0-1.628,1.925,6.793,6.793,0,0,0-.6,2.936,6.476,6.476,0,0,0,.543,2.744,4.4,4.4,0,0,0,1.5,1.817,3.775,3.775,0,0,0,2.195.65,3.585,3.585,0,0,0,2.34-.891,12.358,12.358,0,0,0,2.171-2.443c.495-.71,1-1.516,1.508-2.359l1-1.661.109-.181c.711-1.155,1.435-2.226,2.147-3.189a10.615,10.615,0,0,1,2.762-2.66,6.081,6.081,0,0,1,3.377-.951,5.629,5.629,0,0,1,3.546,1.191,7.8,7.8,0,0,1,2.376,3.309v.012a13.04,13.04,0,0,1,.844,4.885,12.846,12.846,0,0,1-.82,4.826,7.241,7.241,0,0,1-2.292,3.177A5.457,5.457,0,0,1-552.677-471,5.94,5.94,0,0,1-556.741-472.732Zm45.4.289a3.1,3.1,0,0,1-1.013-2.491,3.389,3.389,0,0,1,.422-1.709,3.806,3.806,0,0,1,1.435-1.348,10.567,10.567,0,0,1,2.714-1.035c.482-.132.965-.265,1.423-.385s.941-.241,1.4-.373a1.253,1.253,0,0,0,.2-.048v-.83a4.709,4.709,0,0,0-.277-1.781,1.624,1.624,0,0,0-.82-.915,3.245,3.245,0,0,0-1.411-.265,6.476,6.476,0,0,0-1.194.108.354.354,0,0,0-.1.024l-.181,1.36a2.243,2.243,0,0,1-.543,1.492,1.538,1.538,0,0,1-1.134.457,1.534,1.534,0,0,1-1.073-.349,1.688,1.688,0,0,1-.507-.89,3.818,3.818,0,0,1,1.773-2.635,7.053,7.053,0,0,1,3.883-.963,6.428,6.428,0,0,1,2.605.457,3.307,3.307,0,0,1,1.616,1.468,5.4,5.4,0,0,1,.555,2.647v5.716a1.42,1.42,0,0,0,.229.9.826.826,0,0,0,.675.289,1.308,1.308,0,0,0,.531-.108h-.012a1.641,1.641,0,0,0,.446-.253l.458.927a3.172,3.172,0,0,1-1.085.987,3.117,3.117,0,0,1-1.568.373,2.736,2.736,0,0,1-1.99-.71,2.858,2.858,0,0,1-.76-1.588h-.3a14.025,14.025,0,0,1-1,1.167,3.867,3.867,0,0,1-1.194.855,3.911,3.911,0,0,1-1.688.325A3.7,3.7,0,0,1-511.345-472.444Zm6.054-6.077c-.579.18-1.146.361-1.713.53a4.106,4.106,0,0,0-1.363.626,2.07,2.07,0,0,0-.687.818,2.4,2.4,0,0,0-.193.987,1.794,1.794,0,0,0,.555,1.408,2.131,2.131,0,0,0,1.483.505,2.481,2.481,0,0,0,.977-.192,5.965,5.965,0,0,0,.977-.554c.157-.108.326-.229.494-.361v-3.935C-504.941-478.629-505.11-478.581-505.291-478.521Zm63.51,6.113a5.444,5.444,0,0,1-2.255-2.262,7.428,7.428,0,0,1-.784-3.526,7.612,7.612,0,0,1,.808-3.6,5.853,5.853,0,0,1,2.255-2.395,6.38,6.38,0,0,1,3.28-.854,6.063,6.063,0,0,1,2.882.65,4.589,4.589,0,0,1,1.893,1.817,5.5,5.5,0,0,1,.676,2.768,7.619,7.619,0,0,1-.048.939c-.036.277-.085.529-.133.758h-8.261a5.76,5.76,0,0,0,.507,2.214,3.776,3.776,0,0,0,1.447,1.637,3.9,3.9,0,0,0,2.1.554,4.521,4.521,0,0,0,2.1-.433v-.024a5.129,5.129,0,0,0,1.483-1.179l.929.746a7.577,7.577,0,0,1-1.278,1.552,5.064,5.064,0,0,1-1.737,1.059,6.84,6.84,0,0,1-2.4.373A7.172,7.172,0,0,1-441.781-472.408Zm1.761-10.71a3.521,3.521,0,0,0-1.073,1.625,7.419,7.419,0,0,0-.374,2.106h4.571a1.178,1.178,0,0,0,.687-.553,2.173,2.173,0,0,0,.169-.915,3.535,3.535,0,0,0-.3-1.516,2.209,2.209,0,0,0-.844-.939,2.5,2.5,0,0,0-1.315-.325A2.468,2.468,0,0,0-440.02-483.118ZM-451.948-472.5a3.444,3.444,0,0,1-.965-2.708c0-.361,0-.722.012-1.059s.012-.722.012-1.131v-5.56h-5.005v5.463c0,.6.012,1.215.012,1.829s.012,1.24.012,1.853v.289l2.267.2v1.36h-7.429v-1.36l1.869-.181v-.3c.012-.614.012-1.24.012-1.853v-7.28h-1.966v-1.42l2.062-.265a11.2,11.2,0,0,1,.386-2.106,6.316,6.316,0,0,1,.736-1.625,6.421,6.421,0,0,1,1.049-1.227,4.628,4.628,0,0,1,1.737-1.071,6.311,6.311,0,0,1,2.074-.349,4.276,4.276,0,0,1,1.954.4,1.978,1.978,0,0,1,1.049,1.251,1.513,1.513,0,0,1-.446,1.047,1.711,1.711,0,0,1-1.23.421,1.959,1.959,0,0,1-1.158-.337,4.832,4.832,0,0,1-1-.951l-.675-.782a1.678,1.678,0,0,0-.386.457,4.4,4.4,0,0,0-.482.915,5.435,5.435,0,0,0-.314,1.167,9.512,9.512,0,0,0-.145,1.564v1.24h5.5l1.013-3.634h1.906l-.217,3.634h3.28v1.673h-3.22v7.521a1.984,1.984,0,0,0,.4,1.372,1.483,1.483,0,0,0,1.122.421,2.527,2.527,0,0,0,.808-.132l.012-.012a3.86,3.86,0,0,0,.712-.337l.591,1.059a2.683,2.683,0,0,1-.736.674,4.491,4.491,0,0,1-1.134.517,5.08,5.08,0,0,1-1.483.2A3.8,3.8,0,0,1-451.948-472.5Zm20.961.578v-1.36l1.821-.168v-.193c.012-.638.012-1.288.012-1.961v-4.416c0-.361-.012-.7-.012-1.035s-.012-.674-.012-1.023l-1.966-.132v-1.24l4-1.42.772.132.289,3.43.181.024v.072h.133a7.863,7.863,0,0,1,.941-2.046,4.465,4.465,0,0,1,1.23-1.276,2.685,2.685,0,0,1,1.5-.433,2.192,2.192,0,0,1,1.387.433l-.024.024a2.035,2.035,0,0,1,.736,1.107,2.545,2.545,0,0,1-.531,1.468,1.594,1.594,0,0,1-1.327.59,2.117,2.117,0,0,1-1.049-.253,3.155,3.155,0,0,1-.808-.7l-.072-.072a5.541,5.541,0,0,0-1.158,1.035,7.7,7.7,0,0,0-.965,1.564v4.164c0,.674.012,1.324.012,1.961v.168l2.364.193v1.36Zm-58.746,0v-1.36l1.7-.168v-.193c0-.638.012-1.288.012-1.949s.012-1.276.012-1.865v-2.575a3.207,3.207,0,0,0-.482-2,1.838,1.838,0,0,0-1.508-.578,3.868,3.868,0,0,0-1.194.192,5.618,5.618,0,0,0-1.23.566,7.873,7.873,0,0,0-.7.469v3.923c0,.566,0,1.179.012,1.853s.012,1.324.012,1.961v.2l1.628.156v1.36h-6.73v-1.36l1.821-.168v-.193c.012-.638.012-1.288.012-1.961v-4.416c0-.361-.012-.7-.012-1.035s-.012-.674-.012-1.023l-1.93-.132v-1.24l3.944-1.42.772.132.314,2.419h.229a7.924,7.924,0,0,1,1.254-1.408,5.622,5.622,0,0,1,1.5-.951,4.419,4.419,0,0,1,1.761-.349,3.492,3.492,0,0,1,2.8,1.119,5.05,5.05,0,0,1,.965,3.357v3.069c0,.578.012,1.2.012,1.865s.012,1.312.012,1.949l.012.024v.193l1.749.168v1.36Zm17.4-.024v-1.492l2.376-.132-1.182-3.526h-6.006l-1.158,3.49,2.279.169v1.492h-6.018v-1.492l2.05-.156,5.439-15.523h2.738l5.524,15.572,1.93.108v1.492Zm.675-6.667-2.653-7.954-.531,2.551-1.8,5.4Zm-65.6,6.667v-1.492l2.316-.132V-487.4l-2.316-.144v-1.492h7.357a12.046,12.046,0,0,1,4.161.614h.024a5.14,5.14,0,0,1,2.436,1.769,4.716,4.716,0,0,1,.8,2.744,5.065,5.065,0,0,1-.784,2.756,5.243,5.243,0,0,1-2.5,1.925,11.911,11.911,0,0,1-4.318.686v-1.468a5.538,5.538,0,0,0,2.3-.457,2.8,2.8,0,0,0,1.351-1.336,4.711,4.711,0,0,0,.422-2.058,3.6,3.6,0,0,0-.977-2.744,4.49,4.49,0,0,0-3.148-.914h-1.266c-.012.361-.012.722-.012,1.083-.012.878-.012,1.745-.012,2.623v6.751c0,.818.012,1.661.012,2.515.012.325.012.638.012.963l2.6.144v1.492Zm16.209-.012v-1.36l1.869-.168v-.313c.012-.614.012-1.24.012-1.853V-488.22l-2.014-.385v-1.155l4.487-.951.8.132-.048,3.393v9.7c0,.6.012,1.215.012,1.829s.012,1.24.012,1.853l.012-.012v.325l1.882.168v1.36Z" transform="translate(575 491)" fill="#000"/></svg>
+                </div>
+                </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-col header-col-right">
+                <div class="utility-group">
+                    <div class="utility-btn search-btn" id="searchBtn" onclick="toggleHeaderState('search')">
+                        <svg class="btn-outline" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><linearGradient id="circle-grad-search" x1="0.189" y1="0.126" x2="0.831" y2="0.86" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.133" stop-color="#fff" stop-opacity="0"/><stop offset="0.856" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,29.008,29.008,0,0,0,41.288,3.279,28.818,28.818,0,0,0,30,1m0-1A30,30,0,1,1,0,30,30,30,0,0,1,30,0Z" fill="url(#circle-grad-search)"/></svg>
+                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="21.811" height="21.811" viewBox="0 0 21.811 21.811"><path d="M23,23l-5.774-5.774m0,0a8.333,8.333,0,1,0-11.785,0A8.333,8.333,0,0,0,17.225,17.225Z" transform="translate(-2.249 -2.249)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+                    </div>
+                    <div class="utility-btn bell-btn" id="notifBtn" onclick="toggleHeaderState('notif')">
+                        <svg class="btn-outline" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><linearGradient id="circle-grad-notif" x1="0.189" y1="0.126" x2="0.831" y2="0.86" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.133" stop-color="#fff" stop-opacity="0"/><stop offset="0.856" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,29.008,29.008,0,0,0,41.288,3.279,28.818,28.818,0,0,0,30,1m0-1A30,30,0,1,1,0,30,30,30,0,0,1,30,0Z" fill="url(#circle-grad-notif)"/></svg>
+                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M10,20a3.88,3.88,0,0,1-3.694-2.663,3.778,3.778,0,0,1-.174-1.474,25.944,25.944,0,0,1-5.053-1.28.749.749,0,0,1-.3-1.211A8.385,8.385,0,0,0,3,7.689V6.917A7,7,0,0,1,17,6.917v.771a8.385,8.385,0,0,0,2.211,5.684.75.75,0,0,1-.3,1.211,25.925,25.925,0,0,1-5.051,1.28,3.769,3.769,0,0,1-.412,2.042,3.839,3.839,0,0,1-2.274,1.913A3.917,3.917,0,0,1,10,20M7.626,16.042a2.285,2.285,0,0,0,.11.833,2.388,2.388,0,0,0,2.991,1.512,2.349,2.349,0,0,0,1.394-1.168,2.3,2.3,0,0,0,.253-1.177,26.7,26.7,0,0,1-4.748,0m-.5-1.561a24.93,24.93,0,0,0,5.753,0l.03,0a24.445,24.445,0,0,0,4.491-.963A9.861,9.861,0,0,1,15.5,7.688V6.917a5.5,5.5,0,0,0-11.006,0v.771A9.862,9.862,0,0,1,2.6,13.515a24.437,24.437,0,0,0,4.492.963.259.259,0,0,1,.029,0M19.249,6.125a.749.749,0,0,1-.738-.623,8.412,8.412,0,0,0-2.075-4.248A.75.75,0,1,1,17.545.245a9.9,9.9,0,0,1,2.444,5,.751.751,0,0,1-.613.866.785.785,0,0,1-.127.01m-18.5,0a.785.785,0,0,1-.127-.01.751.751,0,0,1-.613-.866,9.9,9.9,0,0,1,2.444-5A.75.75,0,1,1,3.564,1.254,8.412,8.412,0,0,0,1.489,5.5a.749.749,0,0,1-.738.623" fill="#000"/></svg>
+                        <div class="notif-dot"></div>
+                    </div>
+                    <div class="avatar-btn" id="profileBtn" onclick="toggleProfileDropdown(event)">
+                        <div class="avatar-photo-inner" style="overflow:hidden;border-radius:50%;">
+                            <img id="headerAvatarImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                            <span class="initials" id="headerInitials">SJ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PROFILE DROPDOWN BACKDROP ========== -->
+    <div class="profile-dropdown-backdrop" id="profileDropdownBackdrop" onclick="closeProfileDropdown()"></div>
+
+    <!-- ========== PROFILE DROPDOWN (fixed, overlays 4th column) ========== -->
+    <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-dropdown-header">
+            <div class="profile-dropdown-name">Sarah Johnson</div>
+            <div class="profile-dropdown-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7f0c1e0d1e1751151017110c10113f1a121e1613511c1012">[email&#160;protected]</a></div>
+        </div>
+        <div class="profile-dropdown-section section-primary">
+            <div class="profile-dropdown-item" onclick="navigateTo('profile'); closeProfileDropdown()">
+                <span>My Profile</span>
+                <svg class="dd-icon" width="16" height="20" viewBox="0 0 16 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="4"/><path d="M1 19c0-3.866 3.134-7 7-7s7 3.134 7 7"/></svg>
+            </div>
+            <div class="profile-dropdown-item">
+                <span>Settings</span>
+                <img class="dd-icon" width="20" height="20" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAArCAYAAAADgWq5AAAABHNCSVQICAgIfAhkiAAABG1JREFUWEfNmI2REzEMhbkKgArIVQBUwF4FQAWECggVECrgqIBQAUcF7FUAVMBeBUAFoG+xdl4ce+14YYJmPNmsLenpx5KSs1vL6I6xv7D1xNaDGVGD7fW2XtviuZnOmjn/ML6ztT5CBmAf2vpxBM/e0SWAVybpW4Pil8Zz2cA3siwBvDH+N0HxtX2SFjnPbW3vlZztTgF4Z0qfBcUlr2k0MOruKQB/NqV+0S7suS+A+CX7AG7K41xKPDaBhA1AX2y9D5+uk/cAdqpJLQx6lIkIEUAnaTUE4z+mjEopyt18BF0FhWv7pKRBGMP3EnEG2U67AC5XEnEUkduLRAxYL1IJAPs/bXW2EF5DnLtfczCc6QPoiUUB4zHKlHoOj+IB1u1I0Vf7vj4CLOzIpqT5ZVWRpAD6OOPVh/2n4f14VgF/CMB4f2NrFQHU0GE5q5WQjbHQEABp6DGKDur7U7NxwJ3tfBLtNbe+FWwNH17GEI8qLX0LowMmFbAaIjR489S0NgB6Sc8xAsC6wSUCeEuNxCtcqC7IwENcMtKr9lLGTurthZfC0ZEAVu+WOlbO67Td7UxIuEzPGxwR1/tzAGsH2ruRFTmBQMLGZ4mIGqC9lpfOsx9XrgsAq9sRCmjelQhhdLuVHKTUAWgI7zGEDqbEja9JEeRTCNwZY7oCmBcA1Dq7se9vC4i1IyIMnl2CB/m894YB2IMOFvHBA1hAOxGdnVeJFOjxQAZ0nFulVIrL1NxdyYIFS9zp8LS2ztxUhTe9G7XMEtfG32WcoVMgkaPEgmuk1PBDyBx0roHgeW+vc5FQTHj5e3jBXcnNxFoExtqrQlKAt3bAfx1MHSbyBhZ7fTymKyqYlG5NtWQUUkw1g/lSDxNqvVDqj2oPx2UEIafIYU3JgzKrVSJZRjIXo6VK6OhaqhKknJbZ6Z54HY7B1rToSxPqIyCeoHJQMWLCOO2GNJfOFjw5ypZZAAMWAdBBGZkRSgoRvntyhu9XAQz7KKYsKR3T6Xpj9IqFgX9lltiJ0Bn7Rmesg0Fz53QPozWVxlliEC/VpEJK2dZeeilM7TMaAnYuDVJ88V0ZPYwgH5RHtzcIRpmnQBeekUWKsHBKC2m6TvMwgtTLta22BcAxPOpI+Mau52UNr/xvv+k0d6eOq52O2+2zKx7HIiX2yCmIttkf467o7Mq++yxC6hBVzW8tmTdB77gfT2sA9YK9s2eMoCyxyFElcpOCzmctIYMpb51gQBeLMwB2yv4vwYFNEFgLAKsZfmpAA0R/QdToOBiAUsPPziSl/pkhNHgAwkMeidpLCo/+bIdvsNXZ8slPjUh2xBRgmEgBBJGzeA8j1ItxfczJUQC9AIvr/SroRC9GcBbnaF6PsmoUqVJ9xoDSoK/ndWzMTYE5XdP7JYDxuqdOqUPiQcoUNDcL/1PAekEJIbf5IIQBgf7RkvwlUUQaDizxcJzHtTpL0ZiVswQwgjUtagDvNYEahvjMUsDUVlKD2z33zzpASZutraEFqPP8BtFkHhuJ4mNJAAAAAElFTkSuQmCC">
+            </div>
+            <div class="profile-dropdown-item">
+                <span>Privacy & Security</span>
+                <img class="dd-icon" width="18" height="20" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAArCAYAAAD7YZFOAAAABHNCSVQICAgIfAhkiAAAA8ZJREFUWEfFmItx00AQhkkFkApwKoBUgFIBoQJEBUAFKBUAFSAqwFSAUwGkAkwFQAXwf55bzfr0WslyvDM7evhu979/H3fW2YPl5JNMldJa+moJs2cLGHkkG1+khbO10f0L6Z9D7B8K7qmcwxjXXH4kBrnOkkPAvZTHD1KYM/msG96bwNwbKe8nyxxwhby8z9j6q+dSupZeS2vpQ4cG9t5KN1MQRsHBzvPkGOdeAAZgHz7CDNDH2VjAAfyrdDQfu8AB5EkyuuoBxM+AIqxolyPsEFLUs2h4AQ9YW9RdbsfAwQahAkxEyKFKug0MBiQL8Lk4NA2bpMDawH3XQ1fFeSOsrGZSEFQOgIVDQim1yPSBhM1LwLGy324U4TKqWcUmaYSlAJG7IfgEKIQYKVx9+M8BV0i/Jau36TnqZOlxkGKsXgGukr5LXj7qSgKfSsjN18n5DeAI27P0gi2HnDqVEGq2QuQ2B3eVwJ4KXCHHTYoBzlfqpZ59M71vkC1w/xyC6I4xBXSlweQ0x6g6MLHBA5hjgvNMgCuy+HsBRy8jZVaJLXaVcipzW02wDfpC9zwvIb4t0NgBObbZ04hZEHJ3rGrNwxltUX7eUVpJHk6OR/SviLTA7XVlWahGrBAeThg47Wo7c8JpLvHd7FaEtZTyPwCJ7K0/NQ6A5A9N2wOcG04Dt9FNs1sBDkc4RHB4biN7rlu9twJiPEXE9ZBwmivf1i6s73iHY7sEFcUK7XgDczBYSW3TjlanX7+v1F+QZuBqPdhJNdKPvCEcsDgiYBKtTg+uhcHAFRplG64PVU9kd69LqeWqHzelOm0eKUFqcUV20fPbiT/ocYan6sYkBzgnnPjgDMl/GIS/A0Rmb6/zjrYJ/VhHx4afNyeceSE1BwTPHIMAZYl+o/tqjLr0e5Gum+B4Pwwf1ttg3kLbOiV4FjAwVrkzsOxNyQtrj/muIwyrt0bIPW3iWEIRGuutDaAL3EoTrCkDqpaSB0uLfc8zu60TUd/hz1cPk6PVG11AyP7QyRTG/CeEpoqiCHrGlXrv+2Nv0x8Ch22ffzxXUqp4rlCV2DAZPGiMgaOsAei/bcAoYY70QAOBHZosrJnQbIshO2PgMIRhAPF9zmSbAK7du77b6wRs5QawxQF0cIERcGbTHyLt3UY3hJlrLrBCGLl6CX/ymAIOB7BQS/OPgVu9AzyhIgWoxlUGiu5fSiNs76ZOBcccwoxz23JyxrqeYRfwU/J0FjhzDjNVYrPrsypMwRJjYHayzGEudwKThBulaEh2QKGTmMoN/weYleGJdg3bhAAAAABJRU5ErkJggg==">
+            </div>
+            <div class="profile-dropdown-item">
+                <span>Plan Overview</span>
+                <img class="dd-icon" width="20" height="20" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAArCAYAAADhXXHAAAAABHNCSVQICAgIfAhkiAAAAZVJREFUWEftmY1twjAQhckE0A0YoUzQZALYpO0GdIKyCTBBYYIyAhsUJqDvURsdISE+TO1KvUiWIscXf3653Pmn6OW9huj+HaVEGbSgrFD/hrIqMrIS9PMKZB2tygm7AM1YIdY6J+yXUHWE+00DON3jw9XvcsIeBNw1jlM7gw30Q1M2UCh1M1O2S7IJGjyjPLYE+J0LS8csJF6WXFmCzrtGI55XAjg5LJV6UsCu0ZaBnldyWNmhVE3yn2UhPHj4C7BBWQigvl1WZQ1W+nbs3ED9Kc0NAsNRFmVDshBj6ivKNiYLxbqBJgsxdXJW74GTK6vNQkvAcoA3ZaFYZZNmoXvC/npgN9iG0NX0MyX/wZJ2aG5gbvCjQNR81ny25kZ3iST8JKasKWtucBmk/+cPxtl/34kRsre/R1t/DCRt23Zk5EpE2mrn0XuGLvWpCWxKNzitrVxlaFcox9OaIQpPSry6DdOCsyqpoMaWqnJbdOvepln70eR0DsZOZ06xNmjuAE5RqIi8umwJSZsXAertCcx6DqKz32+Uodro6uV0dwAAAABJRU5ErkJggg==">
+            </div>
+            <div class="profile-dropdown-item">
+                <span>Billing & Subscription</span>
+                <img class="dd-icon" width="20" height="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAjCAYAAAANDvOtAAAABHNCSVQICAgIfAhkiAAAAa5JREFUWEftmI1RwkAQRqUDrUDsQCrQDsQKxAqkA8cOtAK1AqUDO1AqMHZAB/A9Jscch2Tu4oZcnOzMDgncz8uX3eNuB0fbNtbtjfxcPgx+O+Rtocm+5K/ydzfxoLw41uezHNjcDNhb+cLBvmUK6oQD+BpY1ATW2ZMuHuW8irZsqImn8jsPYA0L9VX5JaA0ysUQzQHPgP2W8yTYWcuKhiLBBR9WALv0WrgYzkVZODZ8nYbNSdEdllDZHtZKgU4r+2ClguE4926sTq8G/Tr7x5D4H38KfRj0YSAFwjBgi3aaqMxc7ReJfaqaRyWYv/FNnXukDhz4LCwK9kMzXdScjQPeS82+Ybco2Ev14ojDyTfFirKfVShEwaYANtk2ChZFOUiSZL/ZzDAuqx42CpaYozpTZYc4YEbB+kf0fcCWWb9vjihYXv+kQlYSCfWbti1YJnUL/4murbLY4iEoEH6WA83Diozl+mgBu1OR8WtdqMraSqa3qTAhSNnIL2Wta11YTDJZKFV3DMQb+/VZksUV6OoO2kQ/QCe86XCXRUjwA4GdutuyBP3RYGyEEHBT+V4BctRlvNcfShIAAAAASUVORK5CYII=">
+            </div>
+        </div>
+        <div class="profile-dropdown-section section-secondary">
+            <div class="profile-dropdown-item">
+                <span>Help & Support</span>
+                <img class="dd-icon" width="20" height="20" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAArCAYAAADhXXHAAAAABHNCSVQICAgIfAhkiAAABC1JREFUWEfFmItx1EAMhkkFQAU4FRAqwFQAqQCnAqACjgoIFeBUEKggvgqACjAVQCoAfZ6VR7d+rHbvPGhGc3v2rvTradlnD46jSo4/F66FWUOsoT/C38O6l99OeC/MuojOCk49kjOvhRvhi4LzGNAK3wSD3CJywALyjfBbYdbHEp6/Fv7kBe0F+0oEfl4A+TWEWENOuCEMUs/zWwu/nLGwl2vvhL+krPeA/Ri8aWX9CtcAhoe8hAGAxqNPokNcA/QirYFFMN7Eq0qA3Am3XnQr+5ogy4LGu1dLDlgCC9A7YVtAFAT5muPJlE3owXCbHqTTizk9S2BvI49+CF5IKS+9TwpQvEp4+DIWNgc2PkhYPGEnCoSU30q4F8ZLpI4W35oxjdwk7ZToEkRypBgs+YlXlTweJZQUIcqWqJUbFE8qhWJH4d2xS1iwKP0pzC9Ejq4BYE8djNMzK3gHoCjv1jYFcJrDvfx/pkZasDu5+D4IInSEM+UJrLbFQc8l5Cipggx7H3ko5/4SYTgytEuM0VWwsVe9eapp80OEk19zXqvlOuF9GtABBMBr1MhNzV8MPMdxChZF5B2EV6uEsNzbRAlDHoaDgE0VXS971Lvk+7WC/SZ/EAgdJHUuqpX9rdxjAIIG5QnZttiHaAAWL1JYSo9lkcrVEhts9CZtaUYgqfnbXD8HbCOs+UGBYNEWtBOhWsCelggGW8BXgLUXPOEpMQQvkWpEEeJx2jkE2WjcAJZDTPs5Qhx6DrYQuSZcuQ+gPalWy15mFGi/NViU0WW0eFGaU8ATsH+ND5YGm1xPsn9uDvbmquqzRTb02S3A2rCjmNDvhFPtas4pI74twJKbdnray386jCdHY7DWs/db5GwnGrVgPcPQWopNctYK97aUNQU2rXim9yUJH85MwJ66z56yBiZ91ubYKZ5gCpaiIueOockTrBJpp5wNqHgcwC8doJRmZwOEMdXovJnTtEuBeM7ZqYt5+WJunqUgKIz/TUSbqEMH8ywuB6QOx943ha0MIo20V4+zhH28kl86wgF8fFHLRIThpBShK30Q2Alt8g4GHpSQu/oqQSVOPjQ4gOtbxzDdO/bHW+wHFl6xGIIGo+PBxSY193MHD84QFQwueZejg9gvM4vfDdTC+EBu/mIwTGRgLzWyMeuLjAq2zZhru+Blr+LcffE4OftwWppfyd9OWHsvylthzyegHKDowZtEQonCrIUnxbk2bCMIgPaLSh+8zDR1LPFaTsQqIwiPNnNA2eN5M4hzmHOAZshgVs1pTziA8RGZFiQyk6/nHrAIIkwo0LZmvUp+d8K0Kkj7q/ZbrtF+6iDHnmVN18DwZDF6wSIU5QiF9UkXK875z5MJB8Cu6OSAVSCAbgLbAvQCxfNtYBdIFVwC1oKqQngJMWuIkON5PKep0cu6C8y6iP4BFd/9ShObui4AAAAASUVORK5CYII=">
+            </div>
+            <div class="profile-dropdown-item">
+                <span>Terms & Privacy</span>
+                <img class="dd-icon" width="20" height="20" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAArCAYAAADhXXHAAAAABHNCSVQICAgIfAhkiAAAA8xJREFUWEfNmI2R0zAQhbkKgArwVUCogFABXAX4KgAqIFTAUQFOBQcVnFMBUAGmArgKYD+P1rOR7Vhe6ZjbmZ0oTrR6evujtc4e5Ekl05+LbkUZI4yRP6Lfw7iTz1b0IMrYJWeOWY9kzmvRWnTjmM8GGtF92FCyiTVgAflG9K0o41yB+SvRT6mgU8G+EoOfZ0B+DS5Wl+NuhA0p83xuRV9O7LCTZ+9EvyztPgXsx8CmtfUrPAMYDKUKGwA0jD6JJvEM0LNyCiyGYRNWVQC5E21S0Z34Xx1sWdCwezlHwBxYgN6I2gQiIYjXNUwu7Yl12LgND8LpxdQ6c2CvI0Y/BBaWFvf+TgiQvCowfBEbmwIbT8QtJdy+tBHCgrBToUrgyUFisMQnrKrcNaPxBmKiYHeoEhYs8fNTVGsoMcpu/7cATmO4k/Ez0T5PLNidfH8fkJH1JJcnmdjsU9EfGfNJMq0Sg3cVbMxqTpx+CxtlQVjxCB7V+IWwczauYAlkij8Cq5VnhTCnC6yUsoNZDosrBats8MNRUDtAk6QosTckh9OOJnvvJcDCIoml8hjKHcZLTyE0fxuj54CtRTU+aEpg5b6IrQyXgLUP+ti4L0gFh82lPWBbUbp9hDOZ7x7BbSQpniHGKDleW7r+Vgb0KMihJNhGDPIGYYXSBXCvjMD+NZbmGpuUxazL9P+5OWCTrK+zpcACkBBgAU3Yg4xhJ0cGfKXBAuooKeR7nYHUMntbMmYV01G5kYdNBthRzLZirEQ1UEwUchhBONO7kmBL1tmNAOPoRnJ7g1FIlT7BSsYrYEcnWCUPS/UGJeN1sjdgBxRuGmYkp+uy8a8dF72xpzGiDGrXRSO/mepnSQgSwyONTIpPsaHTX2kQb+N15KifhXJAPgw/et8UsAO76iXMecDWMk8PltsAenhTwOhOVN/BAD68qK1kBMAsxifhpeGQaoZ5VJQqTBg2a3sBNa4vaiwyumhIXTHjf/aChfJHOexjPm5cbFB7XZiBs++l7c3M7L2BLhJP8MbvWtA2Tpm7eCOjC9h6ybOdKLFzVxJfq062lnP961RWN4KUEuKpmXOb1HaS8FOhpm6n1jnVbGMIgPY6sgss7wtQTD3GY5WxBaP1HCEpbwZxDGMb0PQBNNdrmIYAOjxsWpDYHMVoTEgKWObgJhaIr9b5jfhuRampiN5xAUwPB8rPNtiJMVCe2PhiPU4FywIsjlFUT7p44TXfOZkgAE3yzhqwCgTQdVB7rKYChfkmaBJINewBa0FVwb24mDGCy2Ee5jQ0Ohm3QRm75B888eZKB8bzvAAAAABJRU5ErkJggg==">
+            </div>
+        </div>
+        <div class="profile-dropdown-section section-logout">
+            <div class="profile-dropdown-item">
+                <span>Log Out</span>
+                <img class="dd-icon" width="20" height="20" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAArCAYAAADhXXHAAAAABHNCSVQICAgIfAhkiAAAAypJREFUWEftmI1x1EAMhUkFQAVcKiCpgKMCoAKcCoAKMBUQKsBXQaACnAqACjAVQCoAfR7pRrf2Oeu1DMMMmtHYvtt9eta+/ZFP7sRbLZAvxHfiLyPhTyLBFOuXXn/K9X4k/ppk4RmKHwqWZPY/2SlZncmfX2bqzjRbktnJeMdkcE8ifRKn8xtxZniulZIlxmtNzmO5MkEP7BjZK2n1VFt+VdJrk2UEH2qQD3J9lkP2UhqxTprRic65VppZkkOSzN7JzcE6nWY27TBXAgQqJUvfyUR5suj0mzhXjB2oyk2na7eELDCM4hPF6+R6Lt7r15Ot5RmBY9/FmVwDkWeQX0qWZKHfBxprP7pGNs3qhTRsMoiNNVlKFkxG9L2Ck7BTEmdkEfJbl9VNIVG6RZAFp3PZfSX3l0b2sw47jebO/vS9osj6yY4sziFLFplYZpyUSrRq/aPIIs0fjtcpZCtx08dHubfNoFQJUWSJ71eGC8g24s+VWa+NUpbaL5Ksn0s7yLbijzQQezLPSyyS7FaIcEbBrv85spGZIAOReH6S9etsJLgneyMPtnWHyAqyLFN3FW3psgUME7TSa72Epb6sLV83a2h2Ib+D7qtPsFXJNoIeuc5Gkh2ss+grcgeLJNsKmO0B/Q62EY88G0SRHT0bAM6pxoq1paeuKLL+1NUXrWPn2U7+4LD7t43RZtSxg/MsKYekrbdLKoWIl/TziM0F0vtKgQC1uNVgEN8XahHRZ2CQOIoBy+qgBgMrLdQ4Sw4+NMwIWtrUf2A5KFzX+G5QSpJ+2d8NLEja4U/p1+sULrd+kTHCvpwwPaOdtYzKmt3KbLS8SmVgjdFvK25rL7/zAmR5STGZvixx2D193ceauh2Lc4wsoAA14vYph9868Vp8F5BiziNgbRwWGa2OJWSKrGGkGjbSDNv1zEyTAPZ6MD1JMAcaTROSQ5Y+DBMB7PuTx0EerThbNsYwIhWImYzO5H6rOCkHlideHJxJyyULCMEBxW2nuw1/6n92JhKAZ82DOWQtMKQrdT8Bc4mT+UY9i6QBl5D1pDY6vAwx9xhDTubJnEmjk/tWnfsi+w2Dt7xKMWFZnwAAAABJRU5ErkJggg==">
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== NOTIFICATION BACKDROP ========== -->
+    <div class="notif-backdrop" id="notifBackdrop" onclick="closeNotifications()"></div>
+
+    <!-- ========== NOTIFICATION PANEL (fixed, overlays 4th column) ========== -->
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <div class="notif-badge" id="notifBadgeCount">11</div>
+            <div class="notif-panel-title">Notifications</div>
+        </div>
+        <div class="notif-actions">
+            <button class="notif-action-btn" onclick="markAllRead()">Mark All as Read</button>
+            <button class="notif-action-btn" onclick="clearAllNotifs()">Clear All</button>
+        </div>
+        <div class="notif-list" id="notifList">
+            <div class="notif-item priority-info" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority info">INFO</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">Just Now</span>
+                </div>
+                <div class="notif-item-title">Document Successfully Uploaded</div>
+                <div class="notif-item-desc">Your will document has been securely uploaded and verified. It's now part of your digital legacy.</div>
+            </div>
+            <div class="notif-item priority-medium" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority medium">MEDIUM PRIORITY</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">1 hour ago</span>
+                </div>
+                <div class="notif-item-title">Upcoming Task Deadline</div>
+                <div class="notif-item-desc">Your bank account review is due in 2 days. Don't forget to complete this important task.</div>
+            </div>
+            <div class="notif-item priority-high" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority high">HIGH PRIORITY</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">2 hours ago</span>
+                </div>
+                <div class="notif-item-title">Task Reminder: Add Emergency Contacts</div>
+                <div class="notif-item-desc">You have a high-priority task that's due today. Adding emergency contacts is crucial for your plan.</div>
+            </div>
+            <div class="notif-item priority-info" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority info">INFO</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">Yesterday</span>
+                </div>
+                <div class="notif-item-title">New Network Member Added</div>
+                <div class="notif-item-desc">Nadya has been added as your Executor. They'll receive notifications about important updates.</div>
+            </div>
+            <div class="notif-item priority-low" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority low">LOW PRIORITY</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">3 days ago</span>
+                </div>
+                <div class="notif-item-title">Completed health questionnaire</div>
+                <div class="notif-item-desc">Congratulations! You have completed your entire health questionnaire.</div>
+            </div>
+            <div class="notif-item priority-info" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority info">INFO</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">1 week ago</span>
+                </div>
+                <div class="notif-item-title">Letter Draft Saved</div>
+                <div class="notif-item-desc">Your letter to Emily has been automatically saved as a draft in your Emotional Legacy section.</div>
+            </div>
+            <div class="notif-item priority-medium" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority medium">MEDIUM PRIORITY</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">1 week ago</span>
+                </div>
+                <div class="notif-item-title">Insurance Policy Expiring Soon</div>
+                <div class="notif-item-desc">Your life insurance policy expires in 30 days. Review and update your coverage details.</div>
+            </div>
+            <div class="notif-item priority-info" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority info">INFO</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">2 weeks ago</span>
+                </div>
+                <div class="notif-item-title">Profile Updated Successfully</div>
+                <div class="notif-item-desc">Your contact information has been updated. All linked family members have been notified.</div>
+            </div>
+            <div class="notif-item priority-high" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority high">HIGH PRIORITY</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">2 weeks ago</span>
+                </div>
+                <div class="notif-item-title">Beneficiary Confirmation Required</div>
+                <div class="notif-item-desc">Please confirm the beneficiary details for your retirement account to keep your plan current.</div>
+            </div>
+            <div class="notif-item priority-low" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority low">LOW PRIORITY</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">3 weeks ago</span>
+                </div>
+                <div class="notif-item-title">New Article: Digital Legacy Guide</div>
+                <div class="notif-item-desc">A new resource is available in your library about managing digital accounts after passing.</div>
+            </div>
+            <div class="notif-item priority-info" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority info">INFO</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">1 month ago</span>
+                </div>
+                <div class="notif-item-title">Annual Plan Review Reminder</div>
+                <div class="notif-item-desc">It's been a year since your last full plan review. Consider scheduling time to update your records.</div>
+            </div>
+        </div>
+        <div class="notif-footer">
+            <div class="notif-footer-line"></div>
+            <div class="notif-footer-label">View All Notifications</div>
+        </div>
+    </div>
+
+    <!-- ========== SIDEBAR BACKDROP (mobile/tablet) ========== -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+    <!-- ========== SIDEBAR (Fixed Col 1) ========== -->
+    <!-- Right Panel Toggle (visible 1280-1439px) -->
+    <button class="rp-toggle" id="rpToggle" onclick="toggleRightPanel()">
+        <div class="rp-toggle-ring" style="--pct:34"></div>
+        <div><div class="rp-toggle-pct">34%</div><div class="rp-toggle-label">Progress</div></div>
+    </button>
+    <div class="rp-backdrop" id="rpBackdrop" onclick="toggleRightPanel()"></div>
+
+    <aside class="sidebar-fixed">
+        <!-- DEFAULT VIEW: Photo + Identity + Plan -->
+        <div id="sidebar-default">
+            <div class="sidebar-photo sidebar-surface" onclick="handlePhotoClick(event)">
+                <input type="file" id="photoUpload" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+                <img id="sidebarPhotoImg" src="" alt="" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:5;will-change:object-position,transform;border-radius:30px 30px 0 0;">
+                <!-- Photo dots menu — идентично с doc-menu от entry row -->
+                <div class="doc-menu photo-doc-menu" id="photoDots" onclick="event.stopPropagation();toggleDD(this)">
+                    <div class="doc-menu-dots"><span></span><span></span><span></span></div>
+                    <div class="doc-dropdown">
+                        <div class="doc-dropdown-trigger-row">
+                            <div class="doc-menu-inner">
+                                <div class="doc-menu-dots"><span></span><span></span><span></span></div>
+                            </div>
+                        </div>
+                        <div class="dd-row dd-row-edit" onclick="event.stopPropagation();changePhoto()">
+                            <span class="dd-row-label">Change Photo</span>
+                            <div class="dd-row-icon"><svg viewBox="0 0 20 18" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 1.5l2 2L5 15H3v-2L14.5 1.5z"/></svg></div>
+                        </div>
+                        <div class="dd-row" onclick="event.stopPropagation();startReposition()">
+                            <span class="dd-row-label">Reposition</span>
+                            <div class="dd-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg></div>
+                        </div>
+                        <div class="dd-row" onclick="event.stopPropagation();deletePhoto()">
+                            <span class="dd-row-label">Delete Photo</span>
+                            <div class="dd-row-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 19.722 21.5"><path d="M15.739,9.173,15.362,18.4m-5.223,0L9.761,9.173M20.635,5.881c.373.053.744.11,1.115.17m-1.115-.169L19.47,20.119a2.4,2.4,0,0,1-2.448,2.13H8.478a2.4,2.4,0,0,1-2.448-2.13L4.865,5.881m15.77,0q-1.889-.268-3.794-.407M3.75,6.05c.371-.061.742-.117,1.115-.169m0,0q1.889-.268,3.794-.407m8.182,0V4.534a2.3,2.3,0,0,0-2.28-2.257q-1.81-.054-3.622,0a2.3,2.3,0,0,0-2.28,2.257v.939m8.182,0a56.462,56.462,0,0,0-8.182,0" transform="translate(-2.889 -1.499)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Reposition mode bar -->
+                <div class="reposition-bar" id="repoBar">
+                    <span style="color:#FFF;font-size:11px;font-family:'Inter',sans-serif;">−</span>
+                    <input type="range" class="zoom-slider" id="zoomSlider" min="100" max="300" value="100" oninput="onZoomChange(this.value)" onclick="event.stopPropagation()">
+                    <span style="color:#FFF;font-size:11px;font-family:'Inter',sans-serif;">+</span>
+                    <button class="repo-save" onclick="event.stopPropagation();saveReposition()">Save</button>
+                    <button class="repo-cancel" onclick="event.stopPropagation();cancelReposition()">Cancel</button>
+                </div>
+                <!-- Photo change overlay (legacy, hidden) -->
+                <div class="photo-overlay" id="photoOverlay">
+                </div>
+                <!-- Default state elements -->
+                <p class="placeholder-text" id="photoPlaceholder">Add or Change Your Poster Image</p>
+                <div class="add-circle-bg" id="photoCircleBg"></div>
+                <div class="add-circle" id="photoAddCircle">
+                    <div class="add-inner">
+                        <svg viewBox="0 0 50 50" fill="none">
+                            <line x1="25" y1="10" x2="25" y2="40"/>
+                            <line x1="10" y1="25" x2="40" y2="25"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="identity-strip">
+                <div class="identity-avatar-mobile"><img id="identityAvatarImg" src="https://i.pravatar.cc/200?img=47" alt=""><span class="identity-initials" id="identityInitials" style="display:none;">SJ</span></div>
+                <div class="identity-text-wrap">
+                    <div class="identity-name">Sarah Johnson</div>
+                    <div class="identity-role">Plan Owner</div>
+                </div>
+            </div>
+            </div>
+            <!-- INDIVIDUAL PLAN STRIP (hidden, swap back when needed):
+            <div class="plan-strip plan-individual" onclick="alert('Plan Management')">
+                <div class="plan-strip-bg"></div>
+                <span class="plan-strip-text">Individual Plan</span>
+                <button class="plan-strip-btn">Upgrade</button>
+            </div>
+            -->
+            <div class="plan-strip plan-sponsored" onclick="alert('Take Over Plan')">
+                <div class="plan-strip-bg"></div>
+                <div class="plan-strip-sponsored-left">
+                    <span class="plan-strip-covered">Covered By</span>
+                    <span class="plan-strip-sponsor">Allianz Insurance</span>
+                    <span class="plan-strip-plan-type">Individual Essentials</span>
+                </div>
+                <button class="plan-strip-btn">Take Over</button>
+            </div>
+        </div>
+        <!-- CATEGORY VIEW: DirectoryCard (hidden by default) -->
+        <div id="sidebar-category" style="display:none;">
+            <!-- Assets & Liabilities -->
+            <div class="directory-card" id="dir-assets" style="display:none;">
+                <div class="dir-top">
+                    <div class="dir-title">Assets & Liabilities</div>
+                    <div class="dir-progress-row">
+                        <span class="dir-progress-label">Your Progress</span>
+                        <span class="dir-progress-value">52%</span>
+                    </div>
+                    <div class="dir-bar"><div class="dir-bar-fill" style="width:52%;background:#BC8D53;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(188,141,83,0.5)"></div></div>
+                    <span class="dir-complete">Complete</span>
+                </div>
+                <div class="dir-learn" style="background:#E5D7BA;">
+                    <div class="learn-bar"></div>
+                    <div class="learn-circle"><div class="learn-circle-bg"></div><div class="learn-icon"><svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div></div>
+                    <span class="learn-text">Learn & Understand</span>
+                </div>
+            </div>
+            <!-- Emotional Legacy -->
+            <div class="directory-card" id="dir-legacy" style="display:none;">
+                <div class="dir-top">
+                    <div class="dir-title">Emotional Legacy</div>
+                    <div class="dir-progress-row">
+                        <span class="dir-progress-label">Your Progress</span>
+                        <span class="dir-progress-value">20%</span>
+                    </div>
+                    <div class="dir-bar"><div class="dir-bar-fill" style="width:20%;background:#D75C5C;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(215,92,92,0.5)"></div></div>
+                    <span class="dir-complete">Complete</span>
+                </div>
+                <div class="dir-learn" style="background:#F4C2C2;">
+                    <div class="learn-bar"></div>
+                    <div class="learn-circle"><div class="learn-circle-bg"></div><div class="learn-icon"><svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div></div>
+                    <span class="learn-text">Learn & Understand</span>
+                </div>
+            </div>
+            <!-- Post-Loss Support -->
+            <div class="directory-card" id="dir-support" style="display:none;">
+                <div class="dir-top">
+                    <div class="dir-title">Post-Loss Support</div>
+                    <div class="dir-progress-row">
+                        <span class="dir-progress-label">Your Progress</span>
+                        <span class="dir-progress-value">34%</span>
+                    </div>
+                    <div class="dir-bar"><div class="dir-bar-fill" style="width:34%;background:#657EEA;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(101,126,234,0.5)"></div></div>
+                    <span class="dir-complete">Complete</span>
+                </div>
+                <div class="dir-learn" style="background:#A391B9;">
+                    <div class="learn-bar"></div>
+                    <div class="learn-circle"><div class="learn-circle-bg"></div><div class="learn-icon"><svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div></div>
+                    <span class="learn-text">Learn & Understand</span>
+                </div>
+            </div>
+            <!-- Body & Health -->
+            <div class="directory-card" id="dir-health" style="display:none;">
+                <div class="dir-top">
+                    <div class="dir-title">Body & Health</div>
+                    <div class="dir-progress-row">
+                        <span class="dir-progress-label">Your Progress</span>
+                        <span class="dir-progress-value">69%</span>
+                    </div>
+                    <div class="dir-bar"><div class="dir-bar-fill" style="width:69%;background:#3E8B70;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(62,139,112,0.5)"></div></div>
+                    <span class="dir-complete">Complete</span>
+                </div>
+                <div class="dir-learn" style="background:#A8D5C2;">
+                    <div class="learn-bar"></div>
+                    <div class="learn-circle"><div class="learn-circle-bg"></div><div class="learn-icon"><svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div></div>
+                    <span class="learn-text">Learn & Understand</span>
+                </div>
+            </div>
+            <!-- Goals & Aspirations -->
+            <div class="directory-card" id="dir-goals" style="display:none;">
+                <div class="dir-top">
+                    <div class="dir-title">Goals & Aspirations</div>
+                    <div class="dir-progress-row">
+                        <span class="dir-progress-label">Your Progress</span>
+                        <span class="dir-progress-value">15%</span>
+                    </div>
+                    <div class="dir-bar"><div class="dir-bar-fill" style="width:15%;background:#826B96;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(130,107,150,0.5)"></div></div>
+                    <span class="dir-complete">Complete</span>
+                </div>
+                <div class="dir-learn" style="background:#C9B8D9;">
+                    <div class="learn-bar"></div>
+                    <div class="learn-circle"><div class="learn-circle-bg"></div><div class="learn-icon"><svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div></div>
+                    <span class="learn-text">Learn & Understand</span>
+                </div>
+            </div>
+            <!-- Will & Legal Actions -->
+            <div class="directory-card" id="dir-will" style="display:none;">
+                <div class="dir-top">
+                    <div class="dir-title">Will & Legal Actions</div>
+                    <div class="dir-progress-row">
+                        <span class="dir-progress-label">Your Progress</span>
+                        <span class="dir-progress-value">10%</span>
+                    </div>
+                    <div class="dir-bar"><div class="dir-bar-fill" style="width:10%;background:#B62818;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(182,40,24,0.5)"></div></div>
+                    <span class="dir-complete">Complete</span>
+                </div>
+                <div class="dir-learn" style="background:#E8A9A0;">
+                    <div class="learn-bar"></div>
+                    <div class="learn-circle"><div class="learn-circle-bg"></div><div class="learn-icon"><svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div></div>
+                    <span class="learn-text">Learn & Understand</span>
+                </div>
+            </div>
+        </div>
+        <!-- Menu -->
+        <div class="menu-section sidebar-surface no-scrollbar">
+            <!-- Me, Family & Network -->
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'me-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 21.502 19.5"><path d="M15.326,19.128a9.885,9.885,0,0,0,6.919-.58,4.131,4.131,0,0,0-2.9-4.09,4.289,4.289,0,0,0-4.828,1.6m.807,3.073v0a6.224,6.224,0,0,0-.806-3.07m.806,3.073v.106a12.986,12.986,0,0,1-13.076,0v-.109a6.406,6.406,0,0,1,4.913-6.178,6.6,6.6,0,0,1,7.357,3.108m-2.27-9.68a3.463,3.463,0,0,1-6.923,0,3.463,3.463,0,0,1,6.923,0Zm8.461,2.25A2.693,2.693,0,1,1,18.019,6,2.659,2.659,0,0,1,20.711,8.625Z" transform="translate(-1.499 -2.25)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">Me, Family & Network</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="me-sub">
+                    <div class="module-row" onclick="navigateTo('profile')"><div class="dot" style="color:#000"></div><span class="mod-label">My Profile</span></div>
+                    <div class="module-row" onclick="navigateTo(&apos;family&apos;)"><div class="dot" style="color:#000"></div><span class="mod-label">My Family</span></div>
+                    <div class="module-row" onclick="navigateTo(&apos;network&apos;)"><div class="dot" style="color:#000"></div><span class="mod-label">My Network</span></div>
+                </div>
+            </div>
+            <!-- My Plan -->
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'plan-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 17.5 21.5"><path d="M20.5,14.558V11.865A3.533,3.533,0,0,0,16.9,8.4H15.3A1.178,1.178,0,0,1,14.1,7.25V5.712A3.533,3.533,0,0,0,10.5,2.25h-2m0,13.077h8M8.5,18.4h4M10.9,2.25H5.7A1.178,1.178,0,0,0,4.5,3.4V21.1A1.178,1.178,0,0,0,5.7,22.25H19.3A1.178,1.178,0,0,0,20.5,21.1V11.481A9.421,9.421,0,0,0,10.9,2.25Z" transform="translate(-3.75 -1.5)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">My Plan</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="plan-sub">
+                    <!-- Assets & Liabilities -->
+                    <div class="module-row" style="color:#BC8D53" onclick="switchSidebarCategory('assets'); navigateTo('assets')"><div class="dot"></div><span class="mod-label">Assets & Liabilities</span><div class="toggle-btn" id="assets-toggle" onclick="event.stopPropagation(); toggleModule(this.parentElement, 'assets-children')"><svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><line x1="4" y1="0.5" x2="4" y2="7.5"/><line x1="0.5" y1="4" x2="7.5" y2="4"/></svg></div></div>
+                    <div class="content-children" id="assets-children">
+                        <div class="content-row"><div class="content-dot" style="background:#BC8D53"></div><span class="content-label">Assets</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#BC8D53"></div><span class="content-label">Liabilities</span></div>
+                    </div>
+                    <!-- Emotional Legacy -->
+                    <div class="module-row" style="color:#D75C5C" onclick="switchSidebarCategory('legacy')"><div class="dot"></div><span class="mod-label">Emotional Legacy</span><div class="toggle-btn" id="legacy-toggle" onclick="event.stopPropagation(); toggleModule(this.parentElement, 'legacy-children')"><svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><line x1="4" y1="0.5" x2="4" y2="7.5"/><line x1="0.5" y1="4" x2="7.5" y2="4"/></svg></div></div>
+                    <div class="content-children" id="legacy-children">
+                        <div class="content-row"><div class="content-dot" style="background:#D75C5C"></div><span class="content-label">Psychological Support</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#D75C5C"></div><span class="content-label">Life Reflection</span></div>
+                        <div class="content-row" onclick="window.location.href='family.html'"><div class="content-dot" style="background:#D75C5C"></div><span class="content-label">Family Tree & Story</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#D75C5C"></div><span class="content-label">Letters to Loved Ones</span></div>
+                    </div>
+                    <!-- Body & Health -->
+                    <div class="module-row" style="color:#3E8B70" onclick="switchSidebarCategory('health')"><div class="dot"></div><span class="mod-label">Body & Health</span><div class="toggle-btn" id="health-toggle" onclick="event.stopPropagation(); toggleModule(this.parentElement, 'health-children')"><svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><line x1="4" y1="0.5" x2="4" y2="7.5"/><line x1="0.5" y1="4" x2="7.5" y2="4"/></svg></div></div>
+                    <div class="content-children" id="health-children">
+                        <div class="content-row"><div class="content-dot" style="background:#3E8B70"></div><span class="content-label">In Case of Emergency</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#3E8B70"></div><span class="content-label">Getting Old</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#3E8B70"></div><span class="content-label">When I'm Gone</span></div>
+                    </div>
+                    <!-- Goals & Aspirations -->
+                    <div class="module-row" style="color:#826B96" onclick="switchSidebarCategory('goals')"><div class="dot"></div><span class="mod-label">Goals & Aspirations</span><div class="toggle-btn" id="goals-toggle" onclick="event.stopPropagation(); toggleModule(this.parentElement, 'goals-children')"><svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><line x1="4" y1="0.5" x2="4" y2="7.5"/><line x1="0.5" y1="4" x2="7.5" y2="4"/></svg></div></div>
+                    <div class="content-children" id="goals-children">
+                        <div class="content-row"><div class="content-dot" style="background:#826B96"></div><span class="content-label">Annual Goals</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#826B96"></div><span class="content-label">Dreams and Aspirations</span></div>
+                    </div>
+                    <!-- Will & Legal Actions -->
+                    <div class="module-row" style="color:#B62818" onclick="switchSidebarCategory('will')"><div class="dot"></div><span class="mod-label">Will & Legal Actions</span><div class="toggle-btn" id="will-toggle" onclick="event.stopPropagation(); toggleModule(this.parentElement, 'will-children')"><svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><line x1="4" y1="0.5" x2="4" y2="7.5"/><line x1="0.5" y1="4" x2="7.5" y2="4"/></svg></div></div>
+                    <div class="content-children" id="will-children">
+                        <div class="content-row"><div class="content-dot" style="background:#B62818"></div><span class="content-label">Will</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#B62818"></div><span class="content-label">Trust</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#B62818"></div><span class="content-label">Power of Attorney</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#B62818"></div><span class="content-label">Guardianship Declaration</span></div>
+                        <div class="content-row"><div class="content-dot" style="background:#B62818"></div><span class="content-label">Advanced Directive</span></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Post-Loss Support -->
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'support-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 21.5 19.5"><path d="M23,8.659A5.066,5.066,0,0,0,17.791,3.75,5.224,5.224,0,0,0,13,6.731,5.225,5.225,0,0,0,8.208,3.75,5.066,5.066,0,0,0,3,8.659C3,16.535,13,21.75,13,21.75S23,16.535,23,8.659Z" transform="translate(-2.25 -3)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">Post-Loss Support</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="support-sub">
+                    <div class="module-row" onclick="window.location.href='post-loss.html'"><div class="dot" style="color:#000"></div><span class="mod-label">Personalized Plan</span></div>
+                    <div class="module-row" style="color:#BC8D53" onclick="window.location.href='post-loss-directory.html?cat=practical'"><div class="dot"></div><span class="mod-label">Practical Support</span></div>
+                    <div class="module-row" style="color:#D75C5C" onclick="window.location.href='post-loss-directory.html?cat=emotional'"><div class="dot"></div><span class="mod-label">Emotional Support</span></div>
+                    <div class="module-row" onclick="window.location.href='post-loss-obituary.html'"><div class="dot" style="color:#000"></div><span class="mod-label">Obituary</span></div>
+                    <div class="module-row" onclick="window.location.href='post-loss-memorial.html'"><div class="dot" style="color:#000"></div><span class="mod-label">Memorial Page</span></div>
+                </div>
+            </div>
+            <!-- Vault -->
+            <button class="nav-item"><div class="circle-bg"></div><div class="active-bar"></div>
+                <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 17.5 21.5"><path d="M17.3,10.712V6.865A4.71,4.71,0,0,0,12.5,2.25,4.71,4.71,0,0,0,7.7,6.865v3.846M6.9,22.25H18.1a2.355,2.355,0,0,0,2.4-2.308V13.019a2.355,2.355,0,0,0-2.4-2.308H6.9a2.355,2.355,0,0,0-2.4,2.308v6.923A2.355,2.355,0,0,0,6.9,22.25Z" transform="translate(-3.75 -1.5)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                <span class="nav-label">Vault</span>
+            </button>
+            <!-- Tasks -->
+            <button class="nav-item"><div class="circle-bg"></div><div class="active-bar"></div>
+                <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21.5 21.5"><path d="M9.667,13.833l2.5,2.5L16.333,10.5M23,13A10,10,0,1,1,13,3,10,10,0,0,1,23,13Z" transform="translate(-2.25 -2.25)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                <span class="nav-label">Tasks & Reminders</span>
+            </button>
+            <!-- Marketplace -->
+            <button class="nav-item"><div class="circle-bg"></div><div class="active-bar"></div>
+                <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 19.503 21.5"><path d="M15.927,10.712V6.1a3.8,3.8,0,1,0-7.6,0v4.615M19.837,8.667l1.281,12.308a1.148,1.148,0,0,1-1.135,1.275H4.266a1.135,1.135,0,0,1-.849-.381,1.162,1.162,0,0,1-.287-.893L4.412,8.667A1.146,1.146,0,0,1,5.546,7.635H18.7A1.146,1.146,0,0,1,19.837,8.667ZM8.7,10.712a.38.38,0,1,1-.38-.385A.382.382,0,0,1,8.7,10.712Zm7.6,0a.38.38,0,1,1-.38-.385A.382.382,0,0,1,16.307,10.712Z" transform="translate(-2.372 -1.5)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                <span class="nav-label">Marketplace</span>
+            </button>
+            <!-- Plans Shared With Me -->
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'shared-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 21.5 15.5"><path d="M2.25,7.167A1.161,1.161,0,0,1,3.4,6H9.558a1.161,1.161,0,0,1,1.154,1.167v3.889a1.161,1.161,0,0,1-1.154,1.167H3.4A1.16,1.16,0,0,1,2.25,11.056ZM14.558,8.722a1.161,1.161,0,0,1,1.154-1.167H21.1A1.161,1.161,0,0,1,22.25,8.722v8.556A1.161,1.161,0,0,1,21.1,18.444H15.712a1.16,1.16,0,0,1-1.154-1.167ZM3.788,16.5a1.161,1.161,0,0,1,1.154-1.167h5.385A1.161,1.161,0,0,1,11.481,16.5v2.333A1.161,1.161,0,0,1,10.327,20H4.942a1.16,1.16,0,0,1-1.154-1.167Z" transform="translate(-1.5 -5.25)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">Plans Shared With Me</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="shared-sub">
+                    <div class="module-row with-avatar"><div class="dot" style="color:#000"></div><div class="avatar-initials">VM</div><span class="mod-label">Villi's Plan</span><span class="mod-subtext">You are Beneficiary</span></div>
+                    <div class="module-row with-avatar"><div class="dot" style="color:#000"></div><div class="avatar-initials">NM</div><span class="mod-label">Nadya's Plan</span><span class="mod-subtext">You are Executor</span></div>
+                    <div class="module-row with-avatar"><div class="dot" style="color:#000"></div><div class="avatar-initials">AA</div><span class="mod-label">Alexsander's Plan</span><span class="mod-subtext">You are Contributor</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Progress in Sidebar (hidden on desktop, shown ≤767px) -->
+        <!-- Progress removed from sidebar -->
+    </aside>
+    <aside class="rightpanel-fixed" id="rightPanel">
+        <div style="display:flex;flex-direction:column;gap:10px;width:300px;">
+            <!-- Overall Progress -->
+            <div class="progress-overview sidebar-surface">
+                <div class="progress-title">Your PlanAfter Progress</div>
+                <div class="progress-meta">
+                    <span class="progress-meta-label">Overall</span>
+                    <span class="progress-meta-value">34<span>%</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:34%;background:#000;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(0,0,0,0.4);"></div>
+                </div>
+                <button class="collapse-btn" onclick="toggleCategories()">
+                    <svg id="collapseChevron" width="8" height="4" fill="none" stroke="currentColor" viewBox="0 0 8 4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(180deg);transition:transform 0.3s ease-out"><path d="M1 0.5L4 3.5L7 0.5"/></svg>
+                </button>
+            </div>
+            <!-- Category Cards -->
+            <div id="categoryCards" style="display:flex;flex-direction:column;gap:5px;width:300px;max-height:calc(100vh - 350px);overflow-y:auto;transition:all 0.5s;">
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#BC8D53"><div class="cat-bg"></div><span class="cat-label">Assets & Liabilities</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:52%;background:#BC8D53;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(188,141,83,0.5)"></div></div><span class="cat-percent" style="color:#BC8D53">52%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#D75C5C"><div class="cat-bg"></div><span class="cat-label">Emotional Legacy</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:20%;background:#D75C5C;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(215,92,92,0.5)"></div></div><span class="cat-percent" style="color:#D75C5C">20%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#3E8B70"><div class="cat-bg"></div><span class="cat-label">Body & Health</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:69%;background:#3E8B70;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(62,139,112,0.5)"></div></div><span class="cat-percent" style="color:#3E8B70">69%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#826B96"><div class="cat-bg"></div><span class="cat-label">Goals & Aspirations</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:15%;background:#826B96;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(130,107,150,0.5)"></div></div><span class="cat-percent" style="color:#826B96">15%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#B62818"><div class="cat-bg"></div><span class="cat-label">Will & Legal Actions</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:10%;background:#B62818;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(182,40,24,0.5)"></div></div><span class="cat-percent" style="color:#B62818">10%</span><span class="cat-complete">Complete Now</span></div>
+            </div>
+        </div>
+        <!-- AI Assistant (shown on inner pages, hidden on dashboard) -->
+        <div class="ai-card-col4" id="aiCardCol4">
+            <div class="ai-bg"></div>
+            <div class="ai-particles">
+                <div class="ai-p" style="width:2px;height:2px;top:30%;left:18%;--dur:5s;--del:0s;--mx:5px"></div>
+                <div class="ai-p" style="width:2px;height:2px;top:50%;left:60%;--dur:6s;--del:1s;--mx:-6px"></div>
+                <div class="ai-p" style="width:1.5px;height:1.5px;top:25%;left:75%;--dur:4.5s;--del:2s;--mx:4px"></div>
+                <div class="ai-p" style="width:2px;height:2px;top:45%;left:35%;--dur:7s;--del:0.5s;--mx:-5px"></div>
+                <div class="ai-p" style="width:1px;height:1px;top:60%;left:50%;--dur:5.5s;--del:1.5s;--mx:3px"></div>
+            </div>
+            <div class="ai-vignette"></div>
+            <div class="ai-header">
+                <div class="ai-title">PlanAfter AI Assistant</div>
+                <div class="ai-subtitle">Ready to help with your planning</div>
+            </div>
+            <div class="ai-chat" id="col4AiChat">
+                <div class="ai-message">
+                    <div class="ai-status-dot"></div>
+                    <div class="ai-bubble">
+                        <p>Hi <b>Sarah</b>! I'm here to help you navigate your PlanAfter journey.
+
+What would you like to know?</p>
+                    </div>
+                </div>
+                <div class="ai-typing-msg" id="col4Typing">
+                    <div class="ai-status-dot"></div>
+                    <div class="ai-typing-dots"><span></span><span></span><span></span></div>
+                </div>
+            </div>
+            <button class="ai-scroll-btn" id="col4ScrollBtn" onclick="scrollAiBottom('col4')" title="Scroll to bottom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><div class="new-dot"></div></button>
+            <div class="ai-drop-zone" id="col4Drop"><div class="ai-drop-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>Drop files here</div></div>
+
+            <div class="ai-input-area">
+                <input type="file" class="ai-file-input" id="col4FileInput" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" multiple onchange="handleAiFiles(event,'col4')">
+                <button class="ai-attach" title="Attach document" onclick="document.getElementById('col4FileInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><span class="ai-attach-badge" id="col4AttBadge"></span></button>
+                <div class="ai-input-composite" id="col4Composite">
+                    <div class="ai-fc-grid" id="col4FcGrid"></div>
+                    <div class="ai-fc-sep"></div>
+                    <textarea class="ai-input" id="col4AiInput" placeholder="How can I help you?" rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiMsg('col4')}" oninput="toggleSendBtn('col4');autoGrowTextarea(this)"></textarea>
+                </div>
+                <span class="ai-enter-hint">Press Enter ↵</span>
+                <button class="ai-send disabled" id="col4SendBtn" onclick="sendAiMsg('col4')"><svg xmlns="http://www.w3.org/2000/svg" width="21.5" height="21.572" viewBox="0 0 21.5 21.572"><g transform="translate(66.25 1.295)"><path d="M7.142,1.794a3.178,3.178,0,0,1,5.721,0l6.75,13.2A3.429,3.429,0,0,1,16.753,20c-2.4.039-3.286-2.351-6.662-2.351S5.66,20.012,3.253,20a3.419,3.419,0,0,1-2.86-5.006Z" transform="translate(-45.5 -0.509) rotate(90)" fill="none" stroke="#FFF" stroke-width="1.5"/><line x2="5" transform="translate(-58.5 9.494)" fill="none" stroke="#FFF" stroke-linecap="round" stroke-width="1.5"/></g></svg></button>
+            </div>
+            <div class="ai-resize"><div class="ai-resize-handle"></div></div>
+        </div>
+    </aside>
+
+    <!-- ========== SCROLLABLE MIDDLE ZONE ========== -->
+
+    <div class="scroll-container no-scrollbar" id="scroll-container">
+    <div class="scroll-inner">
+        <div class="col-placeholder"></div>
+        <div class="middle-col">
+            <div class="greeting-zone">
+                <h1 class="greeting-text" id="greetingText" style="font: normal normal 500 24px/33px 'Source Serif 4', serif; letter-spacing: 0px; color: #000000; text-align: center;">Welcome back, Sarah!</h1>
+            </div>
+            <main class="page active" id="page-network">
+                <!-- Canonical analytics tool (vault-header) for My Network — same pattern as Vault / Assets & Liabilities.
+                     Static display, no hover on bullets, 30px bullet inset, 23px row gap. -->
+                <div class="vault-header network-analytics" id="networkAnalytics">
+                    <div class="vault-header-tabs">
+                        <span class="vault-htab active" data-net-mode="overview">My Network</span>
+                    </div>
+                    <div class="vault-headline">
+                        <span class="vault-headline-metric" id="netMetric">128</span>
+                        <span class="vault-headline-trend">Contacts &nbsp; ↑ 5 added this month</span>
+                    </div>
+                    <div class="vault-bar" id="netBar">
+                        <span class="vault-bar-seg" style="background:#826B96; width:32%"></span>
+                        <span class="vault-bar-seg" style="background:#3E8B70; width:14%"></span>
+                        <span class="vault-bar-seg" style="background:#B62818; width:11%"></span>
+                        <span class="vault-bar-seg" style="background:#BC8D53; width:9%"></span>
+                        <span class="vault-bar-seg" style="background:#657EEA; width:13%"></span>
+                        <span class="vault-bar-seg" style="background:#A391B9; width:6%"></span>
+                        <span class="vault-bar-seg" style="background:#91C7B1; width:7%"></span>
+                        <span class="vault-bar-seg" style="background:#9CA3AF; width:8%"></span>
+                    </div>
+                    <div class="vault-cats" id="netCats">
+                        <div class="vault-cat-row"><span class="vault-cat-dot" style="background:#826B96"></span><span class="vault-cat-name">Family</span><span class="vault-cat-count">32%</span></div>
+                        <div class="vault-cat-row"><span class="vault-cat-dot" style="background:#3E8B70"></span><span class="vault-cat-name">Health Professionals</span><span class="vault-cat-count">14%</span></div>
+                        <div class="vault-cat-row"><span class="vault-cat-dot" style="background:#B62818"></span><span class="vault-cat-name">Legal Professionals</span><span class="vault-cat-count">11%</span></div>
+                        <div class="vault-cat-row"><span class="vault-cat-dot" style="background:#BC8D53"></span><span class="vault-cat-name">Financial Professionals</span><span class="vault-cat-count">9%</span></div>
+                        <div class="vault-cat-row"><span class="vault-cat-dot" style="background:#657EEA"></span><span class="vault-cat-name">Friends</span><span class="vault-cat-count">13%</span></div>
+                        <div class="vault-cat-row"><span class="vault-cat-dot" style="background:#A391B9"></span><span class="vault-cat-name">Professional</span><span class="vault-cat-count">6%</span></div>
+                        <div class="vault-cat-row"><span class="vault-cat-dot" style="background:#91C7B1"></span><span class="vault-cat-name">Spiritual</span><span class="vault-cat-count">7%</span></div>
+                        <div class="vault-cat-row"><span class="vault-cat-dot" style="background:#9CA3AF"></span><span class="vault-cat-name">Other</span><span class="vault-cat-count">8%</span></div>
+                    </div>
+                    <div class="vault-prompts has-cats-above" id="netPrompts">
+                        <ul>
+                            <li>These are all the people in your <strong>trusted network</strong>.</li>
+                            <li><strong>Family</strong> is currently your largest category <strong>(32%)</strong>.</li>
+                            <li>You haven't added any <strong>Spiritual</strong> contacts in the last 6 months.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Top My Network overview card (avatars + title) — populated by peopleDirectory.js -->
+                <div data-net-overview-mount></div>
+
+                <!-- Canonical tabs + ⋯ menu for My Network page -->
+                <div class="pd-tabs-row">
+                    <div class="profile-tabs" id="profileTabs">
+                        <div class="profile-tabs-pill" id="tabsPill"></div>
+                        <div class="profile-tab active" data-tab="contacts">Contacts</div>
+                        <div class="profile-tab" data-tab="categories">By Category</div>
+                    </div>
+                    <div class="pd-tabs-menu-wrap">
+                        <button class="pd-tabs-menu" type="button" title="More options"
+                                onclick="this.parentElement.classList.toggle('open')">
+                            <span class="pd-tabs-menu-dots"><span></span><span></span><span></span></span>
+                        </button>
+                        <div class="pd-tabs-dropdown">
+                            <div class="pd-tabs-dd-item"><span class="pd-tabs-dd-label">Add Contact</span></div>
+                            <div class="pd-tabs-dd-item"><span class="pd-tabs-dd-label">Download</span></div>
+                            <div class="pd-tabs-dd-item"><span class="pd-tabs-dd-label">Print</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contacts tab — peopleStore-driven grouped list of My Network -->
+                <div class="profile-tab-content active" data-tab-content="contacts">
+                    <div data-net-mount></div>
+                </div>
+
+                <!-- By Category tab — placeholder -->
+                <div class="profile-tab-content" data-tab-content="categories" style="display:none;">
+                    <div class="record-empty">By Category view — Sprint 9 deliverable.</div>
+                </div>
+            </main>
+        </div>
+        <div class="col-placeholder"></div>
+    </div>
+    </div>
+    <nav class="mobile-bottom-nav">
+        <a class="bnav-item bnav-menu" onclick="toggleSidebar()">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <span class="bnav-label">Menu</span>
+        </a>
+        <a class="bnav-item" onclick="goHome()">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            <span class="bnav-label">Home</span>
+        </a>
+        <a class="bnav-item active" onclick="navigateTo('profile')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="bnav-label">Profile</span>
+        </a>
+        <a class="bnav-item" onclick="navigateTo('my-plan')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="bnav-label">My Plan</span>
+        </a>
+        <a class="bnav-item" onclick="navigateTo('vault')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span class="bnav-label">Vault</span>
+        </a>
+    </nav>
+
+    <!-- ========== MORE BOTTOM SHEET (mobile) ========== -->
+    <div class="more-sheet-overlay" id="moreSheetOverlay" onclick="toggleMoreSheet()">
+        <div class="more-sheet" onclick="event.stopPropagation()">
+            <div class="more-sheet-handle"></div>
+            <a class="more-sheet-item" onclick="navigateTo('tasks')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>Tasks & Reminders</span>
+            </a>
+            <a class="more-sheet-item" onclick="navigateTo('marketplace')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 7v13a2 2 0 002 2h14a2 2 0 002-2V7l-3-5z"/><line x1="3" y1="7" x2="21" y2="7"/><path d="M16 11a4 4 0 01-8 0"/></svg>
+                <span>Marketplace</span>
+            </a>
+            <a class="more-sheet-item" onclick="navigateTo('shared')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Plans Shared With Me</span>
+            </a>
+            <a class="more-sheet-item" onclick="document.getElementById('col4AiInput')?.focus(); toggleMoreSheet();">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>AI Assistant</span>
+            </a>
+            <div class="more-sheet-divider"></div>
+            <a class="more-sheet-item" onclick="navigateTo('settings')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                <span>Settings</span>
+            </a>
+            <a class="more-sheet-item" style="color:#E53935">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke="#E53935"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Log Out</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== SEARCH OVERLAY ========== -->
+    <div class="search-overlay" id="searchOverlay" onclick="closeSearch()">
+        <div class="search-pad" onclick="closeSearch()"></div>
+        <div class="search-body" onclick="event.stopPropagation()">
+            <button class="search-close-btn" onclick="closeSearch()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="search-label">Search</div>
+            <div class="search-input-wrap">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search PlanAfter" oninput="onSearchInput(this)">
+                <button class="search-clear" id="searchClear" onclick="clearSearch()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="last-searches">
+                <div class="last-searches-label">Recent Searches</div>
+                <div class="last-search-item" onclick="document.getElementById('searchInput').value='Assets & Liabilities'; onSearchInput(document.getElementById('searchInput'))">Assets & Liabilities</div>
+                <div class="last-search-item" onclick="document.getElementById('searchInput').value='Medical Info'; onSearchInput(document.getElementById('searchInput'))">Medical Info</div>
+                <div class="last-search-item" onclick="document.getElementById('searchInput').value='Emergency contacts'; onSearchInput(document.getElementById('searchInput'))">Emergency contacts</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Floating Voice FAB -->
+    <div class="voice-fab" id="voiceFab" onclick="toggleVoiceFab()">
+        <svg class="fab-speaker" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        <div class="fab-player"><div class="fab-waves"><div class="fab-w"></div><div class="fab-w"></div><div class="fab-w"></div><div class="fab-w"></div><div class="fab-w"></div></div><div class="fab-time" id="fabTime">0:00</div><button class="fab-pause" onclick="event.stopPropagation();toggleVoiceFab()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></button></div>
+    </div>
+
+
+    <script src="_data/entryRules.js"></script>
+    <script src="_data/peopleStore.js"></script>
+    <script src="_data/entriesStore.js"></script>
+    <!-- Persistence layer — must load AFTER peopleStore + entriesStore so the
+         default seeds are set first, then overridden from localStorage if any. -->
+    <script src="_data/persistence.js"></script>
+    <script src="_data/timeline.js"></script>
+    <script src="_data/peopleDirectory.js"></script>
+    <script src="_shared.js?v=20260518fr110"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="21.5" height="21.5" viewBox="0 0 21.5 21.5">
+  <g id="Cancel" transform="translate(-18824.645 -2141.644)" opacity="0.5">
+    <circle id="Ellipse" cx="10" cy="10" r="10" transform="translate(18825.395 2142.394)" fill="none" stroke="#000" stroke-width="1.5"/>
+    <line id="Line" x2="9.868" transform="translate(18831.906 2148.905) rotate(45)" fill="none" stroke="#000" stroke-linecap="round" stroke-width="1.5"/>
+    <line id="Line-2" data-name="Line" y2="9.868" transform="translate(18838.883 2148.906) rotate(45)" fill="none" stroke="#000" stroke-linecap="round" stroke-width="1.5"/>
+  </g>
+</svg>

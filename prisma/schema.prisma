@@ -1,0 +1,665 @@
+// ═══════════════════════════════════════════════════════════════
+// PlanAfter - Database Schema (Prisma)
+// ═══════════════════════════════════════════════════════════════
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ───────────────────────────────────────────────────
+
+enum PlanType {
+  INDIVIDUAL
+  FAMILY
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+  DOMESTIC_PARTNERSHIP
+  SEPARATED
+}
+
+enum ContactType {
+  EMAIL
+  PHONE
+  ADDRESS
+  SOCIAL_MEDIA
+}
+
+enum RelationshipType {
+  SPOUSE
+  CHILD
+  PARENT
+  SIBLING
+  GRANDPARENT
+  GRANDCHILD
+  AUNT_UNCLE
+  NIECE_NEPHEW
+  COUSIN
+  IN_LAW
+  STEP_PARENT
+  STEP_CHILD
+  STEP_SIBLING
+  PARTNER
+  FRIEND
+  OTHER
+}
+
+enum AssetCategory {
+  FINANCIAL_ACCOUNTS
+  CRYPTO_BLOCKCHAIN
+  REAL_ESTATE
+  VEHICLES
+  DIGITAL_ONLINE
+  PERSONAL_PROPERTY
+  BUSINESS_INTERESTS
+  INTELLECTUAL_PROPERTY
+  OTHER
+}
+
+enum LiabilityCategory {
+  MORTGAGE
+  AUTO_LOAN
+  STUDENT_LOAN
+  CREDIT_CARD
+  PERSONAL_LOAN
+  BUSINESS_LOAN
+  TAX_DEBT
+  OTHER
+}
+
+enum AssetStatus {
+  ACTIVE
+  INACTIVE
+  CLOSED
+  SOLD
+}
+
+enum ShareRole {
+  EXECUTOR
+  CONTRIBUTOR
+  BENEFICIARY
+  VIEWER
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum LetterDeliveryTrigger {
+  AFTER_PASSING
+  SPECIFIC_DATE
+  BIRTHDAY
+  ANNIVERSARY
+  MANUAL
+}
+
+enum AllergySeverity {
+  MILD
+  MODERATE
+  SEVERE
+  LIFE_THREATENING
+}
+
+enum EducationType {
+  QUALIFICATION
+  CERTIFICATION
+  OTHER
+}
+
+enum AccountType {
+  PLAN_OWNER
+  INVITED_USER
+  THIRD_PARTY
+  ADMIN
+}
+
+enum PlanOwnerFunding {
+  SELF_PAID
+  SPONSORED_FAMILY
+  SPONSORED_GIFT
+  SPONSORED_CORPORATE
+}
+
+enum ThirdPartyType {
+  CORPORATE_CLIENT
+  BROKER
+  VENDOR
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+// ─── MODELS ──────────────────────────────────────────────────
+
+/// Core user account
+model User {
+  id                  String             @id @default(cuid())
+  email               String             @unique
+  passwordHash        String             @map("password_hash")
+  emailVerified       Boolean            @default(false) @map("email_verified")
+  verificationCode    String?            @map("verification_code")
+  verificationExpiry  DateTime?          @map("verification_expiry")
+  twoFactorEnabled    Boolean            @default(false) @map("two_factor_enabled")
+  twoFactorSecret     String?            @map("two_factor_secret")
+  planType            PlanType           @default(INDIVIDUAL) @map("plan_type")
+  subscriptionStatus  SubscriptionStatus @default(TRIALING) @map("subscription_status")
+  stripeCustomerId    String?            @map("stripe_customer_id")
+  stripeSubscriptionId String?           @map("stripe_subscription_id")
+  onboardingCompleted Boolean            @default(false) @map("onboarding_completed")
+  onboardingData      Json?              @map("onboarding_data")
+  onboardingStep      Int                @default(0) @map("onboarding_step")
+  accountType         AccountType        @default(PLAN_OWNER) @map("account_type")
+  fundingType         PlanOwnerFunding?  @map("funding_type")
+  sponsorId           String?            @map("sponsor_id")
+  sponsorOrgName      String?            @map("sponsor_org_name")
+  isAdmin             Boolean            @default(false) @map("is_admin")
+  lastLoginAt         DateTime?          @map("last_login_at")
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime           @updatedAt @map("updated_at")
+
+  // Relations
+  profile             Profile?
+  refreshTokens       RefreshToken[]
+  documents           Document[]
+  tasks               Task[]
+  auditLogs           AuditLog[]
+  sentShares          PlanShare[]        @relation("SentShares")
+  receivedShares      PlanShare[]        @relation("ReceivedShares")
+  aiConversations     AiConversation[]
+  sponsor             User?              @relation("Sponsorship", fields: [sponsorId], references: [id])
+  sponsoredUsers      User[]             @relation("Sponsorship")
+  invitations         Invitation[]       @relation("InvitationsSent")
+  receivedInvitations Invitation[]       @relation("InvitationsReceived")
+
+  @@map("users")
+}
+
+/// Refresh tokens for JWT rotation
+model RefreshToken {
+  id          String   @id @default(cuid())
+  token       String   @unique
+  userId      String   @map("user_id")
+  expiresAt   DateTime @map("expires_at")
+  revokedAt   DateTime? @map("revoked_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("refresh_tokens")
+}
+
+/// Personal profile (plan owner + family members)
+model Profile {
+  id              String         @id @default(cuid())
+  userId          String?        @unique @map("user_id")
+  firstName       String         @map("first_name")
+  lastName        String         @map("last_name")
+  middleName      String?        @map("middle_name")
+  placeOfBirth    String?        @map("place_of_birth")
+  citizenships    String[]       @default([])
+  nationality     String?
+  dateOfBirth     DateTime?      @map("date_of_birth")
+  gender          Gender?
+  maritalStatus   MaritalStatus? @map("marital_status")
+  countryOfResidence String?     @map("country_of_residence")
+  stateRegion     String?        @map("state_region")
+  photoUrl        String?        @map("photo_url")
+  isPlanOwner     Boolean        @default(false) @map("is_plan_owner")
+  isDeceased      Boolean        @default(false) @map("is_deceased")
+  dateOfDeath     DateTime?      @map("date_of_death")
+  causeOfDeath    String?        @map("cause_of_death")
+  burialLocation  String?        @map("burial_location")
+  legacyNotes     String?        @map("legacy_notes")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  user                User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contacts            ContactInfo[]
+  medicalRecords      MedicalRecord[]
+  allergies           Allergy[]
+  educations          Education[]
+  employments         Employment[]
+  beliefs             Belief[]
+  relationshipsFrom   Relationship[]     @relation("RelationFrom")
+  relationshipsTo     Relationship[]     @relation("RelationTo")
+  assets              Asset[]
+  liabilities         Liability[]
+  letters             Letter[]           @relation("LetterRecipient")
+  lettersAuthored     Letter[]           @relation("LetterAuthor")
+  familyTreeNodes     FamilyTreeNode[]
+
+  @@map("profiles")
+}
+
+/// Contact information (emails, phones, addresses, social)
+model ContactInfo {
+  id          String      @id @default(cuid())
+  profileId   String      @map("profile_id")
+  type        ContactType
+  label       String?     // e.g., "Personal", "Work", "Emergency"
+  value       String      // email, phone number, etc.
+  isPrimary   Boolean     @default(false) @map("is_primary")
+  // Address-specific fields
+  street      String?
+  city        String?
+  state       String?
+  postalCode  String?     @map("postal_code")
+  country     String?
+  // Social media specific
+  platform    String?     // e.g., "LinkedIn", "Facebook"
+  profileUrl  String?     @map("profile_url")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  profile     Profile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@map("contact_info")
+}
+
+/// Relationships between profiles
+model Relationship {
+  id               String           @id @default(cuid())
+  fromProfileId    String           @map("from_profile_id")
+  toProfileId      String           @map("to_profile_id")
+  type             RelationshipType
+  customLabel      String?          @map("custom_label")
+  isSuggested      Boolean          @default(false) @map("is_suggested")
+  notes            String?
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+
+  fromProfile      Profile          @relation("RelationFrom", fields: [fromProfileId], references: [id], onDelete: Cascade)
+  toProfile        Profile          @relation("RelationTo", fields: [toProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([fromProfileId, toProfileId])
+  @@index([fromProfileId])
+  @@index([toProfileId])
+  @@map("relationships")
+}
+
+/// Medical records (blood type, conditions)
+model MedicalRecord {
+  id              String   @id @default(cuid())
+  profileId       String   @map("profile_id")
+  bloodType       String?  @map("blood_type")
+  conditionName   String?  @map("condition_name")
+  diagnosedDate   DateTime? @map("diagnosed_date")
+  status          String?  // active, resolved, chronic
+  notes           String?
+  primaryPhysician String?      @map("primary_physician")
+  medications      String[]     @default([])
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@map("medical_records")
+}
+
+/// Allergies
+model Allergy {
+  id          String          @id @default(cuid())
+  profileId   String          @map("profile_id")
+  name        String
+  severity    AllergySeverity
+  reaction    String?
+  notes       String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  profile     Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@map("allergies")
+}
+
+/// Education records
+model Education {
+  id              String        @id @default(cuid())
+  profileId       String        @map("profile_id")
+  type            EducationType
+  institution     String
+  degree          String?
+  fieldOfStudy    String?       @map("field_of_study")
+  yearCompleted   Int?          @map("year_completed")
+  certificationName String?     @map("certification_name")
+  issuingBody     String?       @map("issuing_body")
+  notes           String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  profile         Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@map("educations")
+}
+
+/// Employment records
+model Employment {
+  id            String    @id @default(cuid())
+  profileId     String    @map("profile_id")
+  employer      String
+  position      String
+  startDate     DateTime? @map("start_date")
+  endDate       DateTime? @map("end_date")
+  isCurrent     Boolean   @default(false) @map("is_current")
+  contactName   String?   @map("contact_name")
+  contactEmail  String?   @map("contact_email")
+  contactPhone  String?   @map("contact_phone")
+  compensation  String?        // e.g. "$145,000 / year"
+  notes         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  profile       Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@map("employments")
+}
+
+/// Beliefs, hobbies, interests
+model Belief {
+  id          String   @id @default(cuid())
+  profileId   String   @map("profile_id")
+  category    String   // "religion", "hobby", "interest", "value"
+  name        String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@map("beliefs")
+}
+
+/// Assets (financial accounts, property, etc.)
+model Asset {
+  id              String        @id @default(cuid())
+  profileId       String        @map("profile_id")
+  category        AssetCategory
+  name            String
+  description     String?
+  value           Decimal       @default(0) @db.Decimal(15, 2)
+  currency        String        @default("EUR")
+  status          AssetStatus   @default(ACTIVE)
+  institution     String?
+  accountNumber   String?       @map("account_number")
+  ownershipDetails Json?        @map("ownership_details")
+  metadata        Json?         // flexible extra data
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  profile         Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  credentials     Credential[]
+  documents       Document[]    @relation("AssetDocuments")
+
+  @@index([profileId])
+  @@index([category])
+  @@map("assets")
+}
+
+/// Liabilities
+model Liability {
+  id              String            @id @default(cuid())
+  profileId       String            @map("profile_id")
+  category        LiabilityCategory
+  name            String
+  description     String?
+  amount          Decimal           @default(0) @db.Decimal(15, 2)
+  currency        String            @default("EUR")
+  interestRate    Decimal?          @map("interest_rate") @db.Decimal(5, 2)
+  monthlyPayment  Decimal?          @map("monthly_payment") @db.Decimal(15, 2)
+  dueDate         DateTime?         @map("due_date")
+  institution     String?
+  linkedAssetId   String?           @map("linked_asset_id")
+  metadata        Json?
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  profile         Profile           @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@map("liabilities")
+}
+
+/// Encrypted credentials for assets
+model Credential {
+  id                String   @id @default(cuid())
+  assetId           String   @map("asset_id")
+  institution       String?
+  username          String?
+  encryptedPassword String?  @map("encrypted_password")
+  encryptedNotes    String?  @map("encrypted_notes")
+  url               String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  asset             Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@map("credentials")
+}
+
+/// Vault documents
+model Document {
+  id              String    @id @default(cuid())
+  userId          String    @map("user_id")
+  fileName        String    @map("file_name")
+  fileType        String    @map("file_type")
+  fileSize        Int       @map("file_size")
+  s3Key           String    @map("s3_key")
+  encryptionKeyId String?   @map("encryption_key_id")
+  category        String?
+  tags            String[]
+  metadata        Json?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets          Asset[]   @relation("AssetDocuments")
+
+  @@index([userId])
+  @@map("documents")
+}
+
+/// Family tree visualization nodes
+model FamilyTreeNode {
+  id          String   @id @default(cuid())
+  profileId   String   @map("profile_id")
+  xPosition   Float    @default(0) @map("x_position")
+  yPosition   Float    @default(0) @map("y_position")
+  generation  Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId])
+  @@map("family_tree_nodes")
+}
+
+/// Letters to loved ones
+model Letter {
+  id               String                 @id @default(cuid())
+  authorProfileId  String                 @map("author_profile_id")
+  recipientProfileId String               @map("recipient_profile_id")
+  title            String
+  encryptedContent String                 @map("encrypted_content")
+  deliveryTrigger  LetterDeliveryTrigger  @map("delivery_trigger")
+  triggerDate      DateTime?              @map("trigger_date")
+  isDelivered      Boolean                @default(false) @map("is_delivered")
+  deliveredAt      DateTime?              @map("delivered_at")
+  createdAt        DateTime               @default(now()) @map("created_at")
+  updatedAt        DateTime               @updatedAt @map("updated_at")
+
+  author           Profile                @relation("LetterAuthor", fields: [authorProfileId], references: [id], onDelete: Cascade)
+  recipient        Profile                @relation("LetterRecipient", fields: [recipientProfileId], references: [id], onDelete: Cascade)
+
+  @@index([authorProfileId])
+  @@index([recipientProfileId])
+  @@map("letters")
+}
+
+/// Tasks & reminders
+model Task {
+  id              String       @id @default(cuid())
+  userId          String       @map("user_id")
+  title           String
+  description     String?
+  category        String?      // "Assets & Liabilities", "Body & Health", etc.
+  status          TaskStatus   @default(PENDING)
+  priority        TaskPriority @default(MEDIUM)
+  dueDate         DateTime?    @map("due_date")
+  completedAt     DateTime?    @map("completed_at")
+  linkedEntityType String?     @map("linked_entity_type")
+  linkedEntityId  String?      @map("linked_entity_id")
+  isAutoGenerated Boolean      @default(false) @map("is_auto_generated")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("tasks")
+}
+
+/// Plan sharing & permissions
+model PlanShare {
+  id              String    @id @default(cuid())
+  ownerId         String    @map("owner_id")
+  sharedWithId    String    @map("shared_with_id")
+  role            ShareRole
+  permissions     Json?     // granular per-section permissions
+  acceptedAt      DateTime? @map("accepted_at")
+  revokedAt       DateTime? @map("revoked_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  owner           User      @relation("SentShares", fields: [ownerId], references: [id], onDelete: Cascade)
+  sharedWith      User      @relation("ReceivedShares", fields: [sharedWithId], references: [id], onDelete: Cascade)
+
+  @@unique([ownerId, sharedWithId])
+  @@index([ownerId])
+  @@index([sharedWithId])
+  @@map("plan_shares")
+}
+
+/// Invitation tokens for role-based access
+model Invitation {
+  id              String           @id @default(cuid())
+  senderId        String           @map("sender_id")
+  recipientEmail  String           @map("recipient_email")
+  role            ShareRole
+  token           String           @unique
+  status          InvitationStatus @default(PENDING)
+  message         String?
+  expiresAt       DateTime         @map("expires_at")
+  acceptedAt      DateTime?        @map("accepted_at")
+  recipientId     String?          @map("recipient_id")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  sender          User             @relation("InvitationsSent", fields: [senderId], references: [id], onDelete: Cascade)
+  recipient       User?            @relation("InvitationsReceived", fields: [recipientId], references: [id])
+
+  @@index([senderId])
+  @@index([recipientEmail])
+  @@index([token])
+  @@map("invitations")
+}
+
+/// Third-party organizations (corporate clients, brokers, vendors)
+model ThirdPartyOrg {
+  id              String         @id @default(cuid())
+  name            String
+  type            ThirdPartyType
+  contactEmail    String?        @map("contact_email")
+  contactPhone    String?        @map("contact_phone")
+  contractRef     String?        @map("contract_ref")
+  isActive        Boolean        @default(true) @map("is_active")
+  metadata        Json?
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  @@map("third_party_orgs")
+}
+
+/// AI conversation history
+model AiConversation {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  messages    Json     // array of {role, content, timestamp}
+  context     String?  // current page/section for context
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("ai_conversations")
+}
+
+/// Immutable audit log
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  action      String   // "CREATE", "UPDATE", "DELETE", "VIEW", "SHARE"
+  entityType  String   @map("entity_type")
+  entityId    String   @map("entity_id")
+  changes     Json?
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

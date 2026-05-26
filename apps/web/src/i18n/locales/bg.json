@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "meFamilyNetwork": "Аз, семейство и мрежа",
+    "myPlan": "Моят план",
+    "postLossSupport": "Подкрепа след загуба",
+    "vault": "Сейф",
+    "tasksReminders": "Задачи и напомняния",
+    "marketplace": "Пазар",
+    "plansSharedWithMe": "Планове, споделени с мен",
+    "myProfile": "Моят профил",
+    "myFamily": "Моето семейство",
+    "myNetwork": "Моята мрежа",
+    "assetsLiabilities": "Активи и пасиви",
+    "emotionalLegacy": "Емоционално наследство",
+    "bodyHealth": "Тяло и здраве",
+    "goalsAspirations": "Цели и стремежи",
+    "willLegalActions": "Завещание и правни действия"
+  },
+  "dashboard": {
+    "goodMorning": "Добро утро",
+    "todaysTasks": "Днешни задачи",
+    "recentActivity": "Скорошна активност",
+    "viewAllTasks": "Виж всички задачи",
+    "viewAllActivity": "Виж цялата активност",
+    "noPendingTasks": "Няма чакащи задачи",
+    "noRecentActivity": "Няма скорошна активност",
+    "keyPeople": "Ключови хора",
+    "noKeyPeople": "Все още няма добавени ключови хора",
+    "yourProgress": "Вашият напредък"
+  },
+  "common": {
+    "add": "Добави",
+    "edit": "Редактирай",
+    "delete": "Изтрий",
+    "save": "Запази",
+    "cancel": "Отказ",
+    "loading": "Зареждане",
+    "noData": "Няма налични данни",
+    "search": "Търсене",
+    "filter": "Филтър"
+  },
+  "auth": {
+    "welcomeBack": "Добре дошли отново",
+    "logIn": "Вход",
+    "signUp": "Регистрация",
+    "email": "Имейл",
+    "password": "Парола",
+    "rememberMe": "Запомни ме",
+    "forgotPassword": "Забравена парола"
+  },
+  "pages": {
+    "tasks": "Задачи",
+    "vault": "Сейф",
+    "health": "Здраве",
+    "assets": "Активи",
+    "family": "Семейство",
+    "legacy": "Наследство",
+    "goals": "Цели",
+    "will": "Завещание",
+    "shared": "Споделени",
+    "postLoss": "След загуба",
+    "settings": "Настройки"
+  }
+}

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="27" height="30" viewBox="0 0 27 30">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.105" y1="1.723" x2="0.105" y2="0.713" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ff6a5d"/>
+      <stop offset="1" stop-color="#db1e09"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="0.09" y1="1.75" x2="0.09" y2="0.741" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-3" x1="-0.599" y1="6.409" x2="-1.341" y2="5.665" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ee4a3c"/>
+      <stop offset="1" stop-color="#c60000"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-4" x1="-0.961" y1="6.603" x2="-1.452" y2="6.111" xlink:href="#linear-gradient"/>
+  </defs>
+  <g id="PDF" transform="translate(0 0)">
+    <g id="File">
+      <path id="Path_145" data-name="Path 145" d="M515.457,159.34,508,151.74H490.93a2.382,2.382,0,0,0-2.355,2.407v25.066a2.381,2.381,0,0,0,2.355,2.407H513.1a2.381,2.381,0,0,0,2.355-2.407Z" transform="translate(-488.516 -151.68)" fill="url(#linear-gradient)"/>
+      <path id="Path_146" data-name="Path 146" d="M514.58,182.607H492.408a1.907,1.907,0,0,1-1.884-1.925V155.616a1.908,1.908,0,0,1,1.884-1.925h16.877l7.179,7.319v19.673a1.908,1.908,0,0,1-1.884,1.925Z" transform="translate(-489.994 -153.148)" fill="url(#linear-gradient-2)"/>
+      <path id="Path_147" data-name="Path 147" d="M490.712,180.94V155.874a1.907,1.907,0,0,1,1.884-1.925c.162,0,16.688-.259,16.688-.259H492.407a1.908,1.908,0,0,0-1.884,1.925v25.066a1.932,1.932,0,0,0,.475,1.264A1.933,1.933,0,0,1,490.712,180.94Z" transform="translate(-489.993 -153.149)" fill="#ff9c96"/>
+      <path id="Path_148" data-name="Path 148" d="M574.8,159.34l-7.455-7.6h-.053c-.128,1.476-.47,5.412-.47,5.412a2.691,2.691,0,0,0,2.661,2.72Z" transform="translate(-547.857 -151.68)" fill="url(#linear-gradient-3)"/>
+      <path id="Path_149" data-name="Path 149" d="M568.983,151.741v5.193a2.381,2.381,0,0,0,2.355,2.407h5.1Z" transform="translate(-549.497 -151.68)" fill="url(#linear-gradient-4)"/>
+      <path id="Path_150" data-name="Path 150" d="M490.743,181.5a2.441,2.441,0,0,1-2.414-2.467h0V153.964a2.441,2.441,0,0,1,2.414-2.467h17.1l7.473,7.618-.041.043.041-.043.017.017v19.9a2.441,2.441,0,0,1-2.414,2.467H490.743Zm-2.3-27.533V179.03a2.326,2.326,0,0,0,2.3,2.347h22.172a2.325,2.325,0,0,0,2.3-2.347h0V159.182l-7.422-7.565H490.743a2.326,2.326,0,0,0-2.3,2.347Z" transform="translate(-488.329 -151.497)" fill="#db1e09"/>
+      <path id="Path_151" data-name="Path 151" d="M492.406,153.691a1.908,1.908,0,0,0-1.884,1.925v14.657l.189-.193V155.873a1.907,1.907,0,0,1,1.883-1.925l14.116-.218.04-.04Z" transform="translate(-489.992 -153.148)" fill="#ff9c96"/>
+      <path id="Path_152" data-name="Path 152" d="M498.711,221.088v-.481h14.98v.481Z" transform="translate(-496.203 -203.544)" fill="#fff"/>
+      <path id="Path_153" data-name="Path 153" d="M498.711,215.295v-.482h14.98v.482Z" transform="translate(-496.203 -199.181)" fill="#fff"/>
+      <path id="Path_154" data-name="Path 154" d="M498.711,209.474v-.482h14.98v.482Z" transform="translate(-496.203 -194.796)" fill="#fff"/>
+      <path id="Path_155" data-name="Path 155" d="M498.711,203.678V203.2h10.271v.481Z" transform="translate(-496.203 -190.433)" fill="#fff"/>
+      <path id="Path_156" data-name="Path 156" d="M529.905,197.859v-.482h7.444v.482Z" transform="translate(-519.861 -186.049)" fill="#fff"/>
+      <path id="Path_157" data-name="Path 157" d="M529.905,192.065v-.481h7.444v.481Z" transform="translate(-519.861 -181.687)" fill="#fff"/>
+      <path id="Path_158" data-name="Path 158" d="M529.905,186.248v-.481h7.444v.481Z" transform="translate(-519.861 -177.305)" fill="#fff"/>
+      <path id="Path_159" data-name="Path 159" d="M529.905,180.45v-.481h2.734v.481Z" transform="translate(-519.861 -172.939)" fill="#fff"/>
+      <path id="Path_160" data-name="Path 160" d="M497.737,184.772v-4.8h7.14v4.8Zm6.9-.241v0Zm-6.434-.24h6.2v-3.839h-6.2v3.839Z" transform="translate(-495.465 -172.941)" fill="#fff"/>
+    </g>
+    <path id="PDF-2" data-name="PDF" d="M-11.227-1.091V-4.365H-10a1.316,1.316,0,0,1,.631.138.95.95,0,0,1,.391.38,1.132,1.132,0,0,1,.134.558,1.126,1.126,0,0,1-.135.557.944.944,0,0,1-.4.38A1.345,1.345,0,0,1-10-2.214h-.837V-2.7h.771a.75.75,0,0,0,.358-.076.493.493,0,0,0,.21-.209.649.649,0,0,0,.069-.3A.646.646,0,0,0-9.5-3.6a.483.483,0,0,0-.211-.2.776.776,0,0,0-.359-.074h-.567v2.782Zm3.99,0h-.828V-1.6h.8a1.184,1.184,0,0,0,.578-.127.8.8,0,0,0,.346-.38,1.512,1.512,0,0,0,.115-.628,1.485,1.485,0,0,0-.115-.622.808.808,0,0,0-.342-.378A1.138,1.138,0,0,0-7.25-3.86H-8.08v-.505h.866a1.687,1.687,0,0,1,.838.2,1.329,1.329,0,0,1,.539.563,1.881,1.881,0,0,1,.189.873,1.9,1.9,0,0,1-.189.879,1.325,1.325,0,0,1-.545.565A1.735,1.735,0,0,1-7.236-1.091Zm-.521-3.274v3.274h-.587V-4.365ZM-5.12-1.091V-4.365H-3v.5H-4.534v.962h1.393v.49H-4.534v1.325Z" transform="translate(26.807 27.341)" fill="#fff"/>
+  </g>
+</svg>

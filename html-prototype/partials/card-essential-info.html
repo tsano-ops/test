@@ -1,0 +1,130 @@
+<!--
+    Essential Info card — partial used by profile.html, record-family.html,
+    record-pet.html, record-network.html. Same DOM structure for all record
+    types so styling is identical. Pet/Network records hide Plan-Owner-specific
+    bits via the `data-record-type` attribute on the mount.
+
+    Population (read mode): JS reads peopleStore[id] and fills [data-ei-*]
+    placeholders. Avatar picker / album / repo panels are profile.html-only —
+    those stay in profile.html itself, not in this partial.
+
+    Entries list: rendered into [data-ei-entries] from peopleStore[id].entries.essential,
+    grouped by category (ID Documents, Birth Certificate, Verification Docs).
+-->
+<div class="accordion-section essential-info-card">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div>
+            <div class="accordion-title">Essential Info</div>
+            <div class="accordion-subtitle" data-ei-subtitle>Identity &amp; key details</div>
+        </div>
+        <svg class="accordion-chevron" width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M0.5 0.5L4 3.5L7.5 0.5"/></svg>
+    </div>
+    <div class="accordion-body">
+        <div class="accordion-inner">
+            <p class="section-desc" data-ei-narrative>All core identity details and important documents about this person are kept here in one organised space.</p>
+
+            <!-- Edit toggle (right-aligned under section description) -->
+            <div class="ei-edit-btn-row">
+                <div class="edit-btn" onclick="toggleEssentialEdit && toggleEssentialEdit(true, this)">
+                    <span>Edit</span>
+                    <div class="edit-btn-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- READ MODE — visible by default. Avatar + Name row, then field stack. -->
+            <div class="ei-read-mode">
+                <div class="ei-avatar-row">
+                    <div class="ei-avatar-container">
+                        <div class="ei-avatar-shadow"></div>
+                        <img class="ei-avatar-photo" data-ei-avatar src="" alt="" style="display:none;">
+                        <span class="ei-read-initials" data-ei-initials></span>
+                        <div class="ei-life-dot" data-ei-life-dot></div>
+                    </div>
+                    <div class="ei-name-block">
+                        <div class="data-value" data-ei-fullname></div>
+                        <div class="data-label">Full Name</div>
+                    </div>
+                </div>
+
+                <div class="ei-fields-block">
+                    <div class="ei-field-row" data-ei-row="gender">
+                        <div class="data-value" data-ei-value="gender"></div>
+                        <div class="data-label">Gender</div>
+                    </div>
+                    <div class="ei-field-row" data-ei-row="dob">
+                        <div class="data-value" data-ei-value="dob"></div>
+                        <div class="data-label">Date of Birth</div>
+                    </div>
+                    <div class="ei-field-row" data-ei-row="pob">
+                        <div class="data-value" data-ei-value="pob"></div>
+                        <div class="data-label">Place of Birth</div>
+                    </div>
+                    <div class="ei-field-row" data-ei-row="citizenship">
+                        <div class="data-value" data-ei-value="citizenship"></div>
+                        <div class="data-label">Citizenship(s)</div>
+                    </div>
+                    <div class="ei-field-row ei-field-last" data-ei-row="residence">
+                        <div class="data-value" data-ei-value="residence"></div>
+                        <div class="data-label">Country of Residence</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDIT MODE — hidden by default; revealed by .editing on the card.
+                 Inputs use canonical .ei-field-input-wrap so styling matches
+                 every other entry-form input on the platform. -->
+            <div class="ei-edit-mode" hidden>
+                <div class="ei-field">
+                    <div class="ei-field-input-wrap">
+                        <textarea rows="1" class="ei-autogrow" data-ei-edit="firstName" placeholder="Enter first name"></textarea>
+                    </div>
+                    <div class="ei-field-label"><span class="required">*</span> First Name</div>
+                </div>
+                <div class="ei-field">
+                    <div class="ei-field-input-wrap">
+                        <textarea rows="1" class="ei-autogrow" data-ei-edit="middleName" placeholder="Optional"></textarea>
+                    </div>
+                    <div class="ei-field-label">Middle Name</div>
+                </div>
+                <div class="ei-field">
+                    <div class="ei-field-input-wrap">
+                        <textarea rows="1" class="ei-autogrow" data-ei-edit="familyName" placeholder="Enter family name"></textarea>
+                    </div>
+                    <div class="ei-field-label"><span class="required">*</span> Family Name</div>
+                </div>
+                <!-- Save row — canonical Save button (right-aligned, 126×60) -->
+                <div class="ee-save-row">
+                    <div class="ei-save-btn-wrap" onclick="saveEssentialEdit && saveEssentialEdit(this)">
+                        <span class="ei-save-btn-label">Save updates</span>
+                        <span class="ei-save-btn-dash"></span>
+                        <span class="ei-save-btn-circle">
+                            <svg class="ei-save-btn-arrow" width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l7 7-7 7"/></svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entries list — Identity & Vital Documents (Passport, ID Card,
+                 Driving License, Birth Certificate, Visa, etc.). Populated by
+                 renderEssentialEntries() from peopleStore[id].entries.essential. -->
+            <div class="ei-entries-section" data-ei-entries></div>
+
+            <!-- LOCKED canonical Add New Entry button — same as Medical/Education/etc. -->
+            <div class="emc-add-entry-btn" onclick="openEntryForm && openEntryForm('essential')">
+                <div class="emc-add-entry-label">Add New Entry</div>
+                <div class="emc-add-entry-row">
+                    <div class="emc-add-entry-line"></div>
+                    <div class="emc-add-entry-plus-wrap">
+                        <div class="emc-add-entry-plus-inner"></div>
+                        <svg class="emc-add-entry-plus-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"><path d="M10 3v14M3 10h14"/></svg>
+                    </div>
+                    <div class="emc-add-entry-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

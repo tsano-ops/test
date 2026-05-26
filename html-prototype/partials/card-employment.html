@@ -1,0 +1,33 @@
+<!--
+    Employment & Affiliations card — Employment Entries (jobs, roles),
+    Memberships & Affiliations (Rotary, professional bodies), Professional
+    Licenses. Each entry has start/end dates, organization, optional document.
+-->
+<div class="accordion-section employment-card">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div>
+            <div class="accordion-title">Employment &amp; Affiliations</div>
+            <div class="accordion-subtitle" data-em-subtitle>Work history &amp; memberships</div>
+        </div>
+        <svg class="accordion-chevron" width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M0.5 0.5L4 3.5L7.5 0.5"/></svg>
+    </div>
+    <div class="accordion-body">
+        <div class="accordion-inner">
+            <p class="section-desc" data-em-narrative>Work roles, employment documents and professional memberships are gathered in one central place.</p>
+
+            <div class="ei-entries-section" data-em-entries></div>
+
+            <div class="emc-add-entry-btn" onclick="openEntryForm && openEntryForm('employment')">
+                <div class="emc-add-entry-label">Add New Entry</div>
+                <div class="emc-add-entry-row">
+                    <div class="emc-add-entry-line"></div>
+                    <div class="emc-add-entry-plus-wrap">
+                        <div class="emc-add-entry-plus-inner"></div>
+                        <svg class="emc-add-entry-plus-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"><path d="M10 3v14M3 10h14"/></svg>
+                    </div>
+                    <div class="emc-add-entry-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

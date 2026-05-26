@@ -1,0 +1,80 @@
+<!--
+  Documents tab — canonical partial.
+  Loaded by loadPartial('tab-documents', '#documentsTabMount') on
+  profile.html, record-family.html, record-pet.html, record-network.html.
+
+  XD specs (page-relative coords for reference):
+    Title          top:508 left:690 w:329 h:24  · Inter 600 20/24 #000 op 1
+    Subtitle       top:542 left:690 w:540 h:17  · Inter 400 14/17 op 0.5
+    Trust copy     top:589 left:690 w:540 h:85  · Inter 400 14/17 op 1
+    Add Document   top:734 left:760 w:400 h:80  · canonical .emc-add-entry-btn
+    Filter bar     top:844 left:660 w:600 h:110 · gradient #FFFFFF→#FFFFFF00 op 0.5
+      • Select All circle 60×60 + box 20×20 + caption "Select All" 12/15 op 0.5
+      • Archive icon-btn 40×40 + icon 20×18 op 0.3→1
+      • Remove icon-btn 40×40 + icon 18×20 op 0.3→1
+      • Search pill 420×60 + icon 20×20 + input 600 16/24 + caption "Filtering The Documents"
+    Group title    centered Inter 600 16/24 op 0.5
+    Doc row        600×100 white op 0.5→1, with bulk-check 20×20 + 60×60 status icon
+                   + title 600 16/20 + subtitle 400 12/15 + date 400 12/15 op 0.5
+                   + status badge top-right + Edit pencil 50×50 reveal
+-->
+<!-- NOTE: do NOT use .accordion-section here — that class adds a hover ::after overlay
+     that turns the WHOLE card white when any child is hovered (intended for clickable
+     accordion headers like Essential Info). Documents tab is a flat tab content, so we
+     use a plain wrapper. -->
+<div class="docs-tab-section" style="padding:30px;">
+    <!-- Canonical title / subtitle / description (same classes as Essential Info, Medical, etc.) -->
+    <div class="accordion-title">All documents linked to this record</div>
+    <div class="accordion-subtitle" style="white-space:normal;">Here you can view, add and manage all documents related to this record.</div>
+    <p class="section-desc" style="margin-top:30px;">PlanAfter stores document entry information and digital copies securely in your Vault and guides you to keep originals well-ordered outside the platform. Centralising documents this way keeps you organised in daily life, makes retrieval simple when official papers are required, and reduces stress, delays, or uncertainty.</p>
+
+    <div class="emc-add-entry-btn" id="docsAddBtn" onclick="paDocumentsAddNew()">
+        <div class="emc-add-entry-label">Add Document</div>
+        <div class="emc-add-entry-row">
+            <div class="emc-add-entry-line"></div>
+            <div class="emc-add-entry-plus-wrap">
+                <div class="emc-add-entry-plus-inner"></div>
+                <svg class="emc-add-entry-plus-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"><path d="M10 3v14M3 10h14"/></svg>
+            </div>
+            <div class="emc-add-entry-line"></div>
+        </div>
+    </div>
+
+    <div class="docs-filter-bar">
+        <!-- Select All — circle with caption (XD: caption "Select All" 12/15 op 0.5 at left:14 w:52) -->
+        <div class="docs-select-all-circle" onclick="paDocsSelectAll(this)">
+            <div class="docs-select-all-box"></div>
+        </div>
+        <div class="docs-filter-caption" style="left:14px;width:52px;text-align:center;">Select All</div>
+        <!-- Archive — icon-btn only, NO caption per XD -->
+        <button type="button" class="docs-action-btn docs-action-archive" aria-label="Archive" onclick="paDocsArchiveSelected()">
+            <img class="docs-action-icon" src="img/archive.svg" alt="">
+        </button>
+        <!-- Remove — icon-btn only, NO caption per XD -->
+        <button type="button" class="docs-action-btn docs-action-remove" aria-label="Remove" onclick="paDocsRemoveSelected()">
+            <img class="docs-action-icon docs-action-icon-trash" src="img/trash.png" alt="">
+        </button>
+        <!-- Search pill — caption "Filtering The Documents" 12/15 op 0.5 at left:180 w:137 -->
+        <div class="docs-search-pill">
+            <img class="docs-search-icon" src="img/search.svg" alt="" width="20" height="20">
+            <input class="docs-search-input" type="text" placeholder="Search…" oninput="paDocsFilter(this.value)" onfocus="paDocsSearchFocus(this)" onblur="paDocsSearchBlur(this)">
+        </div>
+        <div class="docs-filter-caption" style="left:180px;width:240px;text-align:left;white-space:nowrap;">Filtering The Documents</div>
+        <!-- Search dropdown — appears on click/focus, shows "By Type" filter options -->
+        <div class="docs-search-dropdown" id="docsSearchDropdown">
+            <div class="docs-search-dd-header">By Type</div>
+            <div class="docs-search-dd-item" onclick="paDocsSearchPick('Contract')">Contract</div>
+            <div class="docs-search-dd-item" onclick="paDocsSearchPick('Bank Statement')">Bank Statement</div>
+            <div class="docs-search-dd-item" onclick="paDocsSearchPick('Service Agreement')">Service Agreement</div>
+            <div class="docs-search-dd-item" onclick="paDocsSearchPick('ID Document')">ID Document</div>
+            <div class="docs-search-dd-item" onclick="paDocsSearchPick('Notarial Deed')">Notarial Deed</div>
+        </div>
+    </div>
+
+    <div class="file-list" id="documentsList"></div>
+    <div id="documentsEmpty" style="display:none;padding:30px;text-align:center;">
+        <div style="font-size:48px;opacity:0.15;margin-bottom:16px;">📄</div>
+        <div style="font:normal normal 600 16px/20px Inter,sans-serif;opacity:0.6;margin-bottom:8px;">No documents yet</div>
+        <div style="font:normal normal normal 12px/18px Inter,sans-serif;opacity:0.4;max-width:300px;margin:0 auto;">Click "Add Document" above to add your first one.</div>
+    </div>
+</div>

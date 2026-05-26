@@ -1,0 +1,44 @@
+<!--
+    Medical Info card — Blood Type, Allergies, Medical Conditions, Medications,
+    Medical Devices & Implants, Legal Medical Documents, Other Medical Info.
+    Re-uses the canonical Medical Info entry system already built in profile.html
+    (EMC quick-add pads, ANEF full Add New Entry form, entry-row expand pattern).
+
+    For the partial/record version, we mount a slimmer wrapper with the same
+    entry list pipeline so entries created here propagate to peopleStore[id]
+    .entries.medical and to the Documents tab automatically.
+-->
+<div class="accordion-section medical-info-card">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div>
+            <div class="accordion-title">Medical Info</div>
+            <div class="accordion-subtitle" data-mi-subtitle>Health information &amp; records</div>
+        </div>
+        <svg class="accordion-chevron" width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M0.5 0.5L4 3.5L7.5 0.5"/></svg>
+    </div>
+    <div class="accordion-body">
+        <div class="accordion-inner">
+            <p class="section-desc" data-mi-narrative>All medical reports, diagnoses, treatments and results are kept neatly in one place so nothing is lost.</p>
+
+            <!-- EMC snapshot — Blood Type pill, Allergies bars, Conditions tags,
+                 Devices badges. Mounts via syncEmcSnapshot() once entries exist. -->
+            <div class="emc-snapshot" data-mi-emc-snapshot></div>
+
+            <!-- Entry list grouped by Medical category -->
+            <div class="ei-entries-section" data-mi-entries></div>
+
+            <!-- LOCKED canonical Add New Entry button -->
+            <div class="emc-add-entry-btn" onclick="openEntryForm && openEntryForm('medical')">
+                <div class="emc-add-entry-label">Add New Entry</div>
+                <div class="emc-add-entry-row">
+                    <div class="emc-add-entry-line"></div>
+                    <div class="emc-add-entry-plus-wrap">
+                        <div class="emc-add-entry-plus-inner"></div>
+                        <svg class="emc-add-entry-plus-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"><path d="M10 3v14M3 10h14"/></svg>
+                    </div>
+                    <div class="emc-add-entry-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<!--
+    Contact Info card — LOCKED canonical design from profile.html.
+    Uses .ci-section / .ci-group-title (with icon-box + dgt-dots menu) /
+    .ci-primary-card / .ci-extra-group / .ci-edit-container.
+    Three sections: E-mails, Phones, Address. JS populates each from
+    peopleStore[id] and writes back on save (mutates the record).
+-->
+<div class="accordion-section contact-info-card">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div>
+            <div class="accordion-title">Contact Info</div>
+            <div class="accordion-subtitle" data-ci-subtitle>Their key contact details</div>
+        </div>
+        <svg class="accordion-chevron" width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M0.5 0.5L4 3.5L7.5 0.5"/></svg>
+    </div>
+    <div class="accordion-body">
+        <div class="accordion-inner">
+            <p class="section-desc" data-ci-narrative>All important contact details for this person are stored here in one organised place.</p>
+            <div class="ci-body" data-ci-body>
+                <!-- E-mails section — populated by populateContactInfo() -->
+                <div class="ci-section" id="ci-emails" data-ci-emails></div>
+                <!-- Phones section -->
+                <div class="ci-section" id="ci-phones" data-ci-phones></div>
+                <!-- Address section -->
+                <div class="ci-section" id="ci-address" data-ci-address></div>
+                <!-- Social Media section (optional) -->
+                <div class="ci-section" id="ci-socials" data-ci-socials></div>
+            </div>
+        </div>
+    </div>
+</div>

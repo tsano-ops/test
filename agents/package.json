@@ -1,0 +1,18 @@
+{
+  "name": "@planafter/agents",
+  "version": "1.0.0",
+  "description": "PlanAfter multi-agent AI team",
+  "type": "module",
+  "scripts": {
+    "start": "npx tsx index.ts",
+    "dev": "npx tsx --watch index.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.0.0"
+  }
+}

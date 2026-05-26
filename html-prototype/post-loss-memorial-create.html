@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Memorial Page — PlanAfter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="_shared.css?v=20260518fr110">
+    <style>
+        /* Override ei-save-btn-wrap widths for longer labels */
+        /* "Continue" = ~72px text + 10px dash + 60px circle = ~152px */
+        .flow-next.ei-save-btn-wrap { width: 152px !important; }
+        .flow-next.ei-save-btn-wrap::before { width: 152px !important; }
+        .flow-next.ei-save-btn-wrap:hover::before,
+        .flow-next.ei-save-btn-wrap:active::before,
+        .flow-next.ei-save-btn-wrap.touching::before { left: -30px !important; width: 182px !important; }
+        .flow-next .ei-save-btn-dash { left: 72px !important; }
+        .flow-next .ei-save-btn-circle { left: 92px !important; }
+
+        /* Memorial Wizard custom button widths */
+        /* "Open Memorial" on Step 6 — 180px */
+        #mwStep6 .ei-save-btn-wrap { width: 200px !important; }
+        #mwStep6 .ei-save-btn-wrap::before { width: 200px !important; }
+        #mwStep6 .ei-save-btn-wrap:hover::before,
+        #mwStep6 .ei-save-btn-wrap:active::before,
+        #mwStep6 .ei-save-btn-wrap.touching::before { left: -30px !important; width: 230px !important; }
+        #mwStep6 .ei-save-btn-label { font-weight: 600 !important; }
+        #mwStep6 .ei-save-btn-dash { left: 120px !important; }
+        #mwStep6 .ei-save-btn-circle { left: 140px !important; }
+
+        /* "Done" on Step 7 — 110px */
+        #mwStep7 .ei-save-btn-wrap { width: 116px !important; }
+        #mwStep7 .ei-save-btn-wrap::before { width: 116px !important; }
+        #mwStep7 .ei-save-btn-wrap:hover::before,
+        #mwStep7 .ei-save-btn-wrap:active::before,
+        #mwStep7 .ei-save-btn-wrap.touching::before { left: -30px !important; width: 146px !important; }
+        #mwStep7 .ei-save-btn-dash { left: 36px !important; }
+        #mwStep7 .ei-save-btn-circle { left: 56px !important; }
+
+        /* ===== STEP TITLES — Source Serif 4 per design system ===== */
+        .mw-step-eyebrow {
+            font: normal normal 400 12px/15px 'Inter', sans-serif;
+            color: #000; opacity: 0.33; margin-bottom: 24px;
+        }
+        .mw-step-title {
+            font: normal normal 600 24px/30px 'Source Serif 4', serif;
+            color: #000;
+        }
+        .mw-step-sub {
+            font: normal normal 400 14px/20px 'Inter', sans-serif;
+            color: #000; opacity: 0.6; margin-top: 8px;
+        }
+
+        /* ===== CANONICAL 3-FIELD DOB PICKER (Year/Month/Day, 400px) ===== */
+        .mw-dob-row { display: flex; gap: 20px; align-items: center; margin-top: 24px; }
+        .mw-dob-field { position: relative; flex-shrink: 0; }
+        .mw-dob-field.mw-dob-year  { width: 113px; }
+        .mw-dob-field.mw-dob-month { width: 149px; }
+        .mw-dob-field.mw-dob-day   { width: 98px; }
+        .mw-dob-trigger {
+            height: 60px; padding: 0 30px 0 20px; box-sizing: border-box;
+            display: flex; align-items: center; justify-content: space-between;
+            border: 1.5px solid rgba(0,0,0,0.14); border-radius: 30px;
+            background: transparent; cursor: pointer; user-select: none;
+            transition: border-color 0.2s ease-out;
+        }
+        .mw-dob-trigger:hover, .mw-dob-trigger.open { border-color: #000; }
+        .mw-dob-val { font: normal normal 600 16px/24px 'Inter', sans-serif; color: #000; white-space: nowrap; }
+        .mw-dob-val.placeholder { color: rgba(0,0,0,0.4); }
+        .mw-dob-chev {
+            width: 8px; height: 4px; display: inline-block;
+            background: url('img/drop-arrow.png') no-repeat center / contain;
+            transition: background-image 0.3s ease-out;
+        }
+        .mw-dob-trigger.open .mw-dob-chev { background-image: url('img/drop-arrow-active.png'); }
+        .mw-dob-dropdown {
+            position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+            max-height: 260px; overflow-y: auto;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0,0,0,0.06); border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            padding: 8px 0; z-index: 100; display: none;
+        }
+        .mw-dob-dropdown.open { display: block; }
+        .mw-dob-dropdown::-webkit-scrollbar { width: 4px; background: transparent; }
+        .mw-dob-dropdown::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 2px; }
+        .mw-dob-option {
+            padding: 8px 20px; cursor: pointer;
+            font: normal normal 400 16px/24px 'Inter', sans-serif; color: #000;
+            transition: font-weight 0.15s ease-out;
+        }
+        .mw-dob-option:hover, .mw-dob-option.selected { font-weight: 600; }
+
+        /* ===== CANONICAL TEXT INPUT (border-bottom pill, 400px) ===== */
+        .mw-field { margin-top: 24px; position: relative; }
+        .mw-input-wrap {
+            display: flex; align-items: center;
+            padding: 12px 20px;
+            border: 1.5px solid rgba(0,0,0,0.14); border-radius: 30px;
+            transition: border-color 0.2s ease-out;
+            background: transparent;
+        }
+        .mw-input-wrap:hover, .mw-input-wrap:focus-within { border-color: #000; }
+        .mw-input {
+            flex: 1; border: none; background: transparent; outline: none;
+            font: normal normal 600 16px/24px 'Inter', sans-serif;
+            color: #000; padding: 0; min-width: 0;
+        }
+        .mw-input::placeholder {
+            font: normal normal 600 16px/24px 'Inter', sans-serif;
+            color: rgba(0,0,0,0.4);
+        }
+        .mw-label {
+            font: normal normal 400 12px/15px 'Inter', sans-serif;
+            color: #000; opacity: 0.5;
+            padding-left: 20px; margin-top: 4px; display: block;
+        }
+        .mw-row-2col { display: flex; gap: 20px; }
+        .mw-row-2col .mw-field { flex: 1; margin-top: 24px; }
+
+        /* ===== RADIO CARDS (Visibility / Privacy / What happened) ===== */
+        .mw-radio-card {
+            padding: 18px 24px; border-radius: 20px;
+            border: 1.5px solid rgba(0,0,0,0.08);
+            margin-top: 12px; cursor: pointer;
+            transition: border-color 0.2s ease-out, background 0.2s ease-out;
+            display: flex; align-items: flex-start; gap: 14px;
+        }
+        .mw-radio-card:hover { border-color: rgba(0,0,0,0.4); }
+        .mw-radio-card.selected { border-color: #61C553; background: rgba(97,197,83,0.04); }
+        .mw-radio-card.locked { opacity: 0.5; cursor: not-allowed; }
+        .mw-radio-card.locked:hover { border-color: rgba(0,0,0,0.08); }
+        .mw-radio-card-content { flex: 1; min-width: 0; }
+        .mw-radio-card-title {
+            font: normal normal 600 14px/17px 'Inter', sans-serif; color: #000;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .mw-radio-card-desc {
+            font: normal normal 400 13px/18px 'Inter', sans-serif;
+            color: #000; opacity: 0.55; margin-top: 4px;
+        }
+        .mw-radio-dot {
+            width: 18px; height: 18px; border-radius: 50%;
+            border: 1.5px solid rgba(0,0,0,0.2); flex-shrink: 0;
+            margin-top: 1px; box-sizing: border-box;
+            transition: border-color 0.2s ease-out, background 0.2s ease-out;
+            position: relative;
+        }
+        .mw-radio-card.selected .mw-radio-dot {
+            border-color: #61C553;
+        }
+        .mw-radio-card.selected .mw-radio-dot::after {
+            content: ''; position: absolute; inset: 3px;
+            border-radius: 50%; background: #61C553;
+        }
+        .mw-radio-card.premium-locked .mw-radio-dot { border-color: rgba(0,0,0,0.1); }
+        .mw-premium-pill {
+            display: inline-block; padding: 2px 10px; border-radius: 10px;
+            background: linear-gradient(135deg, #FFB54D, #FF9500);
+            color: #FFF; font: normal normal 600 10px/14px 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+        }
+        .mw-basic-pill {
+            display: inline-block; padding: 2px 10px; border-radius: 10px;
+            background: rgba(0,0,0,0.06); color: #000;
+            font: normal normal 600 10px/14px 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== PLAN COMPARISON (Step 3) ===== */
+        .mw-plan-grid { display: flex; gap: 16px; margin-top: 24px; }
+        .mw-plan-card {
+            flex: 1; padding: 24px;
+            border-radius: 24px; border: 1.5px solid rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.4);
+            cursor: pointer; transition: border-color 0.2s ease-out;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .mw-plan-card:hover { border-color: rgba(0,0,0,0.3); }
+        .mw-plan-card.current {
+            border-color: #61C553; background: rgba(97,197,83,0.04);
+        }
+        .mw-plan-card.recommended {
+            border-color: #FF9500; background: linear-gradient(180deg, rgba(255,149,0,0.04), rgba(255,149,0,0));
+        }
+        .mw-plan-header { display: flex; align-items: center; justify-content: space-between; }
+        .mw-plan-name {
+            font: normal normal 600 18px/22px 'Source Serif 4', serif; color: #000;
+        }
+        .mw-plan-price {
+            font: normal normal 400 13px/18px 'Inter', sans-serif; color: #000; opacity: 0.6;
+        }
+        .mw-plan-features { list-style: none; padding: 0; margin: 0; }
+        .mw-plan-features li {
+            padding: 6px 0; display: flex; gap: 8px; align-items: flex-start;
+            font: normal normal 400 13px/20px 'Inter', sans-serif; color: #000;
+        }
+        .mw-plan-features li::before {
+            content: ''; flex-shrink: 0; width: 6px; height: 6px;
+            border-radius: 50%; background: #61C553;
+            margin-top: 7px;
+        }
+        .mw-plan-features li.unavailable::before { background: rgba(0,0,0,0.15); }
+        .mw-plan-features li.unavailable { opacity: 0.45; }
+
+        /* ===== SUBDOMAIN INPUT (Step 4) ===== */
+        .mw-subdomain-wrap {
+            display: flex; align-items: center;
+            margin-top: 14px; padding: 12px 20px;
+            border: 1.5px solid rgba(0,0,0,0.14); border-radius: 30px;
+            background: rgba(255,255,255,0.4);
+        }
+        .mw-subdomain-prefix {
+            font: normal normal 400 14px/20px 'Inter', sans-serif;
+            color: #000; opacity: 0.5;
+        }
+        .mw-subdomain-input {
+            flex: 0 1 auto; min-width: 0; border: none; background: transparent; outline: none;
+            font: normal normal 600 14px/20px 'Inter', sans-serif;
+            color: #000; padding: 0 4px;
+        }
+        .mw-subdomain-suffix {
+            font: normal normal 400 14px/20px 'Inter', sans-serif;
+            color: #000; opacity: 0.5; flex-shrink: 0;
+        }
+        .mw-subdomain-status {
+            font: normal normal 400 12px/15px 'Inter', sans-serif;
+            margin-top: 6px; padding-left: 20px;
+        }
+        .mw-subdomain-status.available { color: #61C553; }
+        .mw-subdomain-status.taken { color: #FF2C55; }
+        .mw-subdomain-status.checking { color: rgba(0,0,0,0.5); }
+
+        /* ===== TERMS CHECKBOX ===== */
+        .mw-terms {
+            margin-top: 24px; display: flex; gap: 10px; align-items: flex-start;
+            cursor: pointer; user-select: none;
+        }
+        .mw-terms-box {
+            width: 18px; height: 18px; border-radius: 4px;
+            border: 1.5px solid rgba(0,0,0,0.2); flex-shrink: 0;
+            transition: background 0.2s, border-color 0.2s;
+            position: relative;
+        }
+        .mw-terms.checked .mw-terms-box {
+            background: #61C553; border-color: #61C553;
+        }
+        .mw-terms.checked .mw-terms-box::after {
+            content: '\2713'; position: absolute;
+            left: 50%; top: 50%; transform: translate(-50%, -50%);
+            color: #FFF; font-size: 12px; font-weight: 700;
+        }
+        .mw-terms-label {
+            font: normal normal 400 13px/18px 'Inter', sans-serif; color: #000; opacity: 0.7;
+        }
+        .mw-terms-label a { color: #000; text-decoration: underline; }
+
+        /* ===== THEME PICKER (Step 5) ===== */
+        .mw-theme-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 14px; margin-top: 24px;
+        }
+        .mw-theme-card {
+            position: relative; cursor: pointer;
+            border-radius: 20px; overflow: hidden;
+            border: 2px solid transparent;
+            transition: border-color 0.2s ease-out, transform 0.2s ease-out;
+            aspect-ratio: 4/3;
+        }
+        .mw-theme-card:hover { transform: translateY(-2px); }
+        .mw-theme-card.selected { border-color: #61C553; }
+        .mw-theme-card.locked {
+            opacity: 0.55; cursor: not-allowed;
+        }
+        .mw-theme-card.locked:hover { transform: none; }
+        .mw-theme-preview {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 16px;
+        }
+        .mw-theme-preview-circle {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(0,0,0,0.08);
+            margin-bottom: 8px;
+        }
+        .mw-theme-preview-name {
+            font: normal normal 600 12px/15px 'Source Serif 4', serif;
+            text-align: center;
+        }
+        .mw-theme-preview-dates {
+            font: normal normal 400 10px/13px 'Inter', sans-serif;
+            opacity: 0.5; margin-top: 2px;
+        }
+        .mw-theme-name {
+            position: absolute; bottom: 8px; left: 12px;
+            font: normal normal 600 13px/16px 'Inter', sans-serif;
+            color: #000; padding: 4px 10px;
+            border-radius: 12px; background: rgba(255,255,255,0.85);
+        }
+        .mw-theme-lock {
+            position: absolute; top: 8px; right: 8px;
+            width: 24px; height: 24px; border-radius: 12px;
+            background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center;
+            color: #FFF;
+        }
+        /* Theme variants */
+        .mw-theme-classic   { background: linear-gradient(135deg, #F8F5F0 0%, #ECE6DC 100%); color: #2C2825; }
+        .mw-theme-warm      { background: linear-gradient(135deg, #FFE8D9 0%, #F4C29C 100%); color: #4A3728; }
+        .mw-theme-modern    { background: linear-gradient(135deg, #2C3E50 0%, #1A2530 100%); color: #FFF; }
+        .mw-theme-nature    { background: linear-gradient(135deg, #E0F0DE 0%, #B0D6AC 100%); color: #2B4A28; }
+        .mw-theme-night     { background: linear-gradient(135deg, #1A1F36 0%, #0A0E1E 100%); color: #E8E6F0; }
+        .mw-theme-cherry    { background: linear-gradient(135deg, #FFE0E8 0%, #FFB8C8 100%); color: #6E2A40; }
+        .mw-theme-mountain  { background: linear-gradient(135deg, #D8DEE9 0%, #4C566A 100%); color: #FFF; }
+        .mw-theme-candle    { background: linear-gradient(135deg, #FFF4E0 0%, #FFD89E 100%); color: #5C3D18; }
+        .mw-theme-child     { background: linear-gradient(135deg, #FFF8E0 0%, #FFE082 100%); color: #5A4520; }
+        .mw-theme-veteran   { background: linear-gradient(135deg, #C8D6E5 0%, #6E89A8 100%); color: #1A2A40; }
+        .mw-theme-modern .mw-theme-preview-circle,
+        .mw-theme-night .mw-theme-preview-circle,
+        .mw-theme-mountain .mw-theme-preview-circle,
+        .mw-theme-veteran .mw-theme-preview-circle { background: rgba(255,255,255,0.15); }
+
+        /* ===== READY STATE SUMMARY (Step 6) ===== */
+        .mw-ready-summary {
+            margin-top: 24px;
+            background: rgba(97,197,83,0.05);
+            border: 1px solid rgba(97,197,83,0.3);
+            border-radius: 20px; padding: 20px;
+        }
+        .mw-ready-row { display: flex; align-items: flex-start; gap: 12px; padding: 6px 0; }
+        .mw-ready-icon {
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #61C553; flex-shrink: 0; margin-top: 2px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .mw-ready-icon svg { width: 10px; height: 10px; color: #FFF; }
+        .mw-ready-label {
+            font: normal normal 400 13px/20px 'Inter', sans-serif; color: #000;
+        }
+        .mw-ready-label strong {
+            font: normal normal 600 13px/20px 'Inter', sans-serif;
+        }
+
+        /* ===== ONBOARDING TILES (Step 7) ===== */
+        .mw-onboard-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 14px; margin-top: 24px;
+        }
+        .mw-onboard-tile {
+            padding: 18px; border-radius: 18px;
+            background: rgba(255,255,255,0.5);
+            border: 1px solid rgba(0,0,0,0.06);
+            cursor: pointer; transition: border-color 0.2s, transform 0.2s;
+        }
+        .mw-onboard-tile:hover {
+            border-color: rgba(0,0,0,0.18); transform: translateY(-2px);
+        }
+        .mw-onboard-icon {
+            width: 36px; height: 36px; border-radius: 18px;
+            background: rgba(0,0,0,0.05); margin-bottom: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .mw-onboard-title {
+            font: normal normal 600 14px/18px 'Inter', sans-serif; color: #000;
+        }
+        .mw-onboard-desc {
+            font: normal normal 400 12px/16px 'Inter', sans-serif;
+            color: #000; opacity: 0.55; margin-top: 4px;
+        }
+        .mw-skip {
+            text-align: center; padding: 14px 0 0;
+            font: normal normal 400 13px/17px 'Inter', sans-serif;
+            color: #000; opacity: 0.5; cursor: pointer;
+        }
+        .mw-skip:hover { opacity: 0.85; }
+
+        /* ===== VERIFICATION GATE MODAL (Step 0) ===== */
+        .mw-verify-backdrop {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .mw-verify-backdrop.open { display: flex; }
+        .mw-verify-card {
+            width: 480px; max-width: 100%;
+            background-color: rgba(255,255,255,0.95);
+            background-image: linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0) 312px);
+            backdrop-filter: blur(20px);
+            border: 1px solid #FFFFFF; border-radius: 30px;
+            padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .mw-verify-icon {
+            width: 60px; height: 60px; border-radius: 30px;
+            background: rgba(255,149,0,0.1);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .mw-verify-icon svg { width: 28px; height: 28px; color: #FF9500; }
+        .mw-verify-title {
+            font: normal normal 600 22px/28px 'Source Serif 4', serif;
+            color: #000; margin-bottom: 8px;
+        }
+        .mw-verify-body {
+            font: normal normal 400 14px/22px 'Inter', sans-serif;
+            color: #000; opacity: 0.7; margin-bottom: 24px;
+        }
+        .mw-verify-actions { display: flex; gap: 12px; justify-content: center; }
+        .mw-verify-cancel {
+            padding: 12px 24px; border-radius: 24px;
+            background: transparent; border: 1.5px solid rgba(0,0,0,0.14);
+            font: normal normal 600 14px/17px 'Inter', sans-serif;
+            color: #000; cursor: pointer;
+            transition: border-color 0.2s ease-out;
+        }
+        .mw-verify-cancel:hover { border-color: #000; }
+        .mw-verify-primary {
+            padding: 12px 24px; border-radius: 24px;
+            background: #020B66; color: #FFF; border: 1.5px solid #020B66;
+            font: normal normal 600 14px/17px 'Inter', sans-serif;
+            cursor: pointer; transition: opacity 0.2s ease-out;
+        }
+        .mw-verify-primary:hover { opacity: 0.85; }
+
+        /* ===== DECEASED CONFIRMATION MODAL (Step 1B Outcome A) ===== */
+        .mw-deceased-card .mw-verify-icon { background: rgba(255,44,85,0.1); }
+        .mw-deceased-card .mw-verify-icon svg { color: #FF2C55; }
+    </style>
+</head>
+<body>
+    <!-- ========== BACKGROUND ========== -->
+    <div class="bg-layer"></div>
+
+    <!-- ========== HEADER ========== -->
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-col header-col-left">
+                <div class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
+                    <svg class="btn-outline" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><linearGradient id="circle-grad-ham" x1="0.189" y1="0.126" x2="0.831" y2="0.86" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.133" stop-color="#fff" stop-opacity="0"/><stop offset="0.856" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,29.008,29.008,0,0,0,41.288,3.279,28.818,28.818,0,0,0,30,1m0-1A30,30,0,1,1,0,30,30,30,0,0,1,30,0Z" fill="url(#circle-grad-ham)"/></svg>
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+                </div>
+                <div class="logo-pill" id="logoPill" onclick="goHome()">
+                    <svg class="logo-outline" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="215" height="60" viewBox="0 0 215 60"><defs><linearGradient id="logo-grad" x1="0.463" x2="0.537" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.184" stop-color="#fff" stop-opacity="0"/><stop offset="0.825" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,28.817,28.817,0,0,0,30,59H185A29.008,29.008,0,0,0,196.288,3.279,28.817,28.817,0,0,0,185,1H30m0-1H185a30,30,0,0,1,0,60H30A30,30,0,0,1,30,0Z" fill="url(#logo-grad)"/></svg>
+                    <svg class="logo-text-svg" xmlns="http://www.w3.org/2000/svg" width="155" height="20" viewBox="0 0 155 20"><path d="M-556.741-472.732a8.936,8.936,0,0,1-1.918-2.587l1.134-1.564a7.587,7.587,0,0,0,1.905,1.648,5.108,5.108,0,0,0,2.581.65,3.914,3.914,0,0,0,2.255-.674,4.737,4.737,0,0,0,1.616-1.925,6.788,6.788,0,0,0,.6-2.936,6.44,6.44,0,0,0-.543-2.744,4.5,4.5,0,0,0-1.5-1.817,3.829,3.829,0,0,0-2.2-.65,3.7,3.7,0,0,0-2.316.866,10.8,10.8,0,0,0-2.171,2.443c-.482.71-.989,1.5-1.5,2.347l-1.061,1.769a36.988,36.988,0,0,1-2.2,3.321,10.694,10.694,0,0,1-2.762,2.635,6.147,6.147,0,0,1-3.389.951,5.7,5.7,0,0,1-3.57-1.191,7.644,7.644,0,0,1-2.4-3.309,13.046,13.046,0,0,1-.844-4.886,12.674,12.674,0,0,1,.82-4.8,7.33,7.33,0,0,1,2.316-3.177,5.46,5.46,0,0,1,3.389-1.143,5.918,5.918,0,0,1,4.052,1.769,8.942,8.942,0,0,1,1.918,2.7l-1.085,1.5a8.009,8.009,0,0,0-1.978-1.733,5.107,5.107,0,0,0-2.581-.65,3.947,3.947,0,0,0-2.231.674,4.6,4.6,0,0,0-1.628,1.925,6.793,6.793,0,0,0-.6,2.936,6.476,6.476,0,0,0,.543,2.744,4.4,4.4,0,0,0,1.5,1.817,3.775,3.775,0,0,0,2.195.65,3.585,3.585,0,0,0,2.34-.891,12.358,12.358,0,0,0,2.171-2.443c.495-.71,1-1.516,1.508-2.359l1-1.661.109-.181c.711-1.155,1.435-2.226,2.147-3.189a10.615,10.615,0,0,1,2.762-2.66,6.081,6.081,0,0,1,3.377-.951,5.629,5.629,0,0,1,3.546,1.191,7.8,7.8,0,0,1,2.376,3.309v.012a13.04,13.04,0,0,1,.844,4.885,12.846,12.846,0,0,1-.82,4.826,7.241,7.241,0,0,1-2.292,3.177A5.457,5.457,0,0,1-552.677-471,5.94,5.94,0,0,1-556.741-472.732Zm45.4.289a3.1,3.1,0,0,1-1.013-2.491,3.389,3.389,0,0,1,.422-1.709,3.806,3.806,0,0,1,1.435-1.348,10.567,10.567,0,0,1,2.714-1.035c.482-.132.965-.265,1.423-.385s.941-.241,1.4-.373a1.253,1.253,0,0,0,.2-.048v-.83a4.709,4.709,0,0,0-.277-1.781,1.624,1.624,0,0,0-.82-.915,3.245,3.245,0,0,0-1.411-.265,6.476,6.476,0,0,0-1.194.108.354.354,0,0,0-.1.024l-.181,1.36a2.243,2.243,0,0,1-.543,1.492,1.538,1.538,0,0,1-1.134.457,1.534,1.534,0,0,1-1.073-.349,1.688,1.688,0,0,1-.507-.89,3.818,3.818,0,0,1,1.773-2.635,7.053,7.053,0,0,1,3.883-.963,6.428,6.428,0,0,1,2.605.457,3.307,3.307,0,0,1,1.616,1.468,5.4,5.4,0,0,1,.555,2.647v5.716a1.42,1.42,0,0,0,.229.9.826.826,0,0,0,.675.289,1.308,1.308,0,0,0,.531-.108h-.012a1.641,1.641,0,0,0,.446-.253l.458.927a3.172,3.172,0,0,1-1.085.987,3.117,3.117,0,0,1-1.568.373,2.736,2.736,0,0,1-1.99-.71,2.858,2.858,0,0,1-.76-1.588h-.3a14.025,14.025,0,0,1-1,1.167,3.867,3.867,0,0,1-1.194.855,3.911,3.911,0,0,1-1.688.325A3.7,3.7,0,0,1-511.345-472.444Zm6.054-6.077c-.579.18-1.146.361-1.713.53a4.106,4.106,0,0,0-1.363.626,2.07,2.07,0,0,0-.687.818,2.4,2.4,0,0,0-.193.987,1.794,1.794,0,0,0,.555,1.408,2.131,2.131,0,0,0,1.483.505,2.481,2.481,0,0,0,.977-.192,5.965,5.965,0,0,0,.977-.554c.157-.108.326-.229.494-.361v-3.935C-504.941-478.629-505.11-478.581-505.291-478.521Zm63.51,6.113a5.444,5.444,0,0,1-2.255-2.262,7.428,7.428,0,0,1-.784-3.526,7.612,7.612,0,0,1,.808-3.6,5.853,5.853,0,0,1,2.255-2.395,6.38,6.38,0,0,1,3.28-.854,6.063,6.063,0,0,1,2.882.65,4.589,4.589,0,0,1,1.893,1.817,5.5,5.5,0,0,1,.676,2.768,7.619,7.619,0,0,1-.048.939c-.036.277-.085.529-.133.758h-8.261a5.76,5.76,0,0,0,.507,2.214,3.776,3.776,0,0,0,1.447,1.637,3.9,3.9,0,0,0,2.1.554,4.521,4.521,0,0,0,2.1-.433v-.024a5.129,5.129,0,0,0,1.483-1.179l.929.746a7.577,7.577,0,0,1-1.278,1.552,5.064,5.064,0,0,1-1.737,1.059,6.84,6.84,0,0,1-2.4.373A7.172,7.172,0,0,1-441.781-472.408Zm1.761-10.71a3.521,3.521,0,0,0-1.073,1.625,7.419,7.419,0,0,0-.374,2.106h4.571a1.178,1.178,0,0,0,.687-.553,2.173,2.173,0,0,0,.169-.915,3.535,3.535,0,0,0-.3-1.516,2.209,2.209,0,0,0-.844-.939,2.5,2.5,0,0,0-1.315-.325A2.468,2.468,0,0,0-440.02-483.118ZM-451.948-472.5a3.444,3.444,0,0,1-.965-2.708c0-.361,0-.722.012-1.059s.012-.722.012-1.131v-5.56h-5.005v5.463c0,.6.012,1.215.012,1.829s.012,1.24.012,1.853v.289l2.267.2v1.36h-7.429v-1.36l1.869-.181v-.3c.012-.614.012-1.24.012-1.853v-7.28h-1.966v-1.42l2.062-.265a11.2,11.2,0,0,1,.386-2.106,6.316,6.316,0,0,1,.736-1.625,6.421,6.421,0,0,1,1.049-1.227,4.628,4.628,0,0,1,1.737-1.071,6.311,6.311,0,0,1,2.074-.349,4.276,4.276,0,0,1,1.954.4,1.978,1.978,0,0,1,1.049,1.251,1.513,1.513,0,0,1-.446,1.047,1.711,1.711,0,0,1-1.23.421,1.959,1.959,0,0,1-1.158-.337,4.832,4.832,0,0,1-1-.951l-.675-.782a1.678,1.678,0,0,0-.386.457,4.4,4.4,0,0,0-.482.915,5.435,5.435,0,0,0-.314,1.167,9.512,9.512,0,0,0-.145,1.564v1.24h5.5l1.013-3.634h1.906l-.217,3.634h3.28v1.673h-3.22v7.521a1.984,1.984,0,0,0,.4,1.372,1.483,1.483,0,0,0,1.122.421,2.527,2.527,0,0,0,.808-.132l.012-.012a3.86,3.86,0,0,0,.712-.337l.591,1.059a2.683,2.683,0,0,1-.736.674,4.491,4.491,0,0,1-1.134.517,5.08,5.08,0,0,1-1.483.2A3.8,3.8,0,0,1-451.948-472.5Zm20.961.578v-1.36l1.821-.168v-.193c.012-.638.012-1.288.012-1.961v-4.416c0-.361-.012-.7-.012-1.035s-.012-.674-.012-1.023l-1.966-.132v-1.24l4-1.42.772.132.289,3.43.181.024v.072h.133a7.863,7.863,0,0,1,.941-2.046,4.465,4.465,0,0,1,1.23-1.276,2.685,2.685,0,0,1,1.5-.433,2.192,2.192,0,0,1,1.387.433l-.024.024a2.035,2.035,0,0,1,.736,1.107,2.545,2.545,0,0,1-.531,1.468,1.594,1.594,0,0,1-1.327.59,2.117,2.117,0,0,1-1.049-.253,3.155,3.155,0,0,1-.808-.7l-.072-.072a5.541,5.541,0,0,0-1.158,1.035,7.7,7.7,0,0,0-.965,1.564v4.164c0,.674.012,1.324.012,1.961v.168l2.364.193v1.36Zm-58.746,0v-1.36l1.7-.168v-.193c0-.638.012-1.288.012-1.949s.012-1.276.012-1.865v-2.575a3.207,3.207,0,0,0-.482-2,1.838,1.838,0,0,0-1.508-.578,3.868,3.868,0,0,0-1.194.192,5.618,5.618,0,0,0-1.23.566,7.873,7.873,0,0,0-.7.469v3.923c0,.566,0,1.179.012,1.853s.012,1.324.012,1.961v.2l1.628.156v1.36h-6.73v-1.36l1.821-.168v-.193c.012-.638.012-1.288.012-1.961v-4.416c0-.361-.012-.7-.012-1.035s-.012-.674-.012-1.023l-1.93-.132v-1.24l3.944-1.42.772.132.314,2.419h.229a7.924,7.924,0,0,1,1.254-1.408,5.622,5.622,0,0,1,1.5-.951,4.419,4.419,0,0,1,1.761-.349,3.492,3.492,0,0,1,2.8,1.119,5.05,5.05,0,0,1,.965,3.357v3.069c0,.578.012,1.2.012,1.865s.012,1.312.012,1.949l.012.024v.193l1.749.168v1.36Zm17.4-.024v-1.492l2.376-.132-1.182-3.526h-6.006l-1.158,3.49,2.279.169v1.492h-6.018v-1.492l2.05-.156,5.439-15.523h2.738l5.524,15.572,1.93.108v1.492Zm.675-6.667-2.653-7.954-.531,2.551-1.8,5.4Zm-65.6,6.667v-1.492l2.316-.132V-487.4l-2.316-.144v-1.492h7.357a12.046,12.046,0,0,1,4.161.614h.024a5.14,5.14,0,0,1,2.436,1.769,4.716,4.716,0,0,1,.8,2.744,5.065,5.065,0,0,1-.784,2.756,5.243,5.243,0,0,1-2.5,1.925,11.911,11.911,0,0,1-4.318.686v-1.468a5.538,5.538,0,0,0,2.3-.457,2.8,2.8,0,0,0,1.351-1.336,4.711,4.711,0,0,0,.422-2.058,3.6,3.6,0,0,0-.977-2.744,4.49,4.49,0,0,0-3.148-.914h-1.266c-.012.361-.012.722-.012,1.083-.012.878-.012,1.745-.012,2.623v6.751c0,.818.012,1.661.012,2.515.012.325.012.638.012.963l2.6.144v1.492Zm16.209-.012v-1.36l1.869-.168v-.313c.012-.614.012-1.24.012-1.853V-488.22l-2.014-.385v-1.155l4.487-.951.8.132-.048,3.393v9.7c0,.6.012,1.215.012,1.829s.012,1.24.012,1.853l.012-.012v.325l1.882.168v1.36Z" transform="translate(575 491)" fill="#000"/></svg>
+                </div>
+                </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-col header-col-right">
+                <div class="utility-group">
+                    <div class="utility-btn search-btn" id="searchBtn" onclick="toggleHeaderState('search')">
+                        <svg class="btn-outline" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><linearGradient id="circle-grad-search" x1="0.189" y1="0.126" x2="0.831" y2="0.86" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.133" stop-color="#fff" stop-opacity="0"/><stop offset="0.856" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,29.008,29.008,0,0,0,41.288,3.279,28.818,28.818,0,0,0,30,1m0-1A30,30,0,1,1,0,30,30,30,0,0,1,30,0Z" fill="url(#circle-grad-search)"/></svg>
+                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="21.811" height="21.811" viewBox="0 0 21.811 21.811"><path d="M23,23l-5.774-5.774m0,0a8.333,8.333,0,1,0-11.785,0A8.333,8.333,0,0,0,17.225,17.225Z" transform="translate(-2.249 -2.249)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+                    </div>
+                    <div class="utility-btn bell-btn" id="notifBtn" onclick="toggleHeaderState('notif')">
+                        <svg class="btn-outline" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><linearGradient id="circle-grad-notif" x1="0.189" y1="0.126" x2="0.831" y2="0.86" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.133" stop-color="#fff" stop-opacity="0"/><stop offset="0.856" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,29.008,29.008,0,0,0,41.288,3.279,28.818,28.818,0,0,0,30,1m0-1A30,30,0,1,1,0,30,30,30,0,0,1,30,0Z" fill="url(#circle-grad-notif)"/></svg>
+                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M10,20a3.88,3.88,0,0,1-3.694-2.663,3.778,3.778,0,0,1-.174-1.474,25.944,25.944,0,0,1-5.053-1.28.749.749,0,0,1-.3-1.211A8.385,8.385,0,0,0,3,7.689V6.917A7,7,0,0,1,17,6.917v.771a8.385,8.385,0,0,0,2.211,5.684.75.75,0,0,1-.3,1.211,25.925,25.925,0,0,1-5.051,1.28,3.769,3.769,0,0,1-.412,2.042,3.839,3.839,0,0,1-2.274,1.913A3.917,3.917,0,0,1,10,20M7.626,16.042a2.285,2.285,0,0,0,.11.833,2.388,2.388,0,0,0,2.991,1.512,2.349,2.349,0,0,0,1.394-1.168,2.3,2.3,0,0,0,.253-1.177,26.7,26.7,0,0,1-4.748,0m-.5-1.561a24.93,24.93,0,0,0,5.753,0l.03,0a24.445,24.445,0,0,0,4.491-.963A9.861,9.861,0,0,1,15.5,7.688V6.917a5.5,5.5,0,0,0-11.006,0v.771A9.862,9.862,0,0,1,2.6,13.515a24.437,24.437,0,0,0,4.492.963.259.259,0,0,1,.029,0M19.249,6.125a.749.749,0,0,1-.738-.623,8.412,8.412,0,0,0-2.075-4.248A.75.75,0,1,1,17.545.245a9.9,9.9,0,0,1,2.444,5,.751.751,0,0,1-.613.866.785.785,0,0,1-.127.01m-18.5,0a.785.785,0,0,1-.127-.01.751.751,0,0,1-.613-.866,9.9,9.9,0,0,1,2.444-5A.75.75,0,1,1,3.564,1.254,8.412,8.412,0,0,0,1.489,5.5a.749.749,0,0,1-.738.623" fill="#000"/></svg>
+                        <div class="notif-dot"></div>
+                    </div>
+                    <div class="avatar-btn" id="profileBtn" onclick="toggleProfileDropdown(event)">
+                        <div class="avatar-photo-inner" style="overflow:hidden;border-radius:50%;">
+                            <img id="headerAvatarImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                            <span class="initials" id="headerInitials">SJ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PROFILE DROPDOWN BACKDROP ========== -->
+    <div class="profile-dropdown-backdrop" id="profileDropdownBackdrop" onclick="closeProfileDropdown()"></div>
+
+    <!-- ========== PROFILE DROPDOWN (fixed, overlays 4th column) ========== -->
+    <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-dropdown-header">
+            <div class="profile-dropdown-name">Sarah Johnson</div>
+            <div class="profile-dropdown-email">sarah.johnson@email.com</div>
+        </div>
+        <div class="profile-dropdown-section section-primary">
+            <div class="profile-dropdown-item" onclick="navigateTo('profile'); closeProfileDropdown()">
+                <span>My Profile</span>
+                <svg class="dd-icon" width="16" height="20" viewBox="0 0 16 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="4"/><path d="M1 19c0-3.866 3.134-7 7-7s7 3.134 7 7"/></svg>
+            </div>
+            <div class="profile-dropdown-item"><span>Settings</span></div>
+            <div class="profile-dropdown-item"><span>Privacy & Security</span></div>
+            <div class="profile-dropdown-item"><span>Plan Overview</span></div>
+            <div class="profile-dropdown-item"><span>Billing & Subscription</span></div>
+        </div>
+        <div class="profile-dropdown-section section-secondary">
+            <div class="profile-dropdown-item"><span>Help & Support</span></div>
+            <div class="profile-dropdown-item"><span>Terms & Privacy</span></div>
+        </div>
+        <div class="profile-dropdown-section section-logout">
+            <div class="profile-dropdown-item"><span>Log Out</span></div>
+        </div>
+    </div>
+
+    <!-- ========== NOTIFICATION BACKDROP ========== -->
+    <div class="notif-backdrop" id="notifBackdrop" onclick="closeNotifications()"></div>
+
+    <!-- ========== NOTIFICATION PANEL ========== -->
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <div class="notif-badge" id="notifBadgeCount">3</div>
+            <div class="notif-panel-title">Notifications</div>
+        </div>
+        <div class="notif-actions">
+            <button class="notif-action-btn" onclick="markAllRead()">Mark All as Read</button>
+            <button class="notif-action-btn" onclick="clearAllNotifs()">Clear All</button>
+        </div>
+        <div class="notif-list" id="notifList">
+            <div class="notif-item priority-info" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority info">INFO</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">Just Now</span>
+                </div>
+                <div class="notif-item-title">Care Plan Flow Started</div>
+                <div class="notif-item-desc">You have started creating your personalized care plan.</div>
+            </div>
+        </div>
+        <div class="notif-footer">
+            <div class="notif-footer-line"></div>
+            <div class="notif-footer-label">View All Notifications</div>
+        </div>
+    </div>
+
+    <!-- ========== SIDEBAR BACKDROP (mobile/tablet) ========== -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+    <!-- ========== SIDEBAR (Fixed Col 1) ========== -->
+    <button class="rp-toggle" id="rpToggle" onclick="toggleRightPanel()">
+        <div class="rp-toggle-ring" style="--pct:34"></div>
+        <div><div class="rp-toggle-pct">34%</div><div class="rp-toggle-label">Progress</div></div>
+    </button>
+    <div class="rp-backdrop" id="rpBackdrop" onclick="toggleRightPanel()"></div>
+
+    <aside class="sidebar-fixed">
+        <div id="sidebar-default">
+            <div class="sidebar-photo sidebar-surface" onclick="handlePhotoClick(event)">
+                <input type="file" id="photoUpload" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+                <img id="sidebarPhotoImg" src="" alt="" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:5;will-change:object-position,transform;border-radius:30px 30px 0 0;">
+                <div class="doc-menu photo-doc-menu" id="photoDots" onclick="event.stopPropagation();toggleDD(this)">
+                    <div class="doc-menu-dots"><span></span><span></span><span></span></div>
+                    <div class="doc-dropdown">
+                        <div class="doc-dropdown-trigger-row">
+                            <div class="doc-menu-inner"><div class="doc-menu-dots"><span></span><span></span><span></span></div></div>
+                        </div>
+                        <div class="dd-row dd-row-edit" onclick="event.stopPropagation();changePhoto()"><span class="dd-row-label">Change Photo</span><div class="dd-row-icon"><svg viewBox="0 0 20 18" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 1.5l2 2L5 15H3v-2L14.5 1.5z"/></svg></div></div>
+                        <div class="dd-row" onclick="event.stopPropagation();startReposition()"><span class="dd-row-label">Reposition</span><div class="dd-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg></div></div>
+                        <div class="dd-row" onclick="event.stopPropagation();deletePhoto()"><span class="dd-row-label">Delete Photo</span><div class="dd-row-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 19.722 21.5"><path d="M15.739,9.173,15.362,18.4m-5.223,0L9.761,9.173M20.635,5.881c.373.053.744.11,1.115.17m-1.115-.169L19.47,20.119a2.4,2.4,0,0,1-2.448,2.13H8.478a2.4,2.4,0,0,1-2.448-2.13L4.865,5.881m15.77,0q-1.889-.268-3.794-.407M3.75,6.05c.371-.061.742-.117,1.115-.169m0,0q1.889-.268,3.794-.407m8.182,0V4.534a2.3,2.3,0,0,0-2.28-2.257q-1.81-.054-3.622,0a2.3,2.3,0,0,0-2.28,2.257v.939m8.182,0a56.462,56.462,0,0,0-8.182,0" transform="translate(-2.889 -1.499)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div></div>
+                    </div>
+                </div>
+                <div class="reposition-bar" id="repoBar">
+                    <span style="color:#FFF;font-size:11px;font-family:'Inter',sans-serif;">−</span>
+                    <input type="range" class="zoom-slider" id="zoomSlider" min="100" max="300" value="100" oninput="onZoomChange(this.value)" onclick="event.stopPropagation()">
+                    <span style="color:#FFF;font-size:11px;font-family:'Inter',sans-serif;">+</span>
+                    <button class="repo-save" onclick="event.stopPropagation();saveReposition()">Save</button>
+                    <button class="repo-cancel" onclick="event.stopPropagation();cancelReposition()">Cancel</button>
+                </div>
+                <div class="photo-overlay" id="photoOverlay"></div>
+                <p class="placeholder-text" id="photoPlaceholder">Add or Change Your Poster Image</p>
+                <div class="add-circle-bg" id="photoCircleBg"></div>
+                <div class="add-circle" id="photoAddCircle">
+                    <div class="add-inner">
+                        <svg viewBox="0 0 50 50" fill="none">
+                            <line x1="25" y1="10" x2="25" y2="40"/>
+                            <line x1="10" y1="25" x2="40" y2="25"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="identity-strip">
+                <div class="identity-avatar-mobile"><img id="identityAvatarImg" src="https://i.pravatar.cc/200?img=47" alt=""><span class="identity-initials" id="identityInitials" style="display:none;">SJ</span></div>
+                <div class="identity-text-wrap">
+                    <div class="identity-name">Sarah Johnson</div>
+                    <div class="identity-role">Plan Owner</div>
+                </div>
+            </div>
+            </div>
+            <div class="plan-strip plan-sponsored" onclick="alert('Take Over Plan')">
+                <div class="plan-strip-bg"></div>
+                <div class="plan-strip-sponsored-left">
+                    <span class="plan-strip-covered">Covered By</span>
+                    <span class="plan-strip-sponsor">Allianz Insurance</span>
+                    <span class="plan-strip-plan-type">Individual Essentials</span>
+                </div>
+                <button class="plan-strip-btn">Take Over</button>
+            </div>
+        </div>
+        <div id="sidebar-category" style="display:none;">
+            <div class="directory-card" id="dir-support" style="display:none;">
+                <div class="dir-top">
+                    <div class="dir-title">Post-Loss Support</div>
+                    <div class="dir-progress-row">
+                        <span class="dir-progress-label">Your Progress</span>
+                        <span class="dir-progress-value">34%</span>
+                    </div>
+                    <div class="dir-bar"><div class="dir-bar-fill" style="width:34%;background:#657EEA;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(101,126,234,0.5)"></div></div>
+                    <span class="dir-complete">Complete</span>
+                </div>
+                <div class="dir-learn" style="background:#A391B9;">
+                    <div class="learn-bar"></div>
+                    <div class="learn-circle"><div class="learn-circle-bg"></div><div class="learn-icon"><svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div></div>
+                    <span class="learn-text">Learn & Understand</span>
+                </div>
+            </div>
+        </div>
+        <div class="menu-section sidebar-surface no-scrollbar">
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'me-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 21.502 19.5"><path d="M15.326,19.128a9.885,9.885,0,0,0,6.919-.58,4.131,4.131,0,0,0-2.9-4.09,4.289,4.289,0,0,0-4.828,1.6m.807,3.073v0a6.224,6.224,0,0,0-.806-3.07m.806,3.073v.106a12.986,12.986,0,0,1-13.076,0v-.109a6.406,6.406,0,0,1,4.913-6.178,6.6,6.6,0,0,1,7.357,3.108m-2.27-9.68a3.463,3.463,0,0,1-6.923,0,3.463,3.463,0,0,1,6.923,0Zm8.461,2.25A2.693,2.693,0,1,1,18.019,6,2.659,2.659,0,0,1,20.711,8.625Z" transform="translate(-1.499 -2.25)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">Me, Family & Network</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="me-sub">
+                    <div class="module-row" onclick="navigateTo('profile')"><div class="dot" style="color:#000"></div><span class="mod-label">My Profile</span></div>
+                    <div class="module-row" onclick="navigateTo(&apos;family&apos;)"><div class="dot" style="color:#000"></div><span class="mod-label">My Family</span></div>
+                    <div class="module-row" onclick="navigateTo(&apos;network&apos;)"><div class="dot" style="color:#000"></div><span class="mod-label">My Network</span></div>
+                </div>
+            </div>
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'plan-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 17.5 21.5"><path d="M20.5,14.558V11.865A3.533,3.533,0,0,0,16.9,8.4H15.3A1.178,1.178,0,0,1,14.1,7.25V5.712A3.533,3.533,0,0,0,10.5,2.25h-2m0,13.077h8M8.5,18.4h4M10.9,2.25H5.7A1.178,1.178,0,0,0,4.5,3.4V21.1A1.178,1.178,0,0,0,5.7,22.25H19.3A1.178,1.178,0,0,0,20.5,21.1V11.481A9.421,9.421,0,0,0,10.9,2.25Z" transform="translate(-3.75 -1.5)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">My Plan</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="plan-sub">
+                    <div class="module-row" style="color:#BC8D53" onclick="switchSidebarCategory('assets')"><div class="dot"></div><span class="mod-label">Assets & Liabilities</span></div>
+                    <div class="module-row" style="color:#D75C5C" onclick="switchSidebarCategory('legacy')"><div class="dot"></div><span class="mod-label">Emotional Legacy</span></div>
+                    <div class="module-row" style="color:#3E8B70" onclick="switchSidebarCategory('health')"><div class="dot"></div><span class="mod-label">Body & Health</span></div>
+                    <div class="module-row" style="color:#826B96" onclick="switchSidebarCategory('goals')"><div class="dot"></div><span class="mod-label">Goals & Aspirations</span></div>
+                    <div class="module-row" style="color:#B62818" onclick="switchSidebarCategory('will')"><div class="dot"></div><span class="mod-label">Will & Legal Actions</span></div>
+                </div>
+            </div>
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'support-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 21.5 19.5"><path d="M23,8.659A5.066,5.066,0,0,0,17.791,3.75,5.224,5.224,0,0,0,13,6.731,5.225,5.225,0,0,0,8.208,3.75,5.066,5.066,0,0,0,3,8.659C3,16.535,13,21.75,13,21.75S23,16.535,23,8.659Z" transform="translate(-2.25 -3)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">Post-Loss Support</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="support-sub">
+                    <div class="module-row" onclick="window.location.href='post-loss.html'"><div class="dot" style="color:#000"></div><span class="mod-label">Personalized Plan</span></div>
+                    <div class="module-row" style="color:#BC8D53" onclick="window.location.href='post-loss-directory.html?cat=practical'"><div class="dot"></div><span class="mod-label">Practical Support</span></div>
+                    <div class="module-row" style="color:#D75C5C" onclick="window.location.href='post-loss-directory.html?cat=emotional'"><div class="dot"></div><span class="mod-label">Emotional Support</span></div>
+                    <div class="module-row" onclick="window.location.href='post-loss-obituary.html'"><div class="dot" style="color:#000"></div><span class="mod-label">Obituary</span></div>
+                    <div class="module-row" onclick="window.location.href='post-loss-memorial.html'"><div class="dot" style="color:#000"></div><span class="mod-label">Memorial Page</span></div>
+                </div>
+            </div>
+            <button class="nav-item"><div class="circle-bg"></div><div class="active-bar"></div>
+                <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 17.5 21.5"><path d="M17.3,10.712V6.865A4.71,4.71,0,0,0,12.5,2.25,4.71,4.71,0,0,0,7.7,6.865v3.846M6.9,22.25H18.1a2.355,2.355,0,0,0,2.4-2.308V13.019a2.355,2.355,0,0,0-2.4-2.308H6.9a2.355,2.355,0,0,0-2.4,2.308v6.923A2.355,2.355,0,0,0,6.9,22.25Z" transform="translate(-3.75 -1.5)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                <span class="nav-label">Vault</span>
+            </button>
+            <button class="nav-item"><div class="circle-bg"></div><div class="active-bar"></div>
+                <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21.5 21.5"><path d="M9.667,13.833l2.5,2.5L16.333,10.5M23,13A10,10,0,1,1,13,3,10,10,0,0,1,23,13Z" transform="translate(-2.25 -2.25)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                <span class="nav-label">Tasks & Reminders</span>
+            </button>
+            <button class="nav-item"><div class="circle-bg"></div><div class="active-bar"></div>
+                <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 19.503 21.5"><path d="M15.927,10.712V6.1a3.8,3.8,0,1,0-7.6,0v4.615M19.837,8.667l1.281,12.308a1.148,1.148,0,0,1-1.135,1.275H4.266a1.135,1.135,0,0,1-.849-.381,1.162,1.162,0,0,1-.287-.893L4.412,8.667A1.146,1.146,0,0,1,5.546,7.635H18.7A1.146,1.146,0,0,1,19.837,8.667ZM8.7,10.712a.38.38,0,1,1-.38-.385A.382.382,0,0,1,8.7,10.712Zm7.6,0a.38.38,0,1,1-.38-.385A.382.382,0,0,1,16.307,10.712Z" transform="translate(-2.372 -1.5)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                <span class="nav-label">Marketplace</span>
+            </button>
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'shared-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 21.5 15.5"><path d="M2.25,7.167A1.161,1.161,0,0,1,3.4,6H9.558a1.161,1.161,0,0,1,1.154,1.167v3.889a1.161,1.161,0,0,1-1.154,1.167H3.4A1.16,1.16,0,0,1,2.25,11.056ZM14.558,8.722a1.161,1.161,0,0,1,1.154-1.167H21.1A1.161,1.161,0,0,1,22.25,8.722v8.556A1.161,1.161,0,0,1,21.1,18.444H15.712a1.16,1.16,0,0,1-1.154-1.167ZM3.788,16.5a1.161,1.161,0,0,1,1.154-1.167h5.385A1.161,1.161,0,0,1,11.481,16.5v2.333A1.161,1.161,0,0,1,10.327,20H4.942a1.16,1.16,0,0,1-1.154-1.167Z" transform="translate(-1.5 -5.25)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">Plans Shared With Me</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="shared-sub">
+                    <div class="module-row with-avatar"><div class="dot" style="color:#000"></div><div class="avatar-initials">VM</div><span class="mod-label">Villi's Plan</span><span class="mod-subtext">You are Beneficiary</span></div>
+                    <div class="module-row with-avatar"><div class="dot" style="color:#000"></div><div class="avatar-initials">NM</div><span class="mod-label">Nadya's Plan</span><span class="mod-subtext">You are Executor</span></div>
+                    <div class="module-row with-avatar"><div class="dot" style="color:#000"></div><div class="avatar-initials">AA</div><span class="mod-label">Alexsander's Plan</span><span class="mod-subtext">You are Contributor</span></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <aside class="rightpanel-fixed" id="rightPanel">
+        <div style="display:flex;flex-direction:column;gap:10px;width:300px;">
+            <div class="progress-overview sidebar-surface">
+                <div class="progress-title">Your PlanAfter Progress</div>
+                <div class="progress-meta">
+                    <span class="progress-meta-label">Overall</span>
+                    <span class="progress-meta-value">34<span>%</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:34%;background:#000;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(0,0,0,0.4);"></div>
+                </div>
+                <button class="collapse-btn" onclick="toggleCategories()">
+                    <svg id="collapseChevron" width="8" height="4" fill="none" stroke="currentColor" viewBox="0 0 8 4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(180deg);transition:transform 0.3s ease-out"><path d="M1 0.5L4 3.5L7 0.5"/></svg>
+                </button>
+            </div>
+            <div id="categoryCards" style="display:flex;flex-direction:column;gap:5px;width:300px;max-height:calc(100vh - 350px);overflow-y:auto;transition:all 0.5s;">
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#BC8D53"><div class="cat-bg"></div><span class="cat-label">Assets & Liabilities</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:52%;background:#BC8D53;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(188,141,83,0.5)"></div></div><span class="cat-percent" style="color:#BC8D53">52%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#D75C5C"><div class="cat-bg"></div><span class="cat-label">Emotional Legacy</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:20%;background:#D75C5C;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(215,92,92,0.5)"></div></div><span class="cat-percent" style="color:#D75C5C">20%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#3E8B70"><div class="cat-bg"></div><span class="cat-label">Body & Health</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:69%;background:#3E8B70;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(62,139,112,0.5)"></div></div><span class="cat-percent" style="color:#3E8B70">69%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#826B96"><div class="cat-bg"></div><span class="cat-label">Goals & Aspirations</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:15%;background:#826B96;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(130,107,150,0.5)"></div></div><span class="cat-percent" style="color:#826B96">15%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#B62818"><div class="cat-bg"></div><span class="cat-label">Will & Legal Actions</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:10%;background:#B62818;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(182,40,24,0.5)"></div></div><span class="cat-percent" style="color:#B62818">10%</span><span class="cat-complete">Complete Now</span></div>
+            </div>
+        </div>
+        <div class="ai-card-col4" id="aiCardCol4">
+            <div class="ai-bg"></div>
+            <div class="ai-particles">
+                <div class="ai-p" style="width:2px;height:2px;top:30%;left:18%;--dur:5s;--del:0s;--mx:5px"></div>
+                <div class="ai-p" style="width:2px;height:2px;top:50%;left:60%;--dur:6s;--del:1s;--mx:-6px"></div>
+                <div class="ai-p" style="width:1.5px;height:1.5px;top:25%;left:75%;--dur:4.5s;--del:2s;--mx:4px"></div>
+                <div class="ai-p" style="width:2px;height:2px;top:45%;left:35%;--dur:7s;--del:0.5s;--mx:-5px"></div>
+                <div class="ai-p" style="width:1px;height:1px;top:60%;left:50%;--dur:5.5s;--del:1.5s;--mx:3px"></div>
+            </div>
+            <div class="ai-vignette"></div>
+            <div class="ai-header">
+                <div class="ai-title">PlanAfter AI Assistant</div>
+                <div class="ai-subtitle">Ready to help with your planning</div>
+            </div>
+            <div class="ai-chat" id="col4AiChat">
+                <div class="ai-message">
+                    <div class="ai-status-dot"></div>
+                    <div class="ai-bubble">
+                        <p>Hi <b>Sarah</b>! I'm here to help you navigate your PlanAfter journey.
+
+What would you like to know?</p>
+                    </div>
+                </div>
+                <div class="ai-typing-msg" id="col4Typing">
+                    <div class="ai-status-dot"></div>
+                    <div class="ai-typing-dots"><span></span><span></span><span></span></div>
+                </div>
+            </div>
+            <button class="ai-scroll-btn" id="col4ScrollBtn" onclick="scrollAiBottom('col4')" title="Scroll to bottom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><div class="new-dot"></div></button>
+            <div class="ai-drop-zone" id="col4Drop"><div class="ai-drop-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>Drop files here</div></div>
+            <div class="ai-input-area">
+                <input type="file" class="ai-file-input" id="col4FileInput" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" multiple onchange="handleAiFiles(event,'col4')">
+                <button class="ai-attach" title="Attach document" onclick="document.getElementById('col4FileInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><span class="ai-attach-badge" id="col4AttBadge"></span></button>
+                <div class="ai-input-composite" id="col4Composite">
+                    <div class="ai-fc-grid" id="col4FcGrid"></div>
+                    <div class="ai-fc-sep"></div>
+                    <textarea class="ai-input" id="col4AiInput" placeholder="How can I help you?" rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiMsg('col4')}" oninput="toggleSendBtn('col4');autoGrowTextarea(this)"></textarea>
+                </div>
+                <span class="ai-enter-hint">Press Enter ↵</span>
+                <button class="ai-send disabled" id="col4SendBtn" onclick="sendAiMsg('col4')"><svg xmlns="http://www.w3.org/2000/svg" width="21.5" height="21.572" viewBox="0 0 21.5 21.572"><g transform="translate(66.25 1.295)"><path d="M7.142,1.794a3.178,3.178,0,0,1,5.721,0l6.75,13.2A3.429,3.429,0,0,1,16.753,20c-2.4.039-3.286-2.351-6.662-2.351S5.66,20.012,3.253,20a3.419,3.419,0,0,1-2.86-5.006Z" transform="translate(-45.5 -0.509) rotate(90)" fill="none" stroke="#FFF" stroke-width="1.5"/><line x2="5" transform="translate(-58.5 9.494)" fill="none" stroke="#FFF" stroke-linecap="round" stroke-width="1.5"/></g></svg></button>
+            </div>
+            <div class="ai-resize"><div class="ai-resize-handle"></div></div>
+        </div>
+    </aside>
+
+    <!-- ========== SCROLLABLE MIDDLE ZONE ========== -->
+    <div class="scroll-container no-scrollbar" id="scroll-container">
+    <div class="scroll-inner">
+        <div class="col-placeholder"></div>
+        <div class="middle-col">
+            <div class="greeting-zone">
+                <h1 class="greeting-text" id="greetingText" style="font: normal normal 300 24px/33px 'Source Serif 4', serif; letter-spacing: 0px; color: #000000; opacity: 0.7; text-align: center;">Let's create their memorial page.</h1>
+            </div>
+
+            <!-- ========== MEMORIAL CREATION WIZARD ==========
+                 Per Memorial Page PRD §12 — 6 visible steps in gradient pads
+                 (PRD lists 8; Steps 0 = auth pre-check and 7 = post-publish
+                 onboarding are merged into the start/end of this flow).
+                 Pattern: canonical Glassmorphic dashboard card with the
+                 LOCKED 312px white-to-transparent gradient overlay. One
+                 step shown at a time, smooth ease-out fade between steps.
+                 2026-05-12 — Built using canonical PlanAfter design system,
+                 NOT a copy of any competitor's HTML/CSS.                ========================================================= -->
+            <div style="width:600px;max-width:100%;margin:0 auto;">
+                <div id="flowCard" style="width:100%;background-color:rgba(255,255,255,0.45);background-image:linear-gradient(180deg,#FFFFFF 0%,rgba(255,255,255,0) 312px);background-repeat:no-repeat;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid #FFFFFF;border-radius:30px;box-shadow:0px 10px 30px #00000029;padding:40px;">
+
+                    <!-- ===== STEP 1 — Who did you lose? ===== -->
+                    <div class="flow-step" id="step1" style="display:block;">
+                        <div style="font:normal normal normal 12px/15px 'Inter',sans-serif;color:#000;opacity:0.33;margin-bottom:30px;">Step <span class="current-step">1</span> of 5</div>
+                        <div style="font:normal normal 600 20px/24px 'Inter',sans-serif;color:#000;">Who did you lose?</div>
+                        <div style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;opacity:0.5;margin-top:8px;">Choose the person this support plan is for.</div>
+                        <div style="position:relative;margin-top:24px;">
+                            <select id="step1Select" onchange="onStep1Change()" style="width:100%;padding:14px 16px;border:none;border-bottom:1px solid #CCCCCC;background:transparent;font:normal normal 600 16px/24px 'Inter',sans-serif;color:#000;outline:none;appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;">
+                                <option value="" disabled selected>Select relationship...</option>
+                                <option value="partner">Partner / Spouse</option>
+                                <option value="child">Child</option>
+                                <option value="pregnancy">Pregnancy / Miscarriage</option>
+                                <option value="parent">Parent</option>
+                                <option value="sibling">Sibling / Friend / Other</option>
+                                <option value="pet">Pet</option>
+                            </select>
+                            <svg style="position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1L5 5L9 1"/></svg>
+                        </div>
+                        <div style="display:flex;justify-content:flex-end;margin-top:40px;">
+                            <div class="ei-save-btn-wrap flow-nav-btn flow-next" id="step1Next" onclick="goToStep(2)" style="margin:0;opacity:0.33;pointer-events:none;" ontouchstart="this.classList.add('touching')" ontouchend="setTimeout(()=>this.classList.remove('touching'),300)">
+                                <span class="ei-save-btn-label">Continue</span>
+                                <span class="ei-save-btn-dash"></span>
+                                <span class="ei-save-btn-circle"><svg class="ei-save-btn-arrow" width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l7 7-7 7"/></svg></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== STEP 2 — Select the specific person ===== -->
+                    <div class="flow-step" id="step2" style="display:none;">
+                        <div style="font:normal normal normal 12px/15px 'Inter',sans-serif;color:#000;opacity:0.33;margin-bottom:30px;">Step <span class="current-step">2</span> of 5</div>
+                        <div style="font:normal normal 600 20px/24px 'Inter',sans-serif;color:#000;">Select the specific person</div>
+                        <div style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;opacity:0.5;margin-top:8px;">Search an existing person record or create a new one.</div>
+                        <input type="text" id="step2Search" placeholder="Search by name..." oninput="onStep2Search()" style="width:100%;padding:14px 16px;border:none;border-bottom:1px solid #CCCCCC;background:transparent;font:normal normal 600 16px/24px 'Inter',sans-serif;color:#000;outline:none;margin-top:24px;box-sizing:border-box;">
+                        <div id="step2Results">
+                            <div class="person-card" data-name="Robert Johnson" onclick="selectPerson(this)" style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;align-items:center;gap:12px;cursor:pointer;">
+                                <div style="width:36px;height:36px;border-radius:50%;background:#E0E0E0;display:flex;align-items:center;justify-content:center;font:normal normal 600 12px/15px 'Inter',sans-serif;color:#666;flex-shrink:0;">RJ</div>
+                                <div>
+                                    <div style="font:normal normal 600 14px/17px 'Inter',sans-serif;color:#000;">Robert Johnson</div>
+                                    <div style="font:normal normal 400 12px/15px 'Inter',sans-serif;color:#000;opacity:0.5;">Father</div>
+                                </div>
+                            </div>
+                            <div class="person-card" data-name="Mary Johnson" onclick="selectPerson(this)" style="padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;align-items:center;gap:12px;cursor:pointer;">
+                                <div style="width:36px;height:36px;border-radius:50%;background:#E0E0E0;display:flex;align-items:center;justify-content:center;font:normal normal 600 12px/15px 'Inter',sans-serif;color:#666;flex-shrink:0;">MJ</div>
+                                <div>
+                                    <div style="font:normal normal 600 14px/17px 'Inter',sans-serif;color:#000;">Mary Johnson</div>
+                                    <div style="font:normal normal 400 12px/15px 'Inter',sans-serif;color:#000;opacity:0.5;">Mother</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding:12px 0;font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;opacity:0.5;cursor:pointer;">+ Create New Record</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:40px;">
+                            <div class="profile-back" onclick="goToStep(1)">
+                                <div class="profile-back-pad"></div>
+                                <div class="profile-back-arrow"><img src="img/arrow-left.svg" width="9" height="16" alt=""></div>
+                                <span>Back</span>
+                            </div>
+                            <div class="ei-save-btn-wrap flow-nav-btn flow-next" id="step2Next" onclick="goToStep(3)" style="margin:0;opacity:0.33;pointer-events:none;" ontouchstart="this.classList.add('touching')" ontouchend="setTimeout(()=>this.classList.remove('touching'),300)">
+                                <span class="ei-save-btn-label">Continue</span>
+                                <span class="ei-save-btn-dash"></span>
+                                <span class="ei-save-btn-circle"><svg class="ei-save-btn-arrow" width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l7 7-7 7"/></svg></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== STEP 3 — Date of death ===== -->
+                    <div class="flow-step" id="step3" style="display:none;">
+                        <div style="font:normal normal normal 12px/15px 'Inter',sans-serif;color:#000;opacity:0.33;margin-bottom:30px;">Step <span class="current-step">3</span> of 5</div>
+                        <div style="font:normal normal 600 20px/24px 'Inter',sans-serif;color:#000;">When did this happen?</div>
+                        <div style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;opacity:0.5;margin-top:8px;">We use this to place the plan in the right phase and show the right next steps.</div>
+                        <input type="date" id="step3Date" onchange="onStep3Change()" style="width:100%;padding:14px 16px;border:none;border-bottom:1px solid #CCCCCC;background:transparent;font:normal normal 600 16px/24px 'Inter',sans-serif;color:#000;outline:none;margin-top:24px;box-sizing:border-box;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:40px;">
+                            <div class="profile-back" onclick="goToStep(2)">
+                                <div class="profile-back-pad"></div>
+                                <div class="profile-back-arrow"><img src="img/arrow-left.svg" width="9" height="16" alt=""></div>
+                                <span>Back</span>
+                            </div>
+                            <div class="ei-save-btn-wrap flow-nav-btn flow-next" id="step3Next" onclick="goToStep(4)" style="margin:0;opacity:0.33;pointer-events:none;" ontouchstart="this.classList.add('touching')" ontouchend="setTimeout(()=>this.classList.remove('touching'),300)">
+                                <span class="ei-save-btn-label">Continue</span>
+                                <span class="ei-save-btn-dash"></span>
+                                <span class="ei-save-btn-circle"><svg class="ei-save-btn-arrow" width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l7 7-7 7"/></svg></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== STEP 4 — What happened? ===== -->
+                    <div class="flow-step" id="step4" style="display:none;">
+                        <div style="font:normal normal normal 12px/15px 'Inter',sans-serif;color:#000;opacity:0.33;margin-bottom:30px;">Step <span class="current-step">4</span> of 5</div>
+                        <div style="font:normal normal 600 20px/24px 'Inter',sans-serif;color:#000;">What happened?</div>
+                        <div style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;opacity:0.5;margin-top:8px;">Choose the option that best matches the situation.</div>
+                        <div style="margin-top:24px;">
+                            <div class="radio-card" onclick="selectRadio(this)" style="padding:16px 20px;border:1px solid rgba(0,0,0,0.08);border-radius:20px;margin-bottom:12px;cursor:pointer;transition:border-color 0.2s, background 0.2s;">
+                                <div style="font:normal normal 600 14px/17px 'Inter',sans-serif;color:#000;">Death after illness</div>
+                                <div style="font:normal normal 400 12px/15px 'Inter',sans-serif;color:#000;opacity:0.5;margin-top:4px;">Following illness or decline</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadio(this)" style="padding:16px 20px;border:1px solid rgba(0,0,0,0.08);border-radius:20px;margin-bottom:12px;cursor:pointer;transition:border-color 0.2s, background 0.2s;">
+                                <div style="font:normal normal 600 14px/17px 'Inter',sans-serif;color:#000;">Sudden or unexpected</div>
+                                <div style="font:normal normal 400 12px/15px 'Inter',sans-serif;color:#000;opacity:0.5;margin-top:4px;">Without preparation</div>
+                            </div>
+                            <div class="radio-card" onclick="selectRadio(this)" style="padding:16px 20px;border:1px solid rgba(0,0,0,0.08);border-radius:20px;margin-bottom:12px;cursor:pointer;transition:border-color 0.2s, background 0.2s;">
+                                <div style="font:normal normal 600 14px/17px 'Inter',sans-serif;color:#000;">Still preparing</div>
+                                <div style="font:normal normal 400 12px/15px 'Inter',sans-serif;color:#000;opacity:0.5;margin-top:4px;">Death has not yet occurred</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:40px;">
+                            <div class="profile-back" onclick="goToStep(3)">
+                                <div class="profile-back-pad"></div>
+                                <div class="profile-back-arrow"><img src="img/arrow-left.svg" width="9" height="16" alt=""></div>
+                                <span>Back</span>
+                            </div>
+                            <div class="ei-save-btn-wrap flow-nav-btn flow-next" id="step4Next" onclick="goToStep(5)" style="margin:0;opacity:0.33;pointer-events:none;" ontouchstart="this.classList.add('touching')" ontouchend="setTimeout(()=>this.classList.remove('touching'),300)">
+                                <span class="ei-save-btn-label">Continue</span>
+                                <span class="ei-save-btn-dash"></span>
+                                <span class="ei-save-btn-circle"><svg class="ei-save-btn-arrow" width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l7 7-7 7"/></svg></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== STEP 5 — How are you feeling? ===== -->
+                    <div class="flow-step" id="step5" style="display:none;">
+                        <div style="font:normal normal normal 12px/15px 'Inter',sans-serif;color:#000;opacity:0.33;margin-bottom:30px;">Step <span class="current-step">5</span> of 5</div>
+                        <div style="font:normal normal 600 20px/24px 'Inter',sans-serif;color:#000;">How are you feeling?</div>
+                        <div style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;opacity:0.5;margin-top:8px;">Choose all that apply. This helps us shape what to show first.</div>
+                        <div style="margin-top:24px;display:flex;flex-wrap:wrap;">
+                            <div class="feeling-chip" onclick="toggleChip(this)" style="display:inline-block;padding:10px 20px;border:1px solid rgba(0,0,0,0.08);border-radius:30px;margin:0 8px 8px 0;cursor:pointer;font:normal normal 400 14px/17px 'Inter',sans-serif;transition:all 0.2s;">Overwhelmed by responsibilities</div>
+                            <div class="feeling-chip" onclick="toggleChip(this)" style="display:inline-block;padding:10px 20px;border:1px solid rgba(0,0,0,0.08);border-radius:30px;margin:0 8px 8px 0;cursor:pointer;font:normal normal 400 14px/17px 'Inter',sans-serif;transition:all 0.2s;">Struggling emotionally</div>
+                            <div class="feeling-chip" onclick="toggleChip(this)" style="display:inline-block;padding:10px 20px;border:1px solid rgba(0,0,0,0.08);border-radius:30px;margin:0 8px 8px 0;cursor:pointer;font:normal normal 400 14px/17px 'Inter',sans-serif;transition:all 0.2s;">Unsure what to do next</div>
+                            <div class="feeling-chip" onclick="toggleChip(this)" style="display:inline-block;padding:10px 20px;border:1px solid rgba(0,0,0,0.08);border-radius:30px;margin:0 8px 8px 0;cursor:pointer;font:normal normal 400 14px/17px 'Inter',sans-serif;transition:all 0.2s;">Handling things for others</div>
+                            <div class="feeling-chip" onclick="toggleChip(this)" style="display:inline-block;padding:10px 20px;border:1px solid rgba(0,0,0,0.08);border-radius:30px;margin:0 8px 8px 0;cursor:pointer;font:normal normal 400 14px/17px 'Inter',sans-serif;transition:all 0.2s;">Just need information</div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:40px;">
+                            <div class="profile-back" onclick="goToStep(4)">
+                                <div class="profile-back-pad"></div>
+                                <div class="profile-back-arrow"><img src="img/arrow-left.svg" width="9" height="16" alt=""></div>
+                                <span>Back</span>
+                            </div>
+                            <div class="ei-save-btn-wrap flow-nav-btn flow-next" id="step5Next" onclick="goToStep(6)" style="margin:0;" ontouchstart="this.classList.add('touching')" ontouchend="setTimeout(()=>this.classList.remove('touching'),300)">
+                                <span class="ei-save-btn-label">Continue</span>
+                                <span class="ei-save-btn-dash"></span>
+                                <span class="ei-save-btn-circle"><svg class="ei-save-btn-arrow" width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l7 7-7 7"/></svg></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== STEP 6 — Confirmation ===== -->
+                    <div class="flow-step" id="step6" style="display:none;">
+                        <div style="font:normal normal 600 24px/29px 'Inter',sans-serif;color:#000;">Your Care Plan is ready.</div>
+                        <div style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;opacity:0.5;margin-top:8px;">Based on what you shared:</div>
+                        <div style="margin-top:24px;">
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                                <div style="width:8px;height:8px;border-radius:50%;background:#61C553;flex-shrink:0;"></div>
+                                <span style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;">24 practical steps across 4 phases</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                                <div style="width:8px;height:8px;border-radius:50%;background:#61C553;flex-shrink:0;"></div>
+                                <span style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;">Starting with: Register the death certificate</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                                <div style="width:8px;height:8px;border-radius:50%;background:#61C553;flex-shrink:0;"></div>
+                                <span style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;">Emotional resources tailored to partner loss</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div style="width:8px;height:8px;border-radius:50%;background:#61C553;flex-shrink:0;"></div>
+                                <span style="font:normal normal 400 14px/17px 'Inter',sans-serif;color:#000;">Legal guidance for your jurisdiction</span>
+                            </div>
+                        </div>
+                        <div style="font:normal normal 400 12px/15px 'Inter',sans-serif;color:#000;opacity:0.33;margin-top:20px;">You can adjust this at any time from plan settings.</div>
+                        <div style="display:flex;justify-content:flex-end;margin-top:40px;">
+                            <div class="ei-save-btn-wrap" onclick="window.location.href='post-loss-plan.html'" style="margin:0;" ontouchstart="this.classList.add('touching')" ontouchend="setTimeout(()=>this.classList.remove('touching'),300)">
+                                <span class="ei-save-btn-label">See Your Plan</span>
+                                <span class="ei-save-btn-dash"></span>
+                                <span class="ei-save-btn-circle"><svg class="ei-save-btn-arrow" width="9" height="16" viewBox="0 0 9 16" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l7 7-7 7"/></svg></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="col-placeholder"></div>
+    </div>
+    </div>
+
+    <nav class="mobile-bottom-nav">
+        <a class="bnav-item bnav-menu" onclick="toggleSidebar()">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <span class="bnav-label">Menu</span>
+        </a>
+        <a class="bnav-item" onclick="goHome()">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            <span class="bnav-label">Home</span>
+        </a>
+        <a class="bnav-item active" onclick="navigateTo('profile')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="bnav-label">Profile</span>
+        </a>
+        <a class="bnav-item" onclick="navigateTo('my-plan')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="bnav-label">My Plan</span>
+        </a>
+        <a class="bnav-item" onclick="navigateTo('vault')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span class="bnav-label">Vault</span>
+        </a>
+    </nav>
+
+    <!-- ========== MORE BOTTOM SHEET (mobile) ========== -->
+    <div class="more-sheet-overlay" id="moreSheetOverlay" onclick="toggleMoreSheet()">
+        <div class="more-sheet" onclick="event.stopPropagation()">
+            <div class="more-sheet-handle"></div>
+            <a class="more-sheet-item" onclick="navigateTo('tasks')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>Tasks & Reminders</span>
+            </a>
+            <a class="more-sheet-item" onclick="navigateTo('marketplace')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 7v13a2 2 0 002 2h14a2 2 0 002-2V7l-3-5z"/><line x1="3" y1="7" x2="21" y2="7"/><path d="M16 11a4 4 0 01-8 0"/></svg>
+                <span>Marketplace</span>
+            </a>
+            <a class="more-sheet-item" onclick="navigateTo('shared')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Plans Shared With Me</span>
+            </a>
+            <a class="more-sheet-item" onclick="document.getElementById('col4AiInput')?.focus(); toggleMoreSheet();">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>AI Assistant</span>
+            </a>
+            <div class="more-sheet-divider"></div>
+            <a class="more-sheet-item" onclick="navigateTo('settings')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                <span>Settings</span>
+            </a>
+            <a class="more-sheet-item" style="color:#E53935">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke="#E53935"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Log Out</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== SEARCH OVERLAY ========== -->
+    <div class="search-overlay" id="searchOverlay" onclick="closeSearch()">
+        <div class="search-pad" onclick="closeSearch()"></div>
+        <div class="search-body" onclick="event.stopPropagation()">
+            <button class="search-close-btn" onclick="closeSearch()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="search-label">Search</div>
+            <div class="search-input-wrap">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search PlanAfter" oninput="onSearchInput(this)">
+                <button class="search-clear" id="searchClear" onclick="clearSearch()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="last-searches">
+                <div class="last-searches-label">Recent Searches</div>
+                <div class="last-search-item" onclick="document.getElementById('searchInput').value='Post-Loss Support'; onSearchInput(document.getElementById('searchInput'))">Post-Loss Support</div>
+                <div class="last-search-item" onclick="document.getElementById('searchInput').value='Care Plan'; onSearchInput(document.getElementById('searchInput'))">Care Plan</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Voice FAB -->
+    <div class="voice-fab" id="voiceFab" onclick="toggleVoiceFab()">
+        <svg class="fab-speaker" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        <div class="fab-player"><div class="fab-waves"><div class="fab-w"></div><div class="fab-w"></div><div class="fab-w"></div><div class="fab-w"></div><div class="fab-w"></div></div><div class="fab-time" id="fabTime">0:00</div><button class="fab-pause" onclick="event.stopPropagation();toggleVoiceFab()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></button></div>
+    </div>
+
+    <!-- ========== CARE PLAN FLOW JS ========== -->
+    <script>
+    (function() {
+        var currentStep = 1;
+        var selectedPerson = null;
+
+        // Step navigation
+        window.goToStep = function(n) {
+            // Hide current
+            var cur = document.getElementById('step' + currentStep);
+            if (cur) cur.style.display = 'none';
+            // Show target
+            var tgt = document.getElementById('step' + n);
+            if (tgt) tgt.style.display = 'block';
+            currentStep = n;
+        };
+
+        // Step 1: enable Continue when dropdown has value
+        window.onStep1Change = function() {
+            var sel = document.getElementById('step1Select');
+            var btn = document.getElementById('step1Next');
+            if (sel.value) {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                btn.style.cursor = 'pointer';
+            } else {
+                btn.style.opacity = '0.33';
+                btn.style.pointerEvents = 'none';
+            }
+        };
+
+        // Step 2: person selection
+        window.selectPerson = function(el) {
+            // Deselect all
+            var cards = document.querySelectorAll('#step2Results .person-card');
+            cards.forEach(function(c) {
+                c.style.background = 'transparent';
+                c.style.borderRadius = '0';
+            });
+            // Select this one
+            el.style.background = 'rgba(97,197,83,0.05)';
+            el.style.borderRadius = '12px';
+            selectedPerson = el.getAttribute('data-name');
+            // Enable Continue
+            var btn = document.getElementById('step2Next');
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+            btn.style.cursor = 'pointer';
+        };
+
+        // Step 2: search filter
+        window.onStep2Search = function() {
+            var q = document.getElementById('step2Search').value.toLowerCase();
+            var cards = document.querySelectorAll('#step2Results .person-card');
+            cards.forEach(function(c) {
+                var name = c.getAttribute('data-name').toLowerCase();
+                c.style.display = name.indexOf(q) !== -1 ? 'flex' : 'none';
+            });
+        };
+
+        // Step 3: enable Continue when date has value
+        window.onStep3Change = function() {
+            var val = document.getElementById('step3Date').value;
+            var btn = document.getElementById('step3Next');
+            if (val) {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                btn.style.cursor = 'pointer';
+            } else {
+                btn.style.opacity = '0.33';
+                btn.style.pointerEvents = 'none';
+            }
+        };
+
+        // Step 4: radio card selection (single select)
+        window.selectRadio = function(el) {
+            var cards = document.querySelectorAll('#step4 .radio-card');
+            cards.forEach(function(c) {
+                c.style.borderColor = 'rgba(0,0,0,0.08)';
+                c.style.background = 'transparent';
+            });
+            el.style.borderColor = '#61C553';
+            el.style.background = 'rgba(97,197,83,0.05)';
+            // Enable Continue
+            var btn = document.getElementById('step4Next');
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+            btn.style.cursor = 'pointer';
+        };
+
+        // Step 5: chip toggle (multi-select)
+        window.toggleChip = function(el) {
+            var isSelected = el.getAttribute('data-selected') === 'true';
+            if (isSelected) {
+                el.setAttribute('data-selected', 'false');
+                el.style.borderColor = 'rgba(0,0,0,0.08)';
+                el.style.background = 'transparent';
+                el.style.fontWeight = '400';
+            } else {
+                el.setAttribute('data-selected', 'true');
+                el.style.borderColor = '#61C553';
+                el.style.background = 'rgba(97,197,83,0.08)';
+                el.style.fontWeight = '600';
+            }
+        };
+    })();
+    </script>
+    <script src="_shared.js?v=20260518fr110"></script>
+</body>
+</html>

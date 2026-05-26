@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanAfter - Refactored Prototype (v10)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!--
+      CSS Stles:
+      Всички стилове са идентични с v10, за да се запази визията.
+      CSS-ът е прегледан и всички класове (включително за "..." менюто,
+      v9 модала и v10 "Draft" таговете) са включени и коректни.
+    -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .card {
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            cursor: pointer;
+        }
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        .tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .tooltip-icon {
+            width: 1rem; height: 1rem; border-radius: 99px;
+            background-color: #e5e7eb; color: #6b7280;
+            font-size: 0.75rem; font-weight: 700; font-style: italic;
+            cursor: pointer; display: inline-flex;
+            align-items: center; justify-content: center;
+            margin-left: 0.375rem;
+        }
+        .tooltip-text {
+            visibility: hidden; width: 280px; background-color: #1f2937;
+            color: #fff; text-align: center; border-radius: 0.375rem;
+            padding: 0.75rem; position: absolute; z-index: 10;
+            bottom: 125%; left: 50%; margin-left: -140px;
+            opacity: 0; transition: opacity 0.3s;
+            font-size: 0.875rem; font-weight: 400; font-style: normal;
+            pointer-events: none;
+        }
+        .tooltip-text::after {
+            content: ""; position: absolute; top: 100%; left: 50%;
+            margin-left: -5px; border-width: 5px; border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+        .tooltip-icon:hover + .tooltip-text,
+        .tooltip-icon:focus + .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        .card-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            overflow: visible; /* NEW: Ensure tooltips are not clipped */
+        }
+        .card-content.collapsed {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            overflow: hidden;
+        }
+        .suggestion-card {
+            background-color: #f9fafb; border-radius: 1rem;
+            padding: 1rem; border: 1px solid #e5e7eb;
+            flex: 1; min-width: 200px; position: relative;
+        }
+        .task-list { margin-top: 0.5rem; }
+        .task-list-header {
+            font-size: 1.125rem; font-weight: 600;
+            color: #111827; padding: 1.5rem 0.5rem 0.5rem 0.5rem;
+        }
+        .task-list-header.first {
+             border-top: 1px solid #f3f4f6;
+             margin-top: 1.5rem; padding-top: 1.5rem;
+        }
+        .task-item { border-bottom: 1px solid #f3f4f6; }
+        .task-row {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 1.25rem 0.5rem; cursor: pointer;
+            transition: background-color 0.2s, opacity 0.3s;
+        }
+        .task-row:hover { background-color: #f9fafb; }
+        .task-status-bar {
+            width: 4px; height: 2.5rem; border-radius: 99px;
+        }
+        .task-done-btn {
+            width: 1.5rem; height: 1.5rem; border-radius: 9999px;
+            border: 2px solid #d1d5db; display: flex;
+            align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all 0.2s;
+        }
+        .task-done-btn.done {
+            background-color: #4f46e5; border-color: #4f46e5;
+        }
+        .task-done-btn.done svg { display: block; }
+        .task-accordion-content {
+            max-height: 0; overflow: hidden; opacity: 0;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding-bottom 0.4s ease-out;
+            padding: 0 0.5rem 0 3.25rem;
+        }
+        .task-accordion-content.open {
+            max-height: 1000px; opacity: 1;
+            padding-bottom: 1.5rem; overflow: visible;
+        }
+        .task-menu-btn {
+            padding: 0.25rem; border-radius: 0.375rem;
+            transition: background-color 0.2s;
+            margin-right: 0.25rem;
+        }
+        .task-menu-btn:hover { background-color: #f3f4f6; }
+        .task-menu-btn svg {
+            width: 1.25rem; height: 1.25rem; color: #6b7280;
+        }
+        .task-menu-dropdown {
+            position: absolute; right: 0; top: calc(100% + 0.25rem);
+            background-color: white; border-radius: 0.75rem;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 160px; z-index: 20; padding: 0.5rem;
+            visibility: hidden; opacity: 0; transform: scale(0.95);
+            transition: all 0.15s ease-out;
+            transform-origin: top right;
+        }
+        .task-menu-dropdown.show {
+            visibility: visible; opacity: 1; transform: scale(1);
+        }
+        .task-menu-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            width: 100%; padding: 0.625rem 0.75rem;
+            font-size: 0.875rem; font-weight: 500;
+            color: #374151; border-radius: 0.5rem;
+            transition: background-color 0.2s; text-align: left;
+        }
+        .task-menu-item:hover { background-color: #f9fafb; }
+        .task-menu-item svg {
+            width: 1.125rem; height: 1.125rem;
+            color: #6b7280; flex-shrink: 0;
+        }
+        .task-menu-item.text-red-600 { color: #ef4444; }
+        .task-menu-item.text-red-600:hover {
+            background-color: #fee2e2; color: #dc2626;
+        }
+        .task-menu-item.text-red-600 svg { color: #ef4444; }
+        .task-menu-item.text-red-600:hover svg { color: #dc2626; }
+        .form-group {
+            margin-bottom: 1.25rem; max-height: 200px;
+            opacity: 1; overflow: hidden;
+            transition: opacity 0.3s, max-height 0.3s, margin-bottom 0.3s;
+        }
+        .form-group.hidden {
+            margin-bottom: 0; max-height: 0; opacity: 0;
+        }
+        .form-label {
+            display: block; margin-bottom: 0.5rem;
+            font-size: 0.875rem; font-weight: 500; color: #6b7280;
+        }
+        .form-label-with-tooltip {
+            display: flex; align-items: center;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; border: 0; border-bottom: 1px solid #d1d5db;
+            padding: 0.5rem 0.125rem; font-size: 1rem; font-weight: 500;
+            color: #111827; background-color: transparent;
+            transition: border-color 0.2s, border-width 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none; border-bottom-color: #4f46e5;
+        }
+        .form-input.error, .form-select.error {
+            border-bottom-color: #ef4444; border-bottom-width: 2px;
+        }
+        .form-textarea.error {
+            border-color: #ef4444; border-width: 2px;
+        }
+        .validation-error-text {
+            font-size: 0.875rem; color: #ef4444;
+            margin-top: 0.25rem; display: none;
+        }
+        .form-textarea {
+            border: 1px solid #d1d5db; border-radius: 0.75rem;
+            padding: 0.75rem; background-color: #f9fafb;
+        }
+        .form-textarea:focus {
+            background-color: white; border-color: #4f46e5;
+            border-bottom-width: 1px;
+        }
+        .add-task-form-container {
+            background-color: #f9fafb; border-radius: 1rem;
+            border: 1px solid #f3f4f6; padding: 0 1.5rem;
+            margin-top: 0.5rem; max-height: 0; opacity: 0;
+            overflow: hidden; margin-bottom: 0; transition: all 0.4s;
+        }
+        .add-task-form-container.open {
+            max-height: 1200px; opacity: 1;
+            margin-bottom: 1.5rem; padding: 1.5rem 1.5rem;
+        }
+        .add-task-btn {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 0.5rem; cursor: pointer;
+            border-top: 1px solid #f3f4f6;
+        }
+        .add-task-btn:hover { background-color: #f9fafb; }
+        .add-task-btn.hidden { display: none; }
+        .view-group {
+            margin-bottom: 1.25rem; max-height: 200px;
+            opacity: 1; overflow: hidden;
+            transition: opacity 0.3s, max-height 0.3s;
+        }
+        .view-group.hidden {
+            max-height: 0; opacity: 0; margin-bottom: 0;
+        }
+        .view-label {
+            font-size: 0.875rem; font-weight: 500;
+            color: #6b7280; margin-bottom: 0.125rem;
+            display: flex; align-items: center;
+        }
+        .view-value {
+            font-size: 1rem; font-weight: 500; color: #111827;
+            display: flex; align-items: center; gap: 0.5rem;
+            word-break: break-word;
+        }
+        .view-avatar {
+            width: 1.75rem; height: 1.75rem; border-radius: 9999px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 600;
+            background-color: #e0e7ff; color: #3730a3;
+        }
+        .view-notes {
+            background-color: #f9fafb; border: 1px solid #f3f4f6;
+            border-radius: 0.75rem; padding: 0.75rem 1rem;
+            font-size: 0.875rem; color: #374151;
+            word-break: break-word;
+        }
+        .empty-state {
+            padding: 1.5rem 0.5rem; text-align: center;
+            font-size: 0.875rem; color: #6b7280;
+            border-bottom: 1px solid #f3f4f6; line-height: 1.5;
+        }
+        .empty-state.active { border-top: 1px solid #f3f4f6; }
+        .btn {
+            padding: 0.5rem 1rem; border-radius: 0.5rem;
+            font-weight: 500; transition: all 0.2s;
+            cursor: pointer; border: 1px solid transparent;
+            display: inline-flex; align-items: center;
+            justify-content: center; gap: 0.375rem;
+        }
+        .btn-primary { background-color: #4f46e5; color: white; }
+        .btn-primary:hover { background-color: #4338ca; }
+        .btn-secondary { background-color: #ffffff; color: #374151; border-color: #d1d5db; }
+        .btn-secondary:hover { background-color: #f9fafb; }
+        .btn-ghost { background-color: transparent; color: #4b5563; }
+        .btn-ghost:hover { background-color: #f3f4f6; color: #111827; }
+        .btn-danger { background-color: transparent; color: #ef4444; }
+        .btn-danger:hover { background-color: #fee2e2; }
+        .btn-danger-solid { background-color: #ef4444; color: white; }
+        .btn-danger-solid:hover { background-color: #dc2626; }
+        .modal-backdrop {
+            position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 50; opacity: 0; visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-backdrop.visible {
+            opacity: 1; visibility: visible;
+        }
+        .modal {
+            background-color: white; border-radius: 0.75rem;
+            width: 100%; max-width: 36rem; margin: 1.5rem;
+            transform: scale(0.95); transition: transform 0.3s;
+            overflow: hidden;
+        }
+        .modal-backdrop.visible .modal { transform: scale(1); }
+        .modal-header {
+            padding: 1.5rem; border-bottom: 1px solid #e5e7eb;
+        }
+        .modal-title {
+            font-size: 1.25rem; font-weight: 600; color: #111827;
+        }
+        .modal-body {
+            padding: 1.5rem; max-height: 70vh; overflow-y: auto;
+        }
+        .modal-footer {
+            padding: 1rem 1.5rem; background-color: #f9fafb;
+            display: flex; justify-content: flex-end; gap: 0.75rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <!--
+      HTML структурата е 1:1 с v10,
+      тъй като е тествана и отговаря на изискванията.
+    -->
+    <div class="max-w-2xl mx-auto">
+        <!-- Example Info Cards from the record -->
+        <div class="card mb-6">
+            <div class="card-header"><h2>Basic Info</h2></div>
+        </div>
+        <div class="card mb-6">
+            <div class="card-header"><h2>Ownership</h2></div>
+        </div>
+
+        <!-- "Tasks & Reminders" Card -->
+        <div class="card">
+            <!-- Card Header -->
+            <div class="card-header" id="tasks-card-header">
+                <div>
+                    <h2>Tasks & Reminders</h2>
+                    <p class="text-sm text-gray-500">Tasks related to your bank account.</p>
+                </div>
+                <svg id="tasks-card-chevron" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 transition-transform transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+
+            <!-- Card Content -->
+            <div class="card-content" id="tasks-card-content">
+                <p class="text-sm text-gray-600 mb-6">
+                    Create tasks for yourself or delegate them to others. Status updates and reminders make progress easy to follow, so nothing important is left unfinished.
+                </p>
+
+                <!-- "Suggestions" Section -->
+                <div>
+                    <h3 class="font-semibold text-gray-800 mb-3">PlanAfter AI Suggestions</h3>
+                    <div class="flex flex-col md:flex-row gap-4 mb-6" id="ai-suggestions-list">
+                        <!-- Suggestion Card 1 -->
+                        <div class="suggestion-card" data-suggestion-id="sugg-1">
+                            <!-- "Draft" tag e premakhnat -->
+                            <div class="flex items-center gap-2 mb-2">
+                                <!-- Tochkata e premakhnata -->
+                                <span class="text-xs font-medium text-blue-700">Suggestion</span>
+                            </div>
+                            <p class="font-semibold text-gray-900 mb-1">Review Q3 Bank Statement</p>
+                            <p class="text-xs text-gray-500 mb-4">Quarterly review due</p>
+                            <div class="flex justify-end gap-2">
+                                <button class="btn-ghost text-sm font-medium" data-action="remove-suggestion">Remove</button>
+                                <button class="btn-ghost text-sm font-medium text-indigo-600" data-action="accept-suggestion">Accept</button>
+                            </div>
+                        </div>
+                        <!-- Suggestion Card 2 -->
+                        <div class="suggestion-card" data-suggestion-id="sugg-2">
+                            <!-- "Draft" tag e premakhnat -->
+                            <div class="flex items-center gap-2 mb-2">
+                                <!-- Tochkata e premakhnata -->
+                                <span class="text-xs font-medium text-blue-700">Suggestion</span>
+                            </div>
+                            <p class="font-semibold text-gray-900 mb-1">Add info for your financial advisor</p>
+                            <p class="text-xs text-gray-500 mb-4">Link contact to this record</p>
+                            <div class="flex justify-end gap-2">
+                                <button class="btn-ghost text-sm font-medium" data-action="remove-suggestion">Remove</button>
+                                <button class="btn-ghost text-sm font-medium text-indigo-600" data-action="accept-suggestion">Accept</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTIVE Tasks List -->
+                <h3 class="task-list-header first">Active Tasks</h3>
+
+                <!-- "Add New Task" Form (hidden) -->
+                <div class="add-task-form-container" id="new-task-form-container">
+                    <form id="new-task-form">
+                        <!-- JS will generate this form, identical to "edit" -->
+                    </form>
+                </div>
+
+                <!-- "Add New Task" Button -->
+                <div id="add-task-btn" class="add-task-btn">
+                    <span class="flex-shrink-0">
+                        <span class="flex items-center justify-center h-6 w-6 rounded-full bg-gray-100 text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </span>
+                    </span>
+                    <div class="text-gray-700 font-medium">Add New Task & Reminder</div>
+                </div>
+
+                <div class="task-list" id="active-task-list">
+                    <!-- Active tasks will be generated by JavaScript here -->
+                </div>
+
+                <!-- COMPLETED Tasks List -->
+                <h3 class="task-list-header">Completed Tasks</h3>
+                <div class="task-list" id="completed-task-list">
+                    <!-- Completed tasks will be generated by JavaScript here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Other card (for context) -->
+        <div class="card mt-6">
+            <div class="card-header"><h2>Shared With</h2></div>
+        </div>
+    </div>
+
+    <!-- --- MODAL POPUPS --- -->
+    <!-- Всички модални прозорци са 1:1 с v10 -->
+
+    <!-- 1. "Send Invitation" Modal -->
+    <div id="invitation-modal" class="modal-backdrop">
+        <div class="modal">
+            <form id="invitation-form">
+                <div class="modal-header">
+                    <h3 class="modal-title">Send Task Invitation</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-4 text-gray-600">
+                        You are assigning this task to <strong id="invitation-recipient-name">...</strong>.
+                        We will send an email invitation so they can securely access this task in PlanAfter.
+                    </p>
+                    <div class="form-group">
+                        <label class="form-label" for="invitation-email">Recipient Email (editable)</label>
+                        <input type="email" id="invitation-email" class="form-input !border-b-2" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="invitation-subject">Subject</label>
+                        <input type="text" id="invitation-subject" class="form-input !border-b-2" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="invitation-message">Message (editable)</label>
+                        <textarea id="invitation-message" class="form-textarea" rows="10" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-action="cancel-invitation">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -ml-1 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                        Send Invitation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. "Create New Contact" Wizard Modal (v9 Logic) -->
+    <div id="contact-wizard-modal" class="modal-backdrop">
+        <div class="modal" style="max-width: 30rem;">
+            <form id="contact-wizard-form">
+                <div class="modal-header">
+                    <h3 class="modal-title">Create New Contact</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="wizard-name">Full Name*</label>
+                        <input type="text" id="wizard-name" class="form-input !border-b-2" required>
+                        <p class="validation-error-text">Full Name is required.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wizard-email">Email*</label>
+                        <input type="email" id="wizard-email" class="form-input !border-b-2" required>
+                        <p class="validation-error-text">A valid Email is required.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wizard-phone">Mobile Phone (with country code)</label>
+                        <input type="tel" id="wizard-phone" class="form-input !border-b-2">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wizard-location-select">Location in PlanAfter*</label>
+                        <select id="wizard-location-select" class="form-select" required>
+                            <option value="" disabled selected>-- Select a location --</option>
+                            <option value="my_family">My Family</option>
+                            <option value="my_network">My Network</option>
+                        </select>
+                        <p class="validation-error-text">Please select a location.</p>
+                    </div>
+                    <div class="form-group hidden" id="wizard-relationship-group">
+                        <label class="form-label" for="wizard-relationship-select">Relationship*</label>
+                        <select id="wizard-relationship-select" class="form-select" required>
+                            <!-- Options will be dynamically populated by JS -->
+                        </select>
+                        <p class="validation-error-text">Please select a relationship.</p>
+                    </div>
+                    <div class="form-group hidden" id="wizard-relationship-other-group">
+                        <label class="form-label" for="wizard-relationship-other">Please Specify Role*</label>
+                        <input type="text" id="wizard-relationship-other" class="form-input !border-b-2">
+                        <p class="validation-error-text">Please specify the role.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-action="wizard-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-action="wizard-save">Save Contact</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Confirmation Modal -->
+    <div id="confirmation-modal" class="modal-backdrop">
+        <div class="modal" style="max-width: 28rem;">
+            <div class="modal-body !p-6">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-full bg-red-100">
+                        <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="modal-title" id="confirmation-title">Delete Task?</h3>
+                        <p class="text-gray-600 mt-2" id="confirmation-message">
+                            Are you sure you want to delete this task? This action cannot be undone.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-action="confirmation-cancel">Cancel</button>
+                <button type="button" class="btn btn-danger-solid" data-action="confirmation-confirm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Rejection Reason Modal -->
+    <div id="rejection-modal" class="modal-backdrop">
+        <div class="modal" style="max-width: 30rem;">
+            <form id="rejection-form">
+                <div class="modal-header">
+                    <h3 class="modal-title">Simulate Rejection Reason</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-4 text-gray-600">
+                        Please provide a reason for rejecting this task (this is what the contributor would do).
+                    </p>
+                    <div class="form-group">
+                        <label class="form-label" for="rejection-reason-text">Rejection Reason*</label>
+                        <textarea id="rejection-reason-text" class="form-textarea" rows="4" required></textarea>
+                        <p class="validation-error-text">A reason is required to reject.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-action="rejection-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-danger-solid">Submit Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+    /*
+      PlanAfter Tasks Prototype (v10 Refactored)
+      Този JavaScript код е рефакторирана версия на v10,
+      организирана в един обект 'App' за по-добра четимост и поддръжка.
+      Цялата функционалност от v10 е 100% запазена.
+    */
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const App = {
+            // --- 1. STATE & CONSTANTS ---
+            // The single source of truth for the application
+            state: {
+                contacts: {
+                    my_family: [
+                        { id: 'me', name: 'Me (Rosen)', email: 'my-email@planafter.com', role: 'PlanOwner', phone: 'N/A' }
+                    ],
+                    my_network: [
+                        { id: 'contact-1', name: 'Mark Davis', email: 'mark.davis@attorney.com', role: 'Legal Advisor', phone: '555-1234' },
+                        { id: 'contact-2', name: 'Anna Petrova', email: 'anna.p@financial.com', role: 'Financial Advisor', phone: '555-5678' }
+                    ]
+                },
+                tasks: [
+                    {
+                        id: 'task-1',
+                        title: 'Review Main Bank Account (Sent)',
+                        date: '2025-09-30',
+                        status: 'rejected',
+                        assigneeId: 'contact-1',
+                        priority: 'High',
+                        repeats: 'none',
+                        ends: { type: 'never' },
+                        access: 'record-ownership',
+                        notes: 'Check contact information about personal banker.',
+                        invitation_sent: '2025-10-28T10:00:00Z',
+                        rejectionReason: 'I do not have the required documents for this.',
+                        isEditing: false
+                    },
+                    {
+                        id: 'task-2',
+                        title: 'Update contact info for KPMG',
+                        date: '2025-10-15',
+                        status: 'pending',
+                        assigneeId: 'me',
+                        priority: 'Medium',
+                        repeats: 'monthly',
+                        ends: { type: 'on', date: '2026-10-15' },
+                        access: null,
+                        notes: '',
+                        invitation_sent: null,
+                        isEditing: false
+                    },
+                    {
+                        id: 'task-3',
+                        title: 'Call Personal Banker (Needs Invitation)',
+                        date: '2025-11-05',
+                        status: 'pending',
+                        assigneeId: 'contact-2',
+                        priority: 'Medium',
+                        repeats: 'none',
+                        ends: { type: 'never' },
+                        access: 'record-basic',
+                        notes: 'Ask about new wire transfer fees.',
+                        invitation_sent: '2025-10-30T10:00:00Z',
+                        isEditing: false
+                    }
+                ],
+                activeFormId: null,       // Tracks which form opened the contact wizard
+                taskToInvite: null,       // Tracks which task is pending invitation
+                taskToReject: null,       // Tracks which task is pending rejection
+                confirmationCallback: null // Stores the 'OK' action for the confirmation modal
+            },
+
+            // Pre-defined roles for the contact wizard
+            constants: {
+                contactRoles: {
+                    my_family: [
+                        "Spouse", "Child", "Parent", "Sibling", "Extended Family"
+                    ],
+                    my_network: [
+                        "Personal Banker", "Financial Advisor", "Legal Advisor", "Doctor", "Trusted Friend", "Accountant"
+                    ]
+                }
+            },
+
+            // --- 2. DOM SELECTORS ---
+            // All DOM elements are cached here for easy access
+            selectors: {
+                // Main card
+                tasksCardHeader: document.getElementById('tasks-card-header'),
+                tasksCardContent: document.getElementById('tasks-card-content'),
+                tasksCardChevron: document.getElementById('tasks-card-chevron'),
+                // AI Suggestions
+                aiSuggestionsList: document.getElementById('ai-suggestions-list'),
+                // Task Lists & Forms
+                activeTaskList: document.getElementById('active-task-list'),
+                completedTaskList: document.getElementById('completed-task-list'),
+                addTaskBtn: document.getElementById('add-task-btn'),
+                newTaskFormContainer: document.getElementById('new-task-form-container'),
+                // Invitation Modal
+                invitation: {
+                    modal: document.getElementById('invitation-modal'),
+                    form: document.getElementById('invitation-form'),
+                    cancelBtn: document.querySelector('#invitation-modal [data-action="cancel-invitation"]'),
+                    recipientName: document.getElementById('invitation-recipient-name'),
+                    emailInput: document.getElementById('invitation-email'),
+                    subjectInput: document.getElementById('invitation-subject'),
+                    messageInput: document.getElementById('invitation-message')
+                },
+                // Contact Wizard Modal (v9)
+                wizard: {
+                    modal: document.getElementById('contact-wizard-modal'),
+                    form: document.getElementById('contact-wizard-form'),
+                    cancelBtn: document.querySelector('#contact-wizard-modal [data-action="wizard-cancel"]'),
+                    nameInput: document.getElementById('wizard-name'),
+                    emailInput: document.getElementById('wizard-email'),
+                    phoneInput: document.getElementById('wizard-phone'),
+                    locationSelect: document.getElementById('wizard-location-select'),
+                    relationshipGroup: document.getElementById('wizard-relationship-group'),
+                    relationshipSelect: document.getElementById('wizard-relationship-select'),
+                    relationshipOtherGroup: document.getElementById('wizard-relationship-other-group'),
+                    relationshipOtherInput: document.getElementById('wizard-relationship-other')
+                },
+                // Confirmation Modal
+                confirmation: {
+                    modal: document.getElementById('confirmation-modal'),
+                    title: document.getElementById('confirmation-title'),
+                    message: document.getElementById('confirmation-message'),
+                    cancelBtn: document.querySelector('#confirmation-modal [data-action="confirmation-cancel"]'),
+                    confirmBtn: document.querySelector('#confirmation-modal [data-action="confirmation-confirm"]')
+                },
+                // Rejection Modal
+                rejection: {
+                    modal: document.getElementById('rejection-modal'),
+                    form: document.getElementById('rejection-form'),
+                    cancelBtn: document.querySelector('#rejection-modal [data-action="rejection-cancel"]'),
+                    reasonText: document.getElementById('rejection-reason-text')
+                }
+            },
+
+            // --- 3. INITIALIZATION ---
+            // Binds all listeners and fires the initial render
+            init() {
+                this.bindListeners();
+                this.render();
+            },
+
+            // --- 4. EVENT LISTENERS ---
+            // Sets up all event listeners for the application
+            bindListeners() {
+                // Main card toggle
+                this.selectors.tasksCardHeader.addEventListener('click', () => {
+                    this.selectors.tasksCardContent.classList.toggle('collapsed');
+                    this.selectors.tasksCardChevron.classList.toggle('rotate-180');
+                });
+
+                // "Add New Task" button
+                this.selectors.addTaskBtn.addEventListener('click', () => {
+                    this.formLogic.closeAllAccordions('new');
+                    this.formLogic.showNewTaskForm();
+                });
+
+                // AI Suggestions (Event Delegation)
+                this.selectors.aiSuggestionsList.addEventListener('click', (e) => this.handleSuggestionClick(e));
+
+                // Task Lists (Event Delegation)
+                this.selectors.activeTaskList.addEventListener('click', (e) => this.handleTaskListClick(e));
+                this.selectors.completedTaskList.addEventListener('click', (e) => this.handleTaskListClick(e));
+
+                // Modals
+                this.selectors.invitation.form.addEventListener('submit', (e) => this.handleInvitationSubmit(e));
+                this.selectors.invitation.cancelBtn.addEventListener('click', () => this.handleInvitationCancel());
+
+                this.selectors.wizard.form.addEventListener('submit', (e) => this.handleWizardSubmit(e));
+                this.selectors.wizard.cancelBtn.addEventListener('click', () => this.modalLogic.hideModal(this.selectors.wizard.modal, this.wizardLogic.resetWizardForm));
+                this.selectors.wizard.locationSelect.addEventListener('change', () => this.wizardLogic.updateRelationshipOptions(this.selectors.wizard.locationSelect.value));
+                this.selectors.wizard.relationshipSelect.addEventListener('change', () => this.selectors.wizard.relationshipOtherGroup.classList.toggle('hidden', this.selectors.wizard.relationshipSelect.value !== 'Other'));
+               
+                this.selectors.rejection.form.addEventListener('submit', (e) => this.handleRejectionSubmit(e));
+                this.selectors.rejection.cancelBtn.addEventListener('click', () => this.modalLogic.hideModal(this.selectors.rejection.modal, this.wizardLogic.resetRejectionForm));
+                this.selectors.rejection.reasonText.addEventListener('input', () => this.utils.clearValidationError(this.selectors.rejection.reasonText));
+               
+                this.selectors.confirmation.confirmBtn.addEventListener('click', () => this.handleConfirmationConfirm());
+                this.selectors.confirmation.cancelBtn.addEventListener('click', () => this.handleConfirmationCancel());
+
+                // Global click listener to close kebab menus
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('[data-menu-container]')) {
+                        this.renderLogic.closeAllMenus();
+                    }
+                });
+            },
+
+            // --- 5. CORE RENDER ---
+            // Main render loop
+            render() {
+                this.renderLogic.renderTasks();
+                this.renderLogic.populateAllAssigneeSelects();
+            },
+
+            // --- 6. EVENT HANDLERS ---
+            // Functions that respond to user interactions
+
+            /**
+             * Handles all clicks on the AI Suggestion cards
+             */
+            handleSuggestionClick(e) {
+                const actionTarget = e.target.closest('[data-action]');
+                if (!actionTarget) return;
+
+                const action = actionTarget.dataset.action;
+                const suggestionCard = e.target.closest('.suggestion-card');
+                if (!suggestionCard) return;
+
+                if (action === 'remove-suggestion') {
+                    suggestionCard.style.display = 'none';
+                }
+
+                if (action === 'accept-suggestion') {
+                    const title = suggestionCard.querySelector('p.font-semibold').textContent;
+                    this.formLogic.showNewTaskForm();
+
+                    setTimeout(() => {
+                        const form = this.selectors.newTaskFormContainer.querySelector('form');
+                        if (!form) return;
+
+                        form.querySelector('[name="title"]').value = title;
+                       
+                        let noteText = 'Task accepted from AI Suggestion.';
+                        if (title.includes('Review Q3 Bank Statement')) {
+                            noteText = 'Please review the attached Q3 bank statement for any discrepancies and confirm all major transactions.';
+                        } else if (title.includes('financial advisor')) {
+                            noteText = 'Please add the contact details for my financial advisor, Anna Petrova, to this record.';
+                        }
+                        form.querySelector('[name="notes"]').value = noteText;
+                        form.querySelector('[name="assignee"]').value = 'me';
+
+                        this.selectors.newTaskFormContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        form.querySelector('[name="title"]').focus();
+                    }, 100);
+
+                    suggestionCard.style.display = 'none';
+                }
+            },
+
+            /**
+             * Handles all clicks within the task lists (Active and Completed)
+             * This is the main event delegation router.
+             */
+            handleTaskListClick(e) {
+                const actionTarget = e.target.closest('[data-action]');
+               
+                if (!actionTarget) {
+                    if (e.target.closest('[data-menu-container]') || e.target.closest('form')) {
+                         e.stopPropagation();
+                    }
+                    return;
+                }
+               
+                const action = actionTarget.dataset.action;
+                const taskItem = e.target.closest('.task-item');
+                if (!taskItem) return;
+
+                const taskId = taskItem.dataset.taskId;
+                const task = this.utils.findTaskById(taskId);
+                if (!task) return;
+
+                // --- v8/v9/v10 CRITICAL FIX ---
+                // Stop propagation for ALL button clicks to prevent accordion toggle
+                if (action !== 'toggle-accordion') {
+                    e.stopPropagation();
+                }
+                // --- END FIX ---
+
+                // Close all *other* accordions
+                if (action === 'toggle-accordion' && !taskItem.querySelector('.task-accordion-content.open')) {
+                    this.formLogic.closeAllAccordions(taskId);
+                }
+
+                // Close *all* kebab menus, unless we are toggling one
+                if (action === 'toggle-menu') {
+                    this.renderLogic.closeAllMenus(taskId); // Close all *other* menus
+                } else {
+                    this.renderLogic.closeAllMenus(); // Close all menus
+                }
+
+                // Route action to the correct handler function
+                switch (action) {
+                    case 'toggle-menu':
+                        const menu = taskItem.querySelector('.task-menu-dropdown');
+                        menu?.classList.toggle('show');
+                        break;
+                    case 'toggle-accordion':
+                        const content = taskItem.querySelector('.task-accordion-content');
+                        const chevron = taskItem.querySelector('.task-chevron');
+                        content?.classList.toggle('open');
+                        chevron?.classList.toggle('rotate-180');
+                        break;
+                    case 'mark-done':
+                        task.status = task.status === 'done' ? 'pending' : 'done';
+                        task.isEditing = false;
+                        this.render();
+                        break;
+                    case 'edit-task':
+                        this.handleEditTask(task);
+                        break;
+                    case 'delete-task':
+                        this.modalLogic.showConfirmationModal(
+                            'Are you sure you want to delete this task?',
+                            () => {
+                                this.state.tasks = this.state.tasks.filter(t => t.id !== taskId);
+                                this.render();
+                            },
+                            'Delete Task?'
+                        );
+                        break;
+                    case 'resend-invitation':
+                        this.state.taskToInvite = taskId;
+                        this.modalLogic.openInvitationModal(task.assigneeId, task.title, task.date);
+                        break;
+                    case 'simulate-accept':
+                        task.status = 'accepted';
+                        this.render();
+                        break;
+                    case 'simulate-reject':
+                        this.state.taskToReject = taskId;
+                        this.modalLogic.showModal(this.selectors.rejection.modal);
+                        break;
+                }
+            },
+
+            /**
+             * Handles the 'Edit' action from the kebab menu
+             */
+            handleEditTask(task) {
+                task.isEditing = true;
+                this.render();
+
+                // Re-attach listeners to the newly-generated form
+                const editForm = document.querySelector(`[data-task-id="${task.id}"] form`);
+                if (editForm) {
+                    this.formLogic.setupFormListeners(editForm);
+                    this.renderLogic.populateAllAssigneeSelects();
+                    editForm.querySelector('[name="assignee"]').value = task.assigneeId;
+                    this.formLogic.toggleTaskFields(editForm, task.assigneeId);
+                }
+
+                // Open the accordion
+                setTimeout(() => {
+                    const content = document.querySelector(`[data-task-id="${task.id}"] .task-accordion-content`);
+                    const chevron = document.querySelector(`[data-task-id="${task.id}"] .task-chevron`);
+                    if (content) content.classList.add('open');
+                    if (chevron) chevron.classList.add('rotate-180');
+                }, 0);
+            },
+
+            /**
+             * Handles saving a new or edited task
+             */
+            handleFormSubmit(e) {
+                e.preventDefault();
+                const form = e.target;
+                const taskId = form.dataset.taskId;
+                const isNew = taskId === 'new';
+
+                const titleInput = form.querySelector('[name="title"]');
+                if (!titleInput.value.trim()) {
+                    this.utils.showValidationError(titleInput, 'Task Title is required.');
+                    titleInput.focus();
+                    return;
+                }
+
+                const formData = new FormData(form);
+                const assigneeId = formData.get('assignee');
+                const isMe = (assigneeId === 'me' || assigneeId === this.state.contacts.my_family[0].id);
+
+                const taskData = {
+                    id: isNew ? `task-${Date.now()}` : taskId,
+                    title: formData.get('title'),
+                    assigneeId: assigneeId,
+                    priority: isMe ? formData.get('priority') : 'Medium',
+                    date: formData.get('date'),
+                    notes: formData.get('notes'),
+                    repeats: isMe ? formData.get('repeats') : 'none',
+                    access: isMe ? null : formData.get('access'),
+                    ends: isMe && formData.get('repeats') !== 'none' ? {
+                        type: formData.get('ends_type'),
+                        date: formData.get('ends_type') === 'on' ? formData.get('ends_date') : null
+                    } : { type: 'never' },
+                    status: 'pending',
+                    invitation_sent: null,
+                    isEditing: false
+                };
+
+                let showInviteModal = false;
+                if (isNew) {
+                    if (!isMe) {
+                        taskData.status = 'pending_invitation';
+                        showInviteModal = true;
+                    }
+                    this.state.tasks.push(taskData);
+                    this.state.taskToInvite = taskData.id;
+                } else {
+                    const originalTask = this.utils.findTaskById(taskId);
+                    if (!originalTask) return;
+
+                    const wasMe = (originalTask.assigneeId === 'me' || originalTask.assigneeId === this.state.contacts.my_family[0].id);
+                    if (!isMe && (wasMe || originalTask.assigneeId !== assigneeId)) {
+                        taskData.status = 'pending_invitation';
+                        taskData.invitation_sent = null;
+                        showInviteModal = true;
+                        this.state.taskToInvite = taskId;
+                    } else if (!isMe) {
+                        taskData.status = originalTask.status === 'done' ? 'pending' : originalTask.status;
+                        taskData.invitation_sent = (originalTask.assigneeId === assigneeId) ? originalTask.invitation_sent : null;
+                        if (taskData.invitation_sent === null) {
+                            taskData.status = 'pending_invitation';
+                            showInviteModal = true;
+                            this.state.taskToInvite = taskId;
+                        }
+                    } else if (isMe && originalTask.status === 'done') {
+                        taskData.status = 'pending';
+                    }
+                    Object.assign(originalTask, taskData);
+                }
+
+                this.render();
+                if (isNew) this.formLogic.hideNewTaskForm();
+                if (showInviteModal) this.modalLogic.openInvitationModal(taskData.assigneeId, taskData.title, taskData.date);
+            },
+
+            /**
+             * Handles sending the invitation modal
+             */
+            handleInvitationSubmit(e) {
+                e.preventDefault();
+                const taskId = this.state.taskToInvite;
+                const task = this.utils.findTaskById(taskId);
+
+                if (task) {
+                    task.status = 'pending';
+                    task.invitation_sent = new Date().toISOString();
+                    const newEmail = this.selectors.invitation.emailInput.value;
+                    const contact = this.utils.findContactById(task.assigneeId);
+                    if (contact) contact.email = newEmail;
+                    this.render();
+                }
+                this.modalLogic.hideModal(this.selectors.invitation.modal);
+                this.state.taskToInvite = null;
+            },
+           
+            /**
+             * Handles canceling the invitation modal
+             */
+            handleInvitationCancel() {
+                const taskId = this.state.taskToInvite;
+                const task = this.utils.findTaskById(taskId);
+                if (task && !task.invitation_sent) {
+                    task.status = 'pending_invitation';
+                }
+                this.modalLogic.hideModal(this.selectors.invitation.modal);
+                this.state.taskToInvite = null;
+                this.render();
+            },
+
+            /**
+             * Handles submitting the rejection reason
+             */
+            handleRejectionSubmit(e) {
+                e.preventDefault();
+                const reason = this.selectors.rejection.reasonText.value;
+                const taskId = this.state.taskToReject;
+               
+                if (!reason.trim()) {
+                    this.utils.showValidationError(this.selectors.rejection.reasonText, 'A reason is required to reject.');
+                    return;
+                }
+
+                if (taskId) {
+                    const task = this.utils.findTaskById(taskId);
+                    if (task) {
+                        task.status = 'rejected';
+                        task.rejectionReason = reason;
+                        this.render();
+                    }
+                }
+                this.modalLogic.hideModal(this.selectors.rejection.modal, this.wizardLogic.resetRejectionForm);
+            },
+
+            /**
+             * Handles submitting the new contact wizard
+             */
+            handleWizardSubmit(e) {
+                e.preventDefault();
+                let isValid = true;
+                const s = this.selectors.wizard; // Shorthand
+               
+                if (!s.nameInput.value.trim()) {
+                    this.utils.showValidationError(s.nameInput, 'Full Name is required.');
+                    isValid = false;
+                }
+                if (!s.emailInput.value.trim() || !s.emailInput.value.includes('@')) {
+                    this.utils.showValidationError(s.emailInput, 'A valid Email is required.');
+                    isValid = false;
+                }
+                const locationKey = s.locationSelect.value;
+                if (!locationKey) {
+                    this.utils.showValidationError(s.locationSelect, 'Please select a location.');
+                    isValid = false;
+                }
+               
+                let role = s.relationshipSelect.value;
+                if (!role) {
+                     this.utils.showValidationError(s.relationshipSelect, 'Please select a relationship.');
+                     isValid = false;
+                }
+
+                if (role === 'Other') {
+                    role = s.relationshipOtherInput.value.trim();
+                    if (!role) {
+                         this.utils.showValidationError(s.relationshipOtherInput, 'Please specify the role.');
+                         isValid = false;
+                    }
+                }
+
+                if (!isValid) return;
+
+                const newContact = {
+                    id: `contact-${Date.now()}`,
+                    name: s.nameInput.value.trim(),
+                    email: s.emailInput.value.trim(),
+                    phone: s.phoneInput.value,
+                    role: role
+                };
+
+                this.state.contacts[locationKey].push(newContact);
+                this.renderLogic.populateAllAssigneeSelects();
+
+                if (this.state.activeFormId) {
+                    const activeForm = document.getElementById(this.state.activeFormId);
+                    if (activeForm) {
+                        const assigneeSelect = activeForm.querySelector('[name="assignee"]');
+                        if (assigneeSelect) {
+                            assigneeSelect.value = newContact.id;
+                            assigneeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }
+                }
+               
+                this.modalLogic.hideModal(s.modal, this.wizardLogic.resetWizardForm);
+            },
+
+            /**
+             * Handles confirming the delete action
+             */
+            handleConfirmationConfirm() {
+                if (typeof this.state.confirmationCallback === 'function') {
+                    this.state.confirmationCallback();
+                }
+                this.modalLogic.hideModal(this.selectors.confirmation.modal);
+                this.state.confirmationCallback = null;
+            },
+
+            /**
+             * Handles canceling the delete action
+             */
+            handleConfirmationCancel() {
+                this.modalLogic.hideModal(this.selectors.confirmation.modal);
+                this.state.confirmationCallback = null;
+            },
+           
+           
+            // --- 7. RENDER LOGIC ---
+            // Functions that generate HTML or manipulate the DOM
+           
+            renderLogic: {
+                /**
+                 * Main function to render both task lists
+                 */
+                renderTasks() {
+                    const activeTasks = App.state.tasks.filter(t => t.status !== 'done');
+                    const completedTasks = App.state.tasks.filter(t => t.status === 'done');
+
+                    const s = App.selectors; // Shorthand
+                    s.activeTaskList.innerHTML = '';
+                    s.completedTaskList.innerHTML = '';
+
+                    if (activeTasks.length > 0) {
+                        activeTasks.forEach(task => this.renderTaskToDOM(task, s.activeTaskList));
+                    } else {
+                        s.activeTaskList.innerHTML = `<div class="empty-state active">You have no active tasks.<br>You can create a new one using the button above or accept an AI suggestion.</div>`;
+                    }
+
+                    if (completedTasks.length > 0) {
+                        completedTasks.forEach(task => this.renderTaskToDOM(task, s.completedTaskList));
+                    } else {
+                        s.completedTaskList.innerHTML = `<div class="empty-state">No completed tasks yet. Keep up the good work!</div>`;
+                    }
+                },
+
+                /**
+                 * Renders a single task item into a container
+                 */
+                renderTaskToDOM(task, container) {
+                    const taskWrapper = document.createElement('div');
+                    const isDone = task.status === 'done';
+                    const contact = App.utils.findContactById(task.assigneeId);
+                    const color = App.utils.getPriorityColor(task.priority);
+
+                    taskWrapper.className = `task-item ${isDone ? 'completed' : ''}`;
+                    taskWrapper.setAttribute('data-task-id', task.id);
+
+                    const accordionContentHTML = task.isEditing
+                        ? this.generateEditFormHTML(task, `edit-form-${task.id}`)
+                        : this.generateViewHTML(task);
+                   
+                    // v10 style update for completed text
+                    const titleClass = isDone ? 'line-through text-gray-500' : 'text-gray-900';
+                    const subtitleClass = isDone ? 'text-gray-400' : 'text-gray-500';
+
+                    taskWrapper.innerHTML = `
+                        <div class="task-row" data-action="toggle-accordion">
+                            <span class="task-status-bar" style="background-color: ${color}"></span>
+                            <div class="task-done-btn ${isDone ? 'done' : ''}" data-action="mark-done">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" style="display: ${isDone ? 'block' : 'none'};">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="font-medium ${titleClass}">${task.title}</p>
+                                <p class="text-sm ${subtitleClass}">
+                                    Assigned to: <strong>${contact.name}</strong> •
+                                    Due: ${App.utils.formatDate(task.date)}
+                                </p>
+                            </div>
+                            <div class="relative ml-auto" data-menu-container>
+                                <button class="task-menu-btn" data-action="toggle-menu">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                                    </svg>
+                                </button>
+                                <div class="task-menu-dropdown">
+                                    <button class="task-menu-item" data-action="edit-task">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
+                                        <span>Edit</span>
+                                    </button>
+                                    <button class="task-menu-item text-red-600" data-action="delete-task">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                        <span>Delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="task-chevron h-5 w-5 text-gray-400 transition-transform transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div class="task-accordion-content">
+                            ${accordionContentHTML}
+                        </div>`;
+                    container.appendChild(taskWrapper);
+                },
+
+                /**
+                 * Generates the HTML for the "View Mode" of an accordion
+                 */
+                generateViewHTML(task) {
+                    const contact = App.utils.findContactById(task.assigneeId);
+                    const isMe = contact.id === 'me';
+                    let rejectionReasonHTML = '';
+                    let statusText = 'Status: Unknown';
+                    let showResendButton = false;
+                    let showSimButtons = false;
+                    const contactName = contact.name.split(' ')[0];
+
+                    switch (task.status) {
+                        case 'pending_invitation':
+                            statusText = `Status: Ready to Send Invitation`;
+                            showResendButton = true;
+                            break;
+                        case 'accepted':
+                            statusText = `Status: <span class="font-bold text-green-600">Accepted</span> by ${contactName} on ${App.utils.formatDate(new Date().toISOString())}`;
+                            break;
+                        case 'rejected':
+                            statusText = `Status: <span class="font-bold text-red-600">Rejected</span> by ${contactName}`;
+                            if (task.rejectionReason) {
+                                rejectionReasonHTML = `
+                                    <div class="view-group col-span-2">
+                                        <label class="view-label">Reason for Rejection</label>
+                                        <div class="view-notes !border-red-200 !bg-red-50">
+                                            <em class="text-gray-700">"${task.rejectionReason}"</em>
+                                        </div>
+                                    </div>`;
+                            }
+                            break;
+                        default: // 'pending'
+                            if (isMe) {
+                                statusText = 'Status: In Progress (To-Do)';
+                            } else if (task.invitation_sent) {
+                                statusText = `Status: Invitation sent, awaiting reply from ${contactName}`;
+                                showResendButton = true;
+                                showSimButtons = true;
+                            } else {
+                                statusText = `Status: Ready to Send Invitation`;
+                                showResendButton = true;
+                            }
+                            break;
+                    }
+
+                    return `
+                        <div class="flex justify-end items-center gap-2 mb-4">
+                            ${showSimButtons ? `
+                                <span class="text-sm text-gray-500">Simulate:</span>
+                                <button class="btn btn-ghost btn-sm !text-green-600" data-action="simulate-accept" title="Simulate Accept">✔️ Accept</button>
+                                <button class="btn btn-ghost btn-sm !text-red-600" data-action="simulate-reject" title="Simulate Reject">✖️ Reject</button>
+                                <span class="border-l h-6 border-gray-200 mx-1"></span>
+                            ` : ''}
+                            ${showResendButton ? `<button class="btn btn-secondary btn-sm" data-action="resend-invitation">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                ${task.invitation_sent ? 'Resend' : 'Send'} Invitation
+                            </button>` : ''}
+                        </div>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-5">
+                            <div class="view-group col-span-2">
+                                <label class="form-label-with-tooltip">Assigned To
+                                   <span class="tooltip-container">
+                                        <span class="tooltip-icon" tabindex="0">i</span>
+                                        <span class="tooltip-text">Select a contact (a unique Record in PlanAfter) or create a new one. Changes here might affect other Records.</span>
+                                   </span>
+                                </label>
+                                <div class="view-value">
+                                    <span class="view-avatar" style="${App.utils.getAvatarStyle(contact)}">${App.utils.getInitials(contact.name)}</span>
+                                    ${contact.name} (${contact.role})
+                                </div>
+                            </div>
+                            <div class="view-group col-span-2">
+                                <label class="view-label">Status</label>
+                                <div class="view-value">${statusText}</div>
+                            </div>
+                            ${rejectionReasonHTML}
+                            <div class="view-group col-span-2">
+                                <label class="view-label">${isMe && task.repeats !== 'none' ? 'Start Date' : 'Due Date'}</label>
+                                <div class="view-value">${App.utils.formatDate(task.date)}</div>
+                            </div>
+                            <div class="view-group ${isMe ? '' : 'hidden'}">
+                                 <label class="form-label-with-tooltip">Repeats
+                                    <span class="tooltip-container">
+                                         <span class="tooltip-icon" tabindex="0">i</span>
+                                         <span class="tooltip-text">Set how often this task should repeat. This option is only available for tasks assigned to yourself.</span>
+                                    </span>
+                                 </label>
+                                <div class="view-value">${App.utils.formatRepeats(task.repeats)}</div>
+                            </div>
+                            <div class="view-group ${isMe ? '' : 'hidden'}">
+                                 <label class="form-label">Priority</label>
+                                <div class="view-value">${task.priority}</div>
+                            </div>
+                            <div class="view-group ${isMe && task.repeats !== 'none' ? '' : 'hidden'}">
+                                 <label class="form-label-with-tooltip">Ends
+                                    <span class="tooltip-container">
+                                         <span class="tooltip-icon" tabindex="0">i</span>
+                                         <span class="tooltip-text">'Never' means the task will repeat indefinitely. 'On' sets a specific end date for the recurrence.</span>
+                                    </span>
+                                 </label>
+                                <div class="view-value">${App.utils.formatEnds(task.ends)}</div>
+                            </div>
+                            <div class="view-group col-span-2 ${isMe ? 'hidden' : ''}">
+                                 <label class="form-label-with-tooltip">Temporary Access To
+                                    <span class="tooltip-container">
+                                         <span class="tooltip-icon" tabindex="0">i</span>
+                                         <span class="tooltip-text">Choose what information in this Record the assigned person needs to see to complete the task. They will only see what you select.</span>
+                                    </span>
+                                 </label>
+                                <div class="view-value">${App.utils.formatAccess(task.access)}</div>
+                            </div>
+                            <div class="view-group col-span-2">
+                                <label class="view-label">Notes & Instructions</label>
+                                <div class="view-notes">${task.notes || 'No notes provided.'}</div>
+                            </div>
+                        </div>`;
+                },
+
+                /**
+                 * Generates the HTML for the "Edit/Create" form
+                 */
+                generateEditFormHTML(task = null, formId) {
+                    const data = task || {
+                        id: 'new',
+                        title: '',
+                        assigneeId: 'me',
+                        priority: 'Medium',
+                        repeats: 'none',
+                        date: new Date().toISOString().split('T')[0],
+                        ends: { type: 'never' },
+                        access: 'record-dossier',
+                        notes: ''
+                    };
+                    const isMe = data.assigneeId === 'me';
+                    return `
+                        <form id="${formId}" data-task-id="${data.id}">
+                            <div class="grid grid-cols-2 gap-x-6 gap-y-5">
+                               
+                                <!-- Red 1: Title -->
+                                <div class="form-group col-span-2">
+                                    <label class="form-label" for="edit-title-${data.id}">Task Title*</label>
+                                    <input type="text" id="edit-title-${data.id}" name="title" class="form-input" value="${data.title}" required>
+                                    <p class="validation-error-text">Task Title is required.</p>
+                                </div>
+
+                                <!-- Red 2: Assignee -->
+                                <div class="form-group col-span-2">
+                                     <label class="form-label-with-tooltip" for="edit-assignee-${data.id}">Assigned To
+                                         <span class="tooltip-container">
+                                              <span class="tooltip-icon" tabindex="0">i</span>
+                                              <span class="tooltip-text">Select a contact (a unique Record in PlanAfter) or create a new one. Changes here might affect other Records.</span>
+                                         </span>
+                                     </label>
+                                    <select id="edit-assignee-${data.id}" name="assignee" class="form-select assignee-select" required>
+                                        <!-- JS will populate this -->
+                                    </select>
+                                </div>
+
+                                <!-- Red 3: Date & Priority (Priority e uslovno) -->
+                                <!-- Data shte se preorazmeryava chrez JS -->
+                                <div class="form-group ${isMe ? 'col-span-1' : 'col-span-2'}" data-field="date">
+                                    <label class="form-label" for="edit-date-${data.id}" id="label-date-${data.id}">
+                                        ${isMe && data.repeats !== 'none' ? 'Start Date' : 'Due Date'}
+                                    </label>
+                                    <input type="date" id="edit-date-${data.id}" name="date" class="form-input" value="${data.date}">
+                                </div>
+                                <div class="form-group col-span-1 ${isMe ? '' : 'hidden'}" data-field="priority">
+                                     <label class="form-label" for="edit-priority-${data.id}">Priority</label>
+                                    <select id="edit-priority-${data.id}" name="priority" class="form-select">
+                                        <option ${data.priority === 'High' ? 'selected' : ''}>High</option>
+                                        <option ${data.priority === 'Medium' ? 'selected' : ''}>Medium</option>
+                                        <option ${data.priority === 'Low' ? 'selected' : ''}>Low</option>
+                                    </select>
+                                </div>
+
+                                <!-- Red 4: Repeats & Ends (Uslovni) -->
+                                <div class="form-group col-span-1 ${isMe ? '' : 'hidden'}" data-field="repeats">
+                                     <label class="form-label-with-tooltip" for="edit-repeats-${data.id}">Repeats
+                                         <span class="tooltip-container">
+                                              <span class="tooltip-icon" tabindex="0">i</span>
+                                              <span class="tooltip-text">Set how often this task should repeat. This option is only available for tasks assigned to yourself.</span>
+                                         </span>
+                                     </label>
+                                    <select id="edit-repeats-${data.id}" name="repeats" class="form-select">
+                                        <option value="none" ${data.repeats === 'none' ? 'selected' : ''}>Does not repeat</option>
+                                        <option value="daily" ${data.repeats === 'daily' ? 'selected' : ''}>Daily</option>
+                                        <option value="weekly" ${data.repeats === 'weekly' ? 'selected' : ''}>Weekly</option>
+                                        <option value="monthly" ${data.repeats === 'monthly' ? 'selected' : ''}>Monthly</option>
+                                        <option value="annually" ${data.repeats === 'annually' ? 'selected' : ''}>Annually</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-span-1 ${isMe && data.repeats !== 'none' ? '' : 'hidden'}" data-field="ends">
+                                     <label class="form-label-with-tooltip" for="edit-ends-type-${data.id}">Ends
+                                         <span class="tooltip-container">
+                                              <span class="tooltip-icon" tabindex="0">i</span>
+                                              <span class="tooltip-text">'Never' means the task will repeat indefinitely. 'On' sets a specific end date for the recurrence.</span>
+                                         </span>
+                                     </label>
+                                    <div class="flex gap-4">
+                                        <select id="edit-ends-type-${data.id}" name="ends_type" class="form-select w-1/3">
+                                            <option value="never" ${data.ends.type === 'never' ? 'selected' : ''}>Never</option>
+                                            <option value="on" ${data.ends.type === 'on' ? 'selected' : ''}>On</option>
+                                        </select>
+                                        <input type="date" id="edit-ends-date-${data.id}" name="ends_date" class="form-input w-2/3 ${data.ends.type === 'on' ? '' : 'hidden'}" value="${data.ends.date || ''}">
+                                    </div>
+                                </div>
+
+                                <!-- Red 5: Access (Uslovno) -->
+                                <div class="form-group col-span-2 ${isMe ? 'hidden' : ''}" data-field="access">
+                                     <label class="form-label-with-tooltip" for="edit-access-${data.id}">Temporary Access To
+                                         <span class="tooltip-container">
+                                              <span class="tooltip-icon" tabindex="0">i</span>
+                                              <span class="tooltip-text">Choose what information in this Record the assigned person needs to see to complete the task. They will only see what you select.</span>
+                                         </span>
+                                     </label>
+                                    <select id="edit-access-${data.id}" name="access" class="form-select">
+                                        <option value="record-dossier" ${data.access === 'record-dossier' ? 'selected' : ''}>Full Record Access</option>
+                                        <option value="record-basic" ${data.access === 'record-basic' ? 'selected' : ''}>Basic Info Card</option>
+                                        <option value="record-ownership" ${data.access === 'record-ownership' ? 'selected' : ''}>Ownership Card</option>
+                                        <option value="record-services" ${data.access === 'record-services' ? 'selected' : ''}>Related Services Card</option>
+                                        <option value="record-docs" ${data.access === 'record-docs' ? 'selected' : ''}>Additional Documents Card</option>
+                                    </select>
+                                </div>
+
+                                <!-- Red 6: Notes -->
+                                <div class="form-group col-span-2" data-field="notes">
+                                    <label class="form-label" for="edit-notes-${data.id}">Notes & Instructions</label>
+                                    <textarea id="edit-notes-${data.id}" name="notes" class="form-textarea" rows="3">${data.notes}</textarea>
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-2 mt-4">
+                                <button type="button" class="btn btn-secondary" data-action="cancel-edit">Cancel</button>
+                                <button type="submit" class="btn btn-primary" data-action="save-form">Save</button>
+                            </div>
+                        </form>`;
+                },
+
+                /**
+                 * Populates all "Assigned To" dropdowns on the page
+                 */
+                populateAllAssigneeSelects() {
+                    const selects = document.querySelectorAll('.assignee-select');
+                    const groups = [
+                        { label: 'My Family', key: 'my_family' },
+                        { label: 'My Network', key: 'my_network' }
+                    ];
+
+                    selects.forEach(select => {
+                        const currentValue = select.value;
+                        select.innerHTML = ''; // Clear
+
+                        groups.forEach(groupInfo => {
+                            const contacts = App.state.contacts[groupInfo.key];
+                            if (contacts.length > 0) {
+                                const optgroup = document.createElement('optgroup');
+                                optgroup.label = groupInfo.label;
+                                contacts.forEach(contact => {
+                                    const option = document.createElement('option');
+                                    option.value = contact.id;
+                                    option.textContent = `${contact.name} (${contact.role})`;
+                                    optgroup.appendChild(option);
+                                });
+                                select.appendChild(optgroup);
+                            }
+                        });
+
+                        select.innerHTML += '<option value="create_new" class="font-bold text-indigo-600 !mt-2">+ Create New Contact...</option>';
+                        select.value = currentValue;
+                        if (!select.value || select.value === "create_new") {
+                            select.value = App.state.contacts.my_family[0].id; // 'me'
+                        }
+                    });
+                },
+
+                /**
+                 * Closes all open kebab menus
+                 */
+                closeAllMenus(exceptTaskId = null) {
+                    document.querySelectorAll('.task-item').forEach(item => {
+                        if (item.dataset.taskId !== exceptTaskId) {
+                            item.querySelector('.task-menu-dropdown')?.classList.remove('show');
+                        }
+                    });
+                }
+            },
+
+            // --- 8. FORM & ACCORDION LOGIC ---
+           
+            formLogic: {
+                /**
+                 * Attaches listeners to a newly created form (edit or new)
+                 */
+                setupFormListeners(form) {
+                    if (!form) return;
+                   
+                    // --- Validation Listener ---
+                    const titleInput = form.querySelector('[name="title"]');
+                    if (titleInput) {
+                        titleInput.addEventListener('input', () => App.utils.clearValidationError(titleInput));
+                    }
+
+                    // --- Dynamic Field Listeners ---
+                    const assignedToSelect = form.querySelector('[name="assignee"]');
+                    if (assignedToSelect) {
+                        assignedToSelect.addEventListener('change', (e) => {
+                            if (e.target.value === 'create_new') {
+                                App.state.activeFormId = form.id;
+                                App.modalLogic.showModal(App.selectors.wizard.modal);
+                                e.target.value = App.state.contacts.my_family[0].id; // 'me'
+                                this.toggleTaskFields(form, e.target.value);
+                            } else {
+                                this.toggleTaskFields(form, e.target.value);
+                            }
+                        });
+                    }
+
+                    const repeatsSelect = form.querySelector('[name="repeats"]');
+                    if (repeatsSelect) {
+                        repeatsSelect.addEventListener('change', () => {
+                            this.toggleTaskFields(form, assignedToSelect.value);
+                        });
+                    }
+
+                    const endsTypeSelect = form.querySelector('[name="ends_type"]');
+                    if (endsTypeSelect) {
+                        endsTypeSelect.addEventListener('change', (e) => {
+                            const endsDateInput = form.querySelector('[name="ends_date"]');
+                            endsDateInput?.classList.toggle('hidden', e.target.value !== 'on');
+                        });
+                    }
+
+                    // --- Button Listeners (with v8/v9/v10 Fix) ---
+                    const cancelBtn = form.querySelector('[data-action="cancel-edit"]');
+                    if (cancelBtn) {
+                        cancelBtn.addEventListener('click', (e) => {
+                            e.stopPropagation(); // Stop click from bubbling to task-row
+                            if (form.id === 'new-task-form') {
+                                this.hideNewTaskForm();
+                            } else {
+                                const task = App.utils.findTaskById(form.dataset.taskId);
+                                if (task) {
+                                    task.isEditing = false;
+                                    App.render();
+                                }
+                            }
+                        });
+                    }
+
+                    form.addEventListener('submit', (e) => {
+                        e.stopPropagation(); // Stop click from bubbling to task-row
+                        // POPRAVKA: Premakhnato '.handlers'
+                        App.handleFormSubmit(e);
+                    });
+                },
+
+                /**
+                 * Shows/hides form fields based on the selected assignee
+                 */
+                toggleTaskFields(form, assigneeId) {
+                    if (!form) return;
+                    const isMe = (assigneeId === 'me' || assigneeId === App.state.contacts.my_family[0].id);
+                    const repeatsValue = form.querySelector('[name="repeats"]')?.value || 'none';
+                    const dateLabel = form.querySelector('[id^="label-date-"]');
+                   
+                    const fields = {
+                        // NEW: Dobaveno e poleto za data
+                        dateGroup: form.querySelector('[data-field="date"]'),
+                        repeatsGroup: form.querySelector('[data-field="repeats"]'),
+                        priorityGroup: form.querySelector('[data-field="priority"]'),
+                        accessGroup: form.querySelector('[data-field="access"]'),
+                        endsGroup: form.querySelector('[data-field="ends"]'),
+                        endsDateInput: form.querySelector('[name="ends_date"]')
+                    };
+
+                    fields.repeatsGroup?.classList.toggle('hidden', !isMe);
+                    fields.priorityGroup?.classList.toggle('hidden', !isMe);
+                    fields.accessGroup?.classList.toggle('hidden', isMe);
+
+                    // NEW: Logika za preorazmeryavane na data
+                    if (fields.dateGroup) {
+                        fields.dateGroup.classList.toggle('col-span-1', isMe);
+                        fields.dateGroup.classList.toggle('col-span-2', !isMe);
+                    }
+                   
+                    const isRepeating = isMe && repeatsValue !== 'none';
+                    fields.endsGroup?.classList.toggle('hidden', !isRepeating);
+                    if (dateLabel) dateLabel.textContent = isRepeating ? 'Start Date' : 'Due Date';
+                   
+                    if (isRepeating) {
+                        const endsType = form.querySelector('[name="ends_type"]')?.value;
+                        fields.endsDateInput?.classList.toggle('hidden', endsType !== 'on');
+                    }
+                },
+
+                /**
+                 * Shows the "Add New Task" form
+                 */
+                showNewTaskForm() {
+                    const s = App.selectors;
+                    s.newTaskFormContainer.innerHTML = App.renderLogic.generateEditFormHTML(null, 'new-task-form');
+                    App.renderLogic.populateAllAssigneeSelects();
+
+                    const form = s.newTaskFormContainer.querySelector('form');
+                    this.setupFormListeners(form);
+                    this.toggleTaskFields(form, 'me');
+
+                    s.newTaskFormContainer.classList.add('open');
+                    s.addTaskBtn.classList.add('hidden');
+
+                    setTimeout(() => form.querySelector('[name="title"]')?.focus(), 100);
+                },
+
+                /**
+                 * Hides the "Add New Task" form
+                 */
+                hideNewTaskForm() {
+                    const s = App.selectors;
+                    s.newTaskFormContainer.classList.remove('open');
+                    s.addTaskBtn.classList.remove('hidden');
+                    setTimeout(() => { s.newTaskFormContainer.innerHTML = ''; }, 500);
+                },
+
+                /**
+                 * Closes all open accordions, except for the one specified
+                 */
+                closeAllAccordions(exceptTaskId = null) {
+                    document.querySelectorAll('.task-item').forEach(item => {
+                        if (item.dataset.taskId !== exceptTaskId) {
+                            item.querySelector('.task-accordion-content')?.classList.remove('open');
+                            item.querySelector('.task-chevron')?.classList.remove('rotate-180');
+                        }
+                    });
+                    if (exceptTaskId !== 'new') {
+                        this.hideNewTaskForm();
+                    }
+                }
+            },
+
+            // --- 9. WIZARD LOGIC (v9) ---
+           
+            wizardLogic: {
+                /**
+                 * Populates the "Relationship" dropdown based on "Location"
+                 */
+                updateRelationshipOptions(location) {
+                    const s = App.selectors.wizard;
+                    s.relationshipSelect.innerHTML = '';
+                   
+                    if (!location) {
+                        s.relationshipGroup.classList.add('hidden');
+                        s.relationshipOtherGroup.classList.add('hidden');
+                        return;
+                    }
+
+                    s.relationshipGroup.classList.remove('hidden');
+                    const roles = App.constants.contactRoles[location] || [];
+                   
+                    s.relationshipSelect.innerHTML = '<option value="" disabled selected>-- Select a relationship --</option>';
+                    roles.forEach(role => {
+                        s.relationshipSelect.innerHTML += `<option value="${role}">${role}</option>`;
+                    });
+                    s.relationshipSelect.innerHTML += '<option value="Other">Other...</option>';
+                },
+               
+                /**
+                 * Resets the contact wizard form
+                 */
+                resetWizardForm() {
+                    const s = App.selectors.wizard;
+                    s.form.reset();
+                    s.relationshipGroup.classList.add('hidden');
+                    s.relationshipOtherGroup.classList.add('hidden');
+                    App.utils.clearValidationError(s.nameInput);
+                    App.utils.clearValidationError(s.emailInput);
+                    App.utils.clearValidationError(s.locationSelect);
+                    App.utils.clearValidationError(s.relationshipSelect);
+                    App.utils.clearValidationError(s.relationshipOtherInput);
+                    App.state.activeFormId = null;
+                },
+               
+                /**
+                 * Resets the rejection form
+                 */
+                resetRejectionForm() {
+                    App.selectors.rejection.form.reset();
+                    App.utils.clearValidationError(App.selectors.rejection.reasonText);
+                    App.state.taskToReject = null;
+                }
+            },
+           
+            // --- 10. MODAL LOGIC ---
+           
+            modalLogic: {
+                showModal(modalElement) {
+                    modalElement.classList.add('visible');
+                },
+
+                hideModal(modalElement, onHideCallback = null) {
+                    modalElement.classList.remove('visible');
+                    if (typeof onHideCallback === 'function') {
+                        onHideCallback();
+                    }
+                },
+
+                /**
+                 * Opens and populates the "Send Invitation" modal
+                 */
+                openInvitationModal(assigneeId, taskTitle, taskDate) {
+                    const contact = App.utils.findContactById(assigneeId);
+                    if (!contact) return;
+                   
+                    const s = App.selectors.invitation;
+                    const state = App.state;
+
+                    const recordName = "My Main Bank Account"; // Hardcoded
+                    const planOwnerName = state.contacts.my_family[0].name;
+                    const contactFirstName = contact.name.split(' ')[0];
+                    const ctaLink = `https://app.planafter.com/task/${state.taskToInvite}`;
+
+                    s.recipientName.textContent = contact.name;
+                    s.emailInput.value = contact.email;
+                    s.subjectInput.value = `PlanAfter Task Assignment: ${taskTitle}`;
+                    s.messageInput.value = `Hi ${contactFirstName},\n\nI hope this email finds you well.\n\nI'm currently using PlanAfter, a platform that helps me securely organize and manage important aspects of my life planning. It provides valuable guidance and ensures that critical information is accessible and up-to-date when needed.\n\nAs part of keeping my records complete, I need your assistance with a task related to my "${recordName}" Record:\n\nTask: ${taskTitle}\nDue Date: ${App.utils.formatDate(taskDate)}\n\nTo view the specific details of the task, provide updates, or mark it as complete once finished, please use the secure link below. This will take you to your personal PlanAfter portal. If you haven't used PlanAfter before, you'll be guided through a quick and secure setup process.\n\n${ctaLink}\n\nYour contribution is greatly appreciated.\n\nBest regards,\n${planOwnerName}`;
+
+                    this.showModal(s.modal);
+                },
+
+                /**
+                 * Opens the confirmation modal
+                 */
+                showConfirmationModal(message, onConfirm, title = 'Are you sure?') {
+                    const s = App.selectors.confirmation;
+                    s.message.textContent = message;
+                    s.title.textContent = title;
+                    App.state.confirmationCallback = onConfirm; // Store the callback
+                    this.showModal(s.modal);
+                }
+            },
+
+            // --- 11. UTILITY FUNCTIONS ---
+           
+            utils: {
+                findTaskById: (id) => App.state.tasks.find(t => t.id === id),
+
+                findContactById(id) {
+                    if (!id) return { id: 'unknown', name: 'Unknown', email: '', role: 'N/A' };
+                    if (id === 'me') return App.state.contacts.my_family[0];
+                    return App.state.contacts.my_family.find(c => c.id === id) ||
+                           App.state.contacts.my_network.find(c => c.id === id) ||
+                           { id: id, name: 'Unknown Contact', email: '', role: 'N/A' };
+                },
+
+                getInitials(name) {
+                    if (!name) return '?';
+                    const parts = name.split(' ');
+                    if (parts.length > 1) {
+                        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+                    }
+                    return parts[0].substring(0, 2).toUpperCase();
+                },
+
+                getAvatarStyle(contact) {
+                    if (!contact || !contact.id) return 'background-color: #e5e7eb; color: #374151;';
+                    const colors = [
+                        { bg: '#e0f2fe', text: '#0284c7' }, { bg: '#dcfce7', text: '#16a34a' },
+                        { bg: '#ffe4e6', text: '#e11d48' }, { bg: '#f3e8ff', text: '#7e22ce' },
+                        { bg: '#fffbeb', text: '#b45309' },
+                    ];
+                    if (contact.id === 'me') return 'background-color: #e0e7ff; color: #3730a3;';
+                    const hash = contact.id.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
+                    const color = colors[hash % colors.length];
+                    return `background-color: ${color.bg}; color: ${color.text};`;
+                },
+
+                getPriorityColor: (priority) => ({
+                    'High': '#ef4444', 'Medium': '#f97316', 'Low': '#6b7280'
+                })[priority] || '#9ca3af',
+               
+                formatDate(dateString) {
+                    if (!dateString) return 'N/A';
+                    try {
+                        if (dateString instanceof Date) {
+                             return dateString.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                        }
+                        return new Date(dateString + 'T00:00:00')
+                            .toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    } catch (e) { return 'Invalid Date'; }
+                },
+
+                formatAccess: (key) => ({
+                    'record-dossier': 'Full Record Access', 'record-basic': 'Basic Info Card',
+                    'record-ownership': 'Ownership Card', 'record-services': 'Related Services Card',
+                    'record-docs': 'Additional Documents Card'
+                })[key] || 'N/A',
+
+                formatRepeats: (key) => ({
+                    'none': 'Does not repeat', 'daily': 'Daily', 'weekly': 'Weekly',
+                    'monthly': 'Monthly', 'annually': 'Annually'
+                })[key] || 'N/A',
+
+                formatEnds(ends) {
+                    if (!ends || ends.type === 'never' || !ends.type) return 'Never';
+                    if (ends.type === 'on' && ends.date) return `On ${this.formatDate(ends.date)}`;
+                    return 'Never';
+                },
+               
+                showValidationError(inputElement, message) {
+                    inputElement.classList.add('error');
+                    const errorEl = inputElement.nextElementSibling;
+                    if (errorEl && errorEl.classList.contains('validation-error-text')) {
+                        errorEl.textContent = message;
+                        errorEl.style.display = 'block';
+                    }
+                },
+               
+                clearValidationError(inputElement) {
+                    inputElement.classList.remove('error');
+                    const errorEl = inputElement.nextElementSibling;
+                    if (errorEl && errorEl.classList.contains('validation-error-text')) {
+                        errorEl.style.display = 'none';
+                    }
+                }
+            }
+        };
+
+        // Start the application
+        App.init();
+
+    });
+    </script>
+
+</body>
+</html>

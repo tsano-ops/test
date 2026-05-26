@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support & Guidance — PlanAfter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="_shared.css?v=20260518fr110">
+    <style>
+        /* ========== DIRECTORY PAGE STYLES ========== */
+
+        /* Back Link */
+        .dir-back {
+            display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+            font: normal normal 400 14px/17px 'Inter', sans-serif; color: #000; opacity: 0.5;
+            text-decoration: none; margin-bottom: 16px;
+            transition: opacity 0.2s;
+        }
+        .dir-back:hover { opacity: 0.8; }
+        .dir-back svg { width: 14px; height: 14px; }
+
+        /* Page Header */
+        .dir-page-title {
+            font: normal normal 600 24px/30px 'Inter', sans-serif; color: #000;
+            margin: 0 0 4px;
+        }
+        .dir-page-subtitle {
+            font: normal normal 400 14px/17px 'Inter', sans-serif; color: #000; opacity: 0.5;
+            margin: 0 0 24px;
+        }
+
+        /* Mode Toggle */
+        .mode-toggle {
+            display: flex; gap: 0; margin-bottom: 24px;
+            background: rgba(0,0,0,0.04); border-radius: 30px; padding: 4px;
+            width: fit-content;
+        }
+        .mode-btn {
+            padding: 10px 28px; border-radius: 26px; cursor: pointer;
+            font: normal normal 600 14px/17px 'Inter', sans-serif;
+            border: none; background: none; color: #000; opacity: 0.33;
+            transition: all 0.3s ease;
+        }
+        .mode-btn.active {
+            background: rgba(130,107,150,0.15); color: #826B96; opacity: 1;
+        }
+        .mode-btn:not(.active):hover { opacity: 0.6; }
+
+        /* Glass Card Base */
+        .glass-card {
+            background: rgba(255,255,255,0.45); backdrop-filter: blur(10px);
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.16); border-radius: 30px;
+            padding: 30px; margin-bottom: 20px; box-sizing: border-box;
+            width: 100%;
+        }
+
+        /* Mode Containers */
+        .mode-guided, .mode-browse { transition: opacity 0.3s ease; }
+        .mode-browse { display: none; }
+
+        /* ========== GUIDED MODE ========== */
+
+        /* Mood Check-In */
+        .mood-title {
+            font: normal normal 400 20px/28px 'Source Serif 4', serif; color: #000;
+            margin: 0 0 20px;
+        }
+        .mood-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+        }
+        .mood-card {
+            display: flex; align-items: center; gap: 14px;
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(6px);
+            border-radius: 20px; padding: 16px 18px;
+            border-left: 3px solid transparent; cursor: pointer;
+            transition: all 0.25s ease; min-height: 48px;
+            box-sizing: border-box;
+        }
+        .mood-card:hover { background: rgba(255,255,255,0.7); }
+        .mood-card.selected {
+            background: rgba(255,255,255,0.75);
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+        }
+        .mood-card[data-color="#FF2C55"] { border-left-color: rgba(255,44,85,0.3); }
+        .mood-card[data-color="#FF2C55"]:hover,
+        .mood-card[data-color="#FF2C55"].selected { border-left-color: #FF2C55; }
+        .mood-card[data-color="#999"] { border-left-color: rgba(153,153,153,0.3); }
+        .mood-card[data-color="#999"]:hover,
+        .mood-card[data-color="#999"].selected { border-left-color: #999; }
+        .mood-card[data-color="#FF9500"] { border-left-color: rgba(255,149,0,0.3); }
+        .mood-card[data-color="#FF9500"]:hover,
+        .mood-card[data-color="#FF9500"].selected { border-left-color: #FF9500; }
+        .mood-card[data-color="#667EEA"] { border-left-color: rgba(102,126,234,0.3); }
+        .mood-card[data-color="#667EEA"]:hover,
+        .mood-card[data-color="#667EEA"].selected { border-left-color: #667EEA; }
+        .mood-card[data-color="#BC8D53"] { border-left-color: rgba(188,141,83,0.3); }
+        .mood-card[data-color="#BC8D53"]:hover,
+        .mood-card[data-color="#BC8D53"].selected { border-left-color: #BC8D53; }
+        .mood-card[data-color="#61C553"] { border-left-color: rgba(97,197,83,0.3); }
+        .mood-card[data-color="#61C553"]:hover,
+        .mood-card[data-color="#61C553"].selected { border-left-color: #61C553; }
+
+        .mood-icon {
+            width: 24px; height: 24px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; line-height: 1;
+        }
+        .mood-text { flex: 1; min-width: 0; }
+        .mood-label {
+            font: normal normal 600 14px/17px 'Inter', sans-serif; color: #000;
+        }
+        .mood-desc {
+            font: normal normal 400 12px/15px 'Inter', sans-serif; color: #000; opacity: 0.5;
+            margin-top: 2px;
+        }
+
+        /* Personalized Message */
+        .mood-message {
+            font: italic normal 400 16px/24px 'Source Serif 4', serif; color: #000; opacity: 0.7;
+            margin: 0 0 20px; padding: 0;
+        }
+
+        /* Recommended Resources */
+        .rec-heading {
+            font: normal normal 600 14px/17px 'Inter', sans-serif; color: #000; opacity: 0.33;
+            text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 12px;
+            font-size: 11px;
+        }
+        .resource-card {
+            display: flex; align-items: center; gap: 14px;
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(6px);
+            border-radius: 20px; padding: 16px 18px;
+            border-left: 3px solid #826B96; cursor: pointer;
+            transition: all 0.25s ease; margin-bottom: 10px;
+        }
+        .resource-card:last-child { margin-bottom: 0; }
+        .resource-card:hover {
+            background: rgba(255,255,255,0.7);
+            transform: translateX(2px);
+        }
+        .resource-card[data-accent="#826B96"] { border-left-color: #826B96; }
+        .resource-card[data-accent="#3E8B70"] { border-left-color: #3E8B70; }
+        .resource-card[data-accent="#BC8D53"] { border-left-color: #BC8D53; }
+        .resource-card[data-accent="#667EEA"] { border-left-color: #667EEA; }
+        .resource-card[data-accent="#FF9500"] { border-left-color: #FF9500; }
+        .resource-card[data-accent="#FF2C55"] { border-left-color: #FF2C55; }
+
+        .resource-icon {
+            width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .resource-icon.wellness { background: rgba(130,107,150,0.12); }
+        .resource-icon.article { background: rgba(102,126,234,0.12); }
+        .resource-icon.professional { background: rgba(255,44,85,0.12); }
+        .resource-icon.checklist { background: rgba(62,139,112,0.12); }
+        .resource-icon.guide { background: rgba(188,141,83,0.12); }
+        .resource-icon.exercise { background: rgba(130,107,150,0.12); }
+        .resource-icon.directory { background: rgba(255,149,0,0.12); }
+
+        .resource-body { flex: 1; min-width: 0; }
+        .resource-title {
+            font: normal normal 600 14px/17px 'Inter', sans-serif; color: #000;
+        }
+        .resource-meta {
+            font: normal normal 400 12px/15px 'Inter', sans-serif; color: #000; opacity: 0.5;
+            margin-top: 3px; display: flex; align-items: center; gap: 8px;
+        }
+        .resource-type-badge {
+            padding: 2px 8px; border-radius: 8px;
+            font: normal normal 500 10px/12px 'Inter', sans-serif;
+            background: rgba(0,0,0,0.05); color: #000; opacity: 0.6;
+        }
+        .resource-arrow {
+            flex-shrink: 0; opacity: 0.2; transition: opacity 0.2s;
+        }
+        .resource-card:hover .resource-arrow { opacity: 0.5; }
+
+        .see-more-link {
+            font: normal normal 400 14px/17px 'Inter', sans-serif; color: #826B96;
+            cursor: pointer; display: block; text-align: center;
+            margin-top: 16px; text-decoration: none;
+        }
+        .see-more-link:hover { text-decoration: underline; }
+
+        /* ========== BROWSE MODE ========== */
+
+        /* Category Filter */
+        .category-filters {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+            margin-bottom: 24px; -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .category-filters::-webkit-scrollbar { display: none; }
+
+        .cat-pill {
+            padding: 8px 18px; border-radius: 20px; cursor: pointer;
+            font: normal normal 500 13px/16px 'Inter', sans-serif;
+            white-space: nowrap; border: 1.5px solid rgba(0,0,0,0.1);
+            background: none; color: #000; opacity: 0.5;
+            transition: all 0.25s ease; flex-shrink: 0;
+        }
+        .cat-pill.active {
+            background: #000; color: #FFF; opacity: 1; border-color: #000;
+        }
+        .cat-pill[data-cat="emotional"].active { background: #826B96; border-color: #826B96; }
+        .cat-pill[data-cat="practical"].active { background: #3E8B70; border-color: #3E8B70; }
+        .cat-pill[data-cat="legal"].active { background: #BC8D53; border-color: #BC8D53; }
+        .cat-pill[data-cat="financial"].active { background: #667EEA; border-color: #667EEA; }
+        .cat-pill[data-cat="children"].active { background: #FF9500; border-color: #FF9500; }
+        .cat-pill:not(.active):hover { opacity: 0.7; }
+
+        /* Browse Section */
+        .browse-section { margin-bottom: 24px; }
+        .browse-section:last-child { margin-bottom: 0; }
+        .browse-section-title {
+            font: normal normal 600 16px/20px 'Inter', sans-serif; color: #000;
+            margin: 0 0 4px; display: flex; align-items: center; gap: 8px;
+        }
+        .browse-section-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .browse-section-count {
+            font: normal normal 400 12px/15px 'Inter', sans-serif; color: #000; opacity: 0.33;
+            margin: 0 0 14px;
+        }
+
+        /* ========== PROFESSIONAL HELP ========== */
+        .pro-help-card {
+            background: rgba(30,20,50,0.06); backdrop-filter: blur(10px);
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.16); border-radius: 30px;
+            padding: 30px; margin-bottom: 20px; box-sizing: border-box;
+        }
+        .pro-help-title {
+            font: normal normal 600 20px/24px 'Inter', sans-serif; color: #000;
+            margin: 0 0 8px;
+        }
+        .pro-help-desc {
+            font: normal normal 400 14px/20px 'Inter', sans-serif; color: #000; opacity: 0.6;
+            margin: 0 0 20px;
+        }
+        .pro-help-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .pro-help-btn {
+            padding: 12px 24px; border-radius: 30px; border: none; cursor: pointer;
+            background: #826B96; color: #FFF;
+            font: normal normal 600 14px/17px 'Inter', sans-serif;
+            transition: background 0.2s;
+        }
+        .pro-help-btn:hover { background: #6e5a80; }
+        .pro-help-crisis {
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            font: normal normal 500 14px/17px 'Inter', sans-serif; color: #000;
+            text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
+        }
+        .pro-help-crisis:hover { opacity: 1; }
+        .pro-help-crisis svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .pro-help-disclaimer {
+            font: normal normal 400 12px/16px 'Inter', sans-serif; color: #000; opacity: 0.33;
+            margin: 16px 0 0;
+        }
+
+        /* ========== JOURNAL ========== */
+        .journal-title {
+            font: normal normal 600 20px/24px 'Inter', sans-serif; color: #000;
+            margin: 0 0 14px;
+        }
+        .journal-prompt {
+            font: italic normal 400 16px/24px 'Source Serif 4', serif; color: #000; opacity: 0.6;
+            margin: 0 0 14px;
+        }
+        .journal-textarea {
+            width: 100%; border: 1.5px solid rgba(0,0,0,0.08); border-radius: 16px;
+            padding: 14px 18px; font: normal normal 400 14px/20px 'Inter', sans-serif;
+            color: #000; background: rgba(255,255,255,0.5); resize: none;
+            outline: none; box-sizing: border-box; min-height: 80px;
+            transition: border-color 0.2s;
+        }
+        .journal-textarea:focus { border-color: rgba(130,107,150,0.4); }
+        .journal-textarea::placeholder { color: #000; opacity: 0.25; }
+        .journal-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+        .journal-save-btn {
+            padding: 10px 22px; border-radius: 30px; border: none; cursor: pointer;
+            background: #000; color: #FFF;
+            font: normal normal 600 13px/16px 'Inter', sans-serif;
+            transition: opacity 0.2s;
+        }
+        .journal-save-btn:hover { opacity: 0.8; }
+        .journal-private-note {
+            font: normal normal 400 12px/15px 'Inter', sans-serif; color: #000; opacity: 0.33;
+        }
+
+        /* Journal Success */
+        .journal-success {
+            display: none; align-items: center; gap: 8px;
+            font: normal normal 500 13px/16px 'Inter', sans-serif; color: #61C553;
+        }
+        .journal-success.show { display: flex; }
+        .journal-success svg { width: 16px; height: 16px; }
+    </style>
+</head>
+<body data-active-page="post-loss">
+    <!-- ========== BACKGROUND ========== -->
+    <div class="bg-layer"></div>
+
+    <!-- ========== HEADER ========== -->
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-col header-col-left">
+                <div class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
+                    <svg class="btn-outline" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><linearGradient id="circle-grad-ham" x1="0.189" y1="0.126" x2="0.831" y2="0.86" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.133" stop-color="#fff" stop-opacity="0"/><stop offset="0.856" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,29.008,29.008,0,0,0,41.288,3.279,28.818,28.818,0,0,0,30,1m0-1A30,30,0,1,1,0,30,30,30,0,0,1,30,0Z" fill="url(#circle-grad-ham)"/></svg>
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+                </div>
+                <div class="logo-pill" id="logoPill" onclick="goHome()">
+                    <svg class="logo-outline" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="215" height="60" viewBox="0 0 215 60"><defs><linearGradient id="logo-grad" x1="0.463" x2="0.537" y2="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.184" stop-color="#fff" stop-opacity="0"/><stop offset="0.825" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,28.817,28.817,0,0,0,30,59H185A29.008,29.008,0,0,0,196.288,3.279,28.817,28.817,0,0,0,185,1H30m0-1H185a30,30,0,0,1,0,60H30A30,30,0,0,1,30,0Z" fill="url(#logo-grad)"/></svg>
+                    <svg class="logo-text-svg" xmlns="http://www.w3.org/2000/svg" width="155" height="20" viewBox="0 0 155 20"><path d="M-556.741-472.732a8.936,8.936,0,0,1-1.918-2.587l1.134-1.564a7.587,7.587,0,0,0,1.905,1.648,5.108,5.108,0,0,0,2.581.65,3.914,3.914,0,0,0,2.255-.674,4.737,4.737,0,0,0,1.616-1.925,6.788,6.788,0,0,0,.6-2.936,6.44,6.44,0,0,0-.543-2.744,4.5,4.5,0,0,0-1.5-1.817,3.829,3.829,0,0,0-2.2-.65,3.7,3.7,0,0,0-2.316.866,10.8,10.8,0,0,0-2.171,2.443c-.482.71-.989,1.5-1.5,2.347l-1.061,1.769a36.988,36.988,0,0,1-2.2,3.321,10.694,10.694,0,0,1-2.762,2.635,6.147,6.147,0,0,1-3.389.951,5.7,5.7,0,0,1-3.57-1.191,7.644,7.644,0,0,1-2.4-3.309,13.046,13.046,0,0,1-.844-4.886,12.674,12.674,0,0,1,.82-4.8,7.33,7.33,0,0,1,2.316-3.177,5.46,5.46,0,0,1,3.389-1.143,5.918,5.918,0,0,1,4.052,1.769,8.942,8.942,0,0,1,1.918,2.7l-1.085,1.5a8.009,8.009,0,0,0-1.978-1.733,5.107,5.107,0,0,0-2.581-.65,3.947,3.947,0,0,0-2.231.674,4.6,4.6,0,0,0-1.628,1.925,6.793,6.793,0,0,0-.6,2.936,6.476,6.476,0,0,0,.543,2.744,4.4,4.4,0,0,0,1.5,1.817,3.775,3.775,0,0,0,2.195.65,3.585,3.585,0,0,0,2.34-.891,12.358,12.358,0,0,0,2.171-2.443c.495-.71,1-1.516,1.508-2.359l1-1.661.109-.181c.711-1.155,1.435-2.226,2.147-3.189a10.615,10.615,0,0,1,2.762-2.66,6.081,6.081,0,0,1,3.377-.951,5.629,5.629,0,0,1,3.546,1.191,7.8,7.8,0,0,1,2.376,3.309v.012a13.04,13.04,0,0,1,.844,4.885,12.846,12.846,0,0,1-.82,4.826,7.241,7.241,0,0,1-2.292,3.177A5.457,5.457,0,0,1-552.677-471,5.94,5.94,0,0,1-556.741-472.732Zm45.4.289a3.1,3.1,0,0,1-1.013-2.491,3.389,3.389,0,0,1,.422-1.709,3.806,3.806,0,0,1,1.435-1.348,10.567,10.567,0,0,1,2.714-1.035c.482-.132.965-.265,1.423-.385s.941-.241,1.4-.373a1.253,1.253,0,0,0,.2-.048v-.83a4.709,4.709,0,0,0-.277-1.781,1.624,1.624,0,0,0-.82-.915,3.245,3.245,0,0,0-1.411-.265,6.476,6.476,0,0,0-1.194.108.354.354,0,0,0-.1.024l-.181,1.36a2.243,2.243,0,0,1-.543,1.492,1.538,1.538,0,0,1-1.134.457,1.534,1.534,0,0,1-1.073-.349,1.688,1.688,0,0,1-.507-.89,3.818,3.818,0,0,1,1.773-2.635,7.053,7.053,0,0,1,3.883-.963,6.428,6.428,0,0,1,2.605.457,3.307,3.307,0,0,1,1.616,1.468,5.4,5.4,0,0,1,.555,2.647v5.716a1.42,1.42,0,0,0,.229.9.826.826,0,0,0,.675.289,1.308,1.308,0,0,0,.531-.108h-.012a1.641,1.641,0,0,0,.446-.253l.458.927a3.172,3.172,0,0,1-1.085.987,3.117,3.117,0,0,1-1.568.373,2.736,2.736,0,0,1-1.99-.71,2.858,2.858,0,0,1-.76-1.588h-.3a14.025,14.025,0,0,1-1,1.167,3.867,3.867,0,0,1-1.194.855,3.911,3.911,0,0,1-1.688.325A3.7,3.7,0,0,1-511.345-472.444Zm6.054-6.077c-.579.18-1.146.361-1.713.53a4.106,4.106,0,0,0-1.363.626,2.07,2.07,0,0,0-.687.818,2.4,2.4,0,0,0-.193.987,1.794,1.794,0,0,0,.555,1.408,2.131,2.131,0,0,0,1.483.505,2.481,2.481,0,0,0,.977-.192,5.965,5.965,0,0,0,.977-.554c.157-.108.326-.229.494-.361v-3.935C-504.941-478.629-505.11-478.581-505.291-478.521Zm63.51,6.113a5.444,5.444,0,0,1-2.255-2.262,7.428,7.428,0,0,1-.784-3.526,7.612,7.612,0,0,1,.808-3.6,5.853,5.853,0,0,1,2.255-2.395,6.38,6.38,0,0,1,3.28-.854,6.063,6.063,0,0,1,2.882.65,4.589,4.589,0,0,1,1.893,1.817,5.5,5.5,0,0,1,.676,2.768,7.619,7.619,0,0,1-.048.939c-.036.277-.085.529-.133.758h-8.261a5.76,5.76,0,0,0,.507,2.214,3.776,3.776,0,0,0,1.447,1.637,3.9,3.9,0,0,0,2.1.554,4.521,4.521,0,0,0,2.1-.433v-.024a5.129,5.129,0,0,0,1.483-1.179l.929.746a7.577,7.577,0,0,1-1.278,1.552,5.064,5.064,0,0,1-1.737,1.059,6.84,6.84,0,0,1-2.4.373A7.172,7.172,0,0,1-441.781-472.408Zm1.761-10.71a3.521,3.521,0,0,0-1.073,1.625,7.419,7.419,0,0,0-.374,2.106h4.571a1.178,1.178,0,0,0,.687-.553,2.173,2.173,0,0,0,.169-.915,3.535,3.535,0,0,0-.3-1.516,2.209,2.209,0,0,0-.844-.939,2.5,2.5,0,0,0-1.315-.325A2.468,2.468,0,0,0-440.02-483.118ZM-451.948-472.5a3.444,3.444,0,0,1-.965-2.708c0-.361,0-.722.012-1.059s.012-.722.012-1.131v-5.56h-5.005v5.463c0,.6.012,1.215.012,1.829s.012,1.24.012,1.853v.289l2.267.2v1.36h-7.429v-1.36l1.869-.181v-.3c.012-.614.012-1.24.012-1.853v-7.28h-1.966v-1.42l2.062-.265a11.2,11.2,0,0,1,.386-2.106,6.316,6.316,0,0,1,.736-1.625,6.421,6.421,0,0,1,1.049-1.227,4.628,4.628,0,0,1,1.737-1.071,6.311,6.311,0,0,1,2.074-.349,4.276,4.276,0,0,1,1.954.4,1.978,1.978,0,0,1,1.049,1.251,1.513,1.513,0,0,1-.446,1.047,1.711,1.711,0,0,1-1.23.421,1.959,1.959,0,0,1-1.158-.337,4.832,4.832,0,0,1-1-.951l-.675-.782a1.678,1.678,0,0,0-.386.457,4.4,4.4,0,0,0-.482.915,5.435,5.435,0,0,0-.314,1.167,9.512,9.512,0,0,0-.145,1.564v1.24h5.5l1.013-3.634h1.906l-.217,3.634h3.28v1.673h-3.22v7.521a1.984,1.984,0,0,0,.4,1.372,1.483,1.483,0,0,0,1.122.421,2.527,2.527,0,0,0,.808-.132l.012-.012a3.86,3.86,0,0,0,.712-.337l.591,1.059a2.683,2.683,0,0,1-.736.674,4.491,4.491,0,0,1-1.134.517,5.08,5.08,0,0,1-1.483.2A3.8,3.8,0,0,1-451.948-472.5Zm20.961.578v-1.36l1.821-.168v-.193c.012-.638.012-1.288.012-1.961v-4.416c0-.361-.012-.7-.012-1.035s-.012-.674-.012-1.023l-1.966-.132v-1.24l4-1.42.772.132.289,3.43.181.024v.072h.133a7.863,7.863,0,0,1,.941-2.046,4.465,4.465,0,0,1,1.23-1.276,2.685,2.685,0,0,1,1.5-.433,2.192,2.192,0,0,1,1.387.433l-.024.024a2.035,2.035,0,0,1,.736,1.107,2.545,2.545,0,0,1-.531,1.468,1.594,1.594,0,0,1-1.327.59,2.117,2.117,0,0,1-1.049-.253,3.155,3.155,0,0,1-.808-.7l-.072-.072a5.541,5.541,0,0,0-1.158,1.035,7.7,7.7,0,0,0-.965,1.564v4.164c0,.674.012,1.324.012,1.961v.168l2.364.193v1.36Zm-58.746,0v-1.36l1.7-.168v-.193c0-.638.012-1.288.012-1.949s.012-1.276.012-1.865v-2.575a3.207,3.207,0,0,0-.482-2,1.838,1.838,0,0,0-1.508-.578,3.868,3.868,0,0,0-1.194.192,5.618,5.618,0,0,0-1.23.566,7.873,7.873,0,0,0-.7.469v3.923c0,.566,0,1.179.012,1.853s.012,1.324.012,1.961v.2l1.628.156v1.36h-6.73v-1.36l1.821-.168v-.193c.012-.638.012-1.288.012-1.961v-4.416c0-.361-.012-.7-.012-1.035s-.012-.674-.012-1.023l-1.93-.132v-1.24l3.944-1.42.772.132.314,2.419h.229a7.924,7.924,0,0,1,1.254-1.408,5.622,5.622,0,0,1,1.5-.951,4.419,4.419,0,0,1,1.761-.349,3.492,3.492,0,0,1,2.8,1.119,5.05,5.05,0,0,1,.965,3.357v3.069c0,.578.012,1.2.012,1.865s.012,1.312.012,1.949l.012.024v.193l1.749.168v1.36Zm17.4-.024v-1.492l2.376-.132-1.182-3.526h-6.006l-1.158,3.49,2.279.169v1.492h-6.018v-1.492l2.05-.156,5.439-15.523h2.738l5.524,15.572,1.93.108v1.492Zm.675-6.667-2.653-7.954-.531,2.551-1.8,5.4Zm-65.6,6.667v-1.492l2.316-.132V-487.4l-2.316-.144v-1.492h7.357a12.046,12.046,0,0,1,4.161.614h.024a5.14,5.14,0,0,1,2.436,1.769,4.716,4.716,0,0,1,.8,2.744,5.065,5.065,0,0,1-.784,2.756,5.243,5.243,0,0,1-2.5,1.925,11.911,11.911,0,0,1-4.318.686v-1.468a5.538,5.538,0,0,0,2.3-.457,2.8,2.8,0,0,0,1.351-1.336,4.711,4.711,0,0,0,.422-2.058,3.6,3.6,0,0,0-.977-2.744,4.49,4.49,0,0,0-3.148-.914h-1.266c-.012.361-.012.722-.012,1.083-.012.878-.012,1.745-.012,2.623v6.751c0,.818.012,1.661.012,2.515.012.325.012.638.012.963l2.6.144v1.492Zm16.209-.012v-1.36l1.869-.168v-.313c.012-.614.012-1.24.012-1.853V-488.22l-2.014-.385v-1.155l4.487-.951.8.132-.048,3.393v9.7c0,.6.012,1.215.012,1.829s.012,1.24.012,1.853l.012-.012v.325l1.882.168v1.36Z" transform="translate(575 491)" fill="#000"/></svg>
+                </div>
+                </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-col header-col-right">
+                <div class="utility-group">
+                    <div class="utility-btn search-btn" id="searchBtn" onclick="toggleHeaderState('search')">
+                        <svg class="btn-outline" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><linearGradient id="circle-grad-search" x1="0.189" y1="0.126" x2="0.831" y2="0.86" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.133" stop-color="#fff" stop-opacity="0"/><stop offset="0.856" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,29.008,29.008,0,0,0,41.288,3.279,28.818,28.818,0,0,0,30,1m0-1A30,30,0,1,1,0,30,30,30,0,0,1,30,0Z" fill="url(#circle-grad-search)"/></svg>
+                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="21.811" height="21.811" viewBox="0 0 21.811 21.811"><path d="M23,23l-5.774-5.774m0,0a8.333,8.333,0,1,0-11.785,0A8.333,8.333,0,0,0,17.225,17.225Z" transform="translate(-2.249 -2.249)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+                    </div>
+                    <div class="utility-btn bell-btn" id="notifBtn" onclick="toggleHeaderState('notif')">
+                        <svg class="btn-outline" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><linearGradient id="circle-grad-notif" x1="0.189" y1="0.126" x2="0.831" y2="0.86" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff"/><stop offset="0.133" stop-color="#fff" stop-opacity="0"/><stop offset="0.856" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="M30,1A29.008,29.008,0,0,0,18.712,56.721,29.008,29.008,0,0,0,41.288,3.279,28.818,28.818,0,0,0,30,1m0-1A30,30,0,1,1,0,30,30,30,0,0,1,30,0Z" fill="url(#circle-grad-notif)"/></svg>
+                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M10,20a3.88,3.88,0,0,1-3.694-2.663,3.778,3.778,0,0,1-.174-1.474,25.944,25.944,0,0,1-5.053-1.28.749.749,0,0,1-.3-1.211A8.385,8.385,0,0,0,3,7.689V6.917A7,7,0,0,1,17,6.917v.771a8.385,8.385,0,0,0,2.211,5.684.75.75,0,0,1-.3,1.211,25.925,25.925,0,0,1-5.051,1.28,3.769,3.769,0,0,1-.412,2.042,3.839,3.839,0,0,1-2.274,1.913A3.917,3.917,0,0,1,10,20M7.626,16.042a2.285,2.285,0,0,0,.11.833,2.388,2.388,0,0,0,2.991,1.512,2.349,2.349,0,0,0,1.394-1.168,2.3,2.3,0,0,0,.253-1.177,26.7,26.7,0,0,1-4.748,0m-.5-1.561a24.93,24.93,0,0,0,5.753,0l.03,0a24.445,24.445,0,0,0,4.491-.963A9.861,9.861,0,0,1,15.5,7.688V6.917a5.5,5.5,0,0,0-11.006,0v.771A9.862,9.862,0,0,1,2.6,13.515a24.437,24.437,0,0,0,4.492.963.259.259,0,0,1,.029,0M19.249,6.125a.749.749,0,0,1-.738-.623,8.412,8.412,0,0,0-2.075-4.248A.75.75,0,1,1,17.545.245a9.9,9.9,0,0,1,2.444,5,.751.751,0,0,1-.613.866.785.785,0,0,1-.127.01m-18.5,0a.785.785,0,0,1-.127-.01.751.751,0,0,1-.613-.866,9.9,9.9,0,0,1,2.444-5A.75.75,0,1,1,3.564,1.254,8.412,8.412,0,0,0,1.489,5.5a.749.749,0,0,1-.738.623" fill="#000"/></svg>
+                        <div class="notif-dot"></div>
+                    </div>
+                    <div class="avatar-btn" id="profileBtn" onclick="toggleProfileDropdown(event)">
+                        <div class="avatar-photo-inner" style="overflow:hidden;border-radius:50%;">
+                            <img id="headerAvatarImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                            <span class="initials" id="headerInitials">SJ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PROFILE DROPDOWN BACKDROP ========== -->
+    <div class="profile-dropdown-backdrop" id="profileDropdownBackdrop" onclick="closeProfileDropdown()"></div>
+
+    <!-- ========== PROFILE DROPDOWN ========== -->
+    <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-dropdown-header">
+            <div class="profile-dropdown-name">Sarah Johnson</div>
+            <div class="profile-dropdown-email">sarah.johnson@email.com</div>
+        </div>
+        <div class="profile-dropdown-section section-primary">
+            <div class="profile-dropdown-item" onclick="navigateTo('profile'); closeProfileDropdown()">
+                <span>My Profile</span>
+                <svg class="dd-icon" width="16" height="20" viewBox="0 0 16 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5" r="4"/><path d="M1 19c0-3.866 3.134-7 7-7s7 3.134 7 7"/></svg>
+            </div>
+            <div class="profile-dropdown-item"><span>Settings</span></div>
+            <div class="profile-dropdown-item"><span>Privacy & Security</span></div>
+            <div class="profile-dropdown-item"><span>Plan Overview</span></div>
+            <div class="profile-dropdown-item"><span>Billing & Subscription</span></div>
+        </div>
+        <div class="profile-dropdown-section section-secondary">
+            <div class="profile-dropdown-item"><span>Help & Support</span></div>
+            <div class="profile-dropdown-item"><span>Terms & Privacy</span></div>
+        </div>
+        <div class="profile-dropdown-section section-logout">
+            <div class="profile-dropdown-item"><span>Log Out</span></div>
+        </div>
+    </div>
+
+    <!-- ========== NOTIFICATION BACKDROP ========== -->
+    <div class="notif-backdrop" id="notifBackdrop" onclick="closeNotifications()"></div>
+
+    <!-- ========== NOTIFICATION PANEL ========== -->
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <div class="notif-badge" id="notifBadgeCount">3</div>
+            <div class="notif-panel-title">Notifications</div>
+        </div>
+        <div class="notif-actions">
+            <button class="notif-action-btn" onclick="markAllRead()">Mark All as Read</button>
+            <button class="notif-action-btn" onclick="clearAllNotifs()">Clear All</button>
+        </div>
+        <div class="notif-list" id="notifList">
+            <div class="notif-item priority-high" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority high">HIGH PRIORITY</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">Just Now</span>
+                </div>
+                <div class="notif-item-title">Care Plan Step Due Today</div>
+                <div class="notif-item-desc">Register the death certificate for Robert Johnson. This step is due within 24 hours.</div>
+            </div>
+            <div class="notif-item priority-medium" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority medium">MEDIUM PRIORITY</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">1 hour ago</span>
+                </div>
+                <div class="notif-item-title">Notify Employer</div>
+                <div class="notif-item-desc">Contact Robert's employer within 3 days to notify them of his passing.</div>
+            </div>
+            <div class="notif-item priority-info" onclick="markAsRead(this)">
+                <div class="notif-bar"></div>
+                <div class="notif-item-meta">
+                    <span class="notif-priority info">INFO</span>
+                    <div class="notif-dot-sep"></div>
+                    <span class="notif-time">2 hours ago</span>
+                </div>
+                <div class="notif-item-title">Care Plan Created</div>
+                <div class="notif-item-desc">A personalized care plan has been created for Robert Johnson with 24 steps across all phases.</div>
+            </div>
+        </div>
+        <div class="notif-footer">
+            <div class="notif-footer-line"></div>
+            <div class="notif-footer-label">View All Notifications</div>
+        </div>
+    </div>
+
+    <!-- ========== SIDEBAR BACKDROP ========== -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+    <!-- ========== SIDEBAR ========== -->
+    <button class="rp-toggle" id="rpToggle" onclick="toggleRightPanel()">
+        <div class="rp-toggle-ring" style="--pct:34"></div>
+        <div><div class="rp-toggle-pct">34%</div><div class="rp-toggle-label">Progress</div></div>
+    </button>
+    <div class="rp-backdrop" id="rpBackdrop" onclick="toggleRightPanel()"></div>
+
+    <aside class="sidebar-fixed">
+        <div id="sidebar-default">
+            <div class="sidebar-photo sidebar-surface" onclick="handlePhotoClick(event)">
+                <input type="file" id="photoUpload" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+                <img id="sidebarPhotoImg" src="" alt="" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:5;will-change:object-position,transform;border-radius:30px 30px 0 0;">
+                <div class="doc-menu photo-doc-menu" id="photoDots" onclick="event.stopPropagation();toggleDD(this)">
+                    <div class="doc-menu-dots"><span></span><span></span><span></span></div>
+                    <div class="doc-dropdown">
+                        <div class="doc-dropdown-trigger-row">
+                            <div class="doc-menu-inner">
+                                <div class="doc-menu-dots"><span></span><span></span><span></span></div>
+                            </div>
+                        </div>
+                        <div class="dd-row dd-row-edit" onclick="event.stopPropagation();changePhoto()">
+                            <span class="dd-row-label">Change Photo</span>
+                            <div class="dd-row-icon"><svg viewBox="0 0 20 18" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 1.5l2 2L5 15H3v-2L14.5 1.5z"/></svg></div>
+                        </div>
+                        <div class="dd-row" onclick="event.stopPropagation();startReposition()">
+                            <span class="dd-row-label">Reposition</span>
+                            <div class="dd-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg></div>
+                        </div>
+                        <div class="dd-row" onclick="event.stopPropagation();deletePhoto()">
+                            <span class="dd-row-label">Delete Photo</span>
+                            <div class="dd-row-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 19.722 21.5"><path d="M15.739,9.173,15.362,18.4m-5.223,0L9.761,9.173M20.635,5.881c.373.053.744.11,1.115.17m-1.115-.169L19.47,20.119a2.4,2.4,0,0,1-2.448,2.13H8.478a2.4,2.4,0,0,1-2.448-2.13L4.865,5.881m15.77,0q-1.889-.268-3.794-.407M3.75,6.05c.371-.061.742-.117,1.115-.169m0,0q1.889-.268,3.794-.407m8.182,0V4.534a2.3,2.3,0,0,0-2.28-2.257q-1.81-.054-3.622,0a2.3,2.3,0,0,0-2.28,2.257v.939m8.182,0a56.462,56.462,0,0,0-8.182,0" transform="translate(-2.889 -1.499)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="reposition-bar" id="repoBar">
+                    <span style="color:#FFF;font-size:11px;font-family:'Inter',sans-serif;">&#8722;</span>
+                    <input type="range" class="zoom-slider" id="zoomSlider" min="100" max="300" value="100" oninput="onZoomChange(this.value)" onclick="event.stopPropagation()">
+                    <span style="color:#FFF;font-size:11px;font-family:'Inter',sans-serif;">+</span>
+                    <button class="repo-save" onclick="event.stopPropagation();saveReposition()">Save</button>
+                    <button class="repo-cancel" onclick="event.stopPropagation();cancelReposition()">Cancel</button>
+                </div>
+                <div class="photo-overlay" id="photoOverlay"></div>
+                <p class="placeholder-text" id="photoPlaceholder">Add or Change Your Poster Image</p>
+                <div class="add-circle-bg" id="photoCircleBg"></div>
+                <div class="add-circle" id="photoAddCircle">
+                    <div class="add-inner">
+                        <svg viewBox="0 0 50 50" fill="none">
+                            <line x1="25" y1="10" x2="25" y2="40"/>
+                            <line x1="10" y1="25" x2="40" y2="25"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="identity-strip">
+                <div class="identity-avatar-mobile"><img id="identityAvatarImg" src="https://i.pravatar.cc/200?img=47" alt=""><span class="identity-initials" id="identityInitials" style="display:none;">SJ</span></div>
+                <div class="identity-text-wrap">
+                    <div class="identity-name">Sarah Johnson</div>
+                    <div class="identity-role">Plan Owner</div>
+                </div>
+            </div>
+            </div>
+            <div class="plan-strip plan-sponsored" onclick="alert('Take Over Plan')">
+                <div class="plan-strip-bg"></div>
+                <div class="plan-strip-sponsored-left">
+                    <span class="plan-strip-covered">Covered By</span>
+                    <span class="plan-strip-sponsor">Allianz Insurance</span>
+                    <span class="plan-strip-plan-type">Individual Essentials</span>
+                </div>
+                <button class="plan-strip-btn">Take Over</button>
+            </div>
+        </div>
+        <div id="sidebar-category" style="display:none;">
+            <div class="directory-card" id="dir-assets" style="display:none;">
+                <div class="dir-top">
+                    <div class="dir-title">Assets & Liabilities</div>
+                    <div class="dir-progress-row"><span class="dir-progress-label">Your Progress</span><span class="dir-progress-value">52%</span></div>
+                    <div class="dir-bar"><div class="dir-bar-fill" style="width:52%;background:#BC8D53;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(188,141,83,0.5)"></div></div>
+                    <span class="dir-complete">Complete</span>
+                </div>
+                <div class="dir-learn" style="background:#E5D7BA;">
+                    <div class="learn-bar"></div>
+                    <div class="learn-circle"><div class="learn-circle-bg"></div><div class="learn-icon"><svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div></div>
+                    <span class="learn-text">Learn & Understand</span>
+                </div>
+            </div>
+            <div class="directory-card" id="dir-support" style="display:none;">
+                <div class="dir-top">
+                    <div class="dir-title">Post-Loss Support</div>
+                    <div class="dir-progress-row"><span class="dir-progress-label">Your Progress</span><span class="dir-progress-value">34%</span></div>
+                    <div class="dir-bar"><div class="dir-bar-fill" style="width:34%;background:#657EEA;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(101,126,234,0.5)"></div></div>
+                    <span class="dir-complete">Complete</span>
+                </div>
+                <div class="dir-learn" style="background:#A391B9;">
+                    <div class="learn-bar"></div>
+                    <div class="learn-circle"><div class="learn-circle-bg"></div><div class="learn-icon"><svg width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div></div>
+                    <span class="learn-text">Learn & Understand</span>
+                </div>
+            </div>
+        </div>
+        <div class="menu-section sidebar-surface no-scrollbar">
+            <!-- Me, Family & Network -->
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'me-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 21.502 19.5"><path d="M15.326,19.128a9.885,9.885,0,0,0,6.919-.58,4.131,4.131,0,0,0-2.9-4.09,4.289,4.289,0,0,0-4.828,1.6m.807,3.073v0a6.224,6.224,0,0,0-.806-3.07m.806,3.073v.106a12.986,12.986,0,0,1-13.076,0v-.109a6.406,6.406,0,0,1,4.913-6.178,6.6,6.6,0,0,1,7.357,3.108m-2.27-9.68a3.463,3.463,0,0,1-6.923,0,3.463,3.463,0,0,1,6.923,0Zm8.461,2.25A2.693,2.693,0,1,1,18.019,6,2.659,2.659,0,0,1,20.711,8.625Z" transform="translate(-1.499 -2.25)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">Me, Family & Network</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="me-sub">
+                    <div class="module-row" onclick="navigateTo('profile')"><div class="dot" style="color:#000"></div><span class="mod-label">My Profile</span></div>
+                    <div class="module-row" onclick="navigateTo(&apos;family&apos;)"><div class="dot" style="color:#000"></div><span class="mod-label">My Family</span></div>
+                    <div class="module-row" onclick="navigateTo(&apos;network&apos;)"><div class="dot" style="color:#000"></div><span class="mod-label">My Network</span></div>
+                </div>
+            </div>
+            <!-- My Plan -->
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'plan-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 17.5 21.5"><path d="M20.5,14.558V11.865A3.533,3.533,0,0,0,16.9,8.4H15.3A1.178,1.178,0,0,1,14.1,7.25V5.712A3.533,3.533,0,0,0,10.5,2.25h-2m0,13.077h8M8.5,18.4h4M10.9,2.25H5.7A1.178,1.178,0,0,0,4.5,3.4V21.1A1.178,1.178,0,0,0,5.7,22.25H19.3A1.178,1.178,0,0,0,20.5,21.1V11.481A9.421,9.421,0,0,0,10.9,2.25Z" transform="translate(-3.75 -1.5)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">My Plan</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="plan-sub">
+                    <div class="module-row" style="color:#BC8D53" onclick="switchSidebarCategory('assets')"><div class="dot"></div><span class="mod-label">Assets & Liabilities</span></div>
+                    <div class="module-row" style="color:#D75C5C"><div class="dot"></div><span class="mod-label">Emotional Legacy</span></div>
+                    <div class="module-row" style="color:#3E8B70"><div class="dot"></div><span class="mod-label">Body & Health</span></div>
+                    <div class="module-row" style="color:#826B96"><div class="dot"></div><span class="mod-label">Goals & Aspirations</span></div>
+                    <div class="module-row" style="color:#B62818"><div class="dot"></div><span class="mod-label">Will & Legal Actions</span></div>
+                </div>
+            </div>
+            <!-- Post-Loss Support -->
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'support-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 21.5 19.5"><path d="M23,8.659A5.066,5.066,0,0,0,17.791,3.75,5.224,5.224,0,0,0,13,6.731,5.225,5.225,0,0,0,8.208,3.75,5.066,5.066,0,0,0,3,8.659C3,16.535,13,21.75,13,21.75S23,16.535,23,8.659Z" transform="translate(-2.25 -3)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">Post-Loss Support</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="support-sub">
+                    <div class="module-row" onclick="window.location.href='post-loss.html'"><div class="dot" style="color:#000"></div><span class="mod-label">Personalized Plan</span></div>
+                    <div class="module-row" style="color:#BC8D53" onclick="window.location.href='post-loss-directory.html?cat=practical'"><div class="dot"></div><span class="mod-label">Practical Support</span></div>
+                    <div class="module-row" style="color:#D75C5C" onclick="window.location.href='post-loss-directory.html?cat=emotional'"><div class="dot"></div><span class="mod-label">Emotional Support</span></div>
+                    <div class="module-row" onclick="window.location.href='post-loss-obituary.html'"><div class="dot" style="color:#000"></div><span class="mod-label">Obituary</span></div>
+                    <div class="module-row" onclick="window.location.href='post-loss-memorial.html'"><div class="dot" style="color:#000"></div><span class="mod-label">Memorial Page</span></div>
+                </div>
+            </div>
+            <!-- Vault -->
+            <button class="nav-item"><div class="circle-bg"></div><div class="active-bar"></div>
+                <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 17.5 21.5"><path d="M17.3,10.712V6.865A4.71,4.71,0,0,0,12.5,2.25,4.71,4.71,0,0,0,7.7,6.865v3.846M6.9,22.25H18.1a2.355,2.355,0,0,0,2.4-2.308V13.019a2.355,2.355,0,0,0-2.4-2.308H6.9a2.355,2.355,0,0,0-2.4,2.308v6.923A2.355,2.355,0,0,0,6.9,22.25Z" transform="translate(-3.75 -1.5)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                <span class="nav-label">Vault</span>
+            </button>
+            <!-- Tasks -->
+            <button class="nav-item"><div class="circle-bg"></div><div class="active-bar"></div>
+                <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21.5 21.5"><path d="M9.667,13.833l2.5,2.5L16.333,10.5M23,13A10,10,0,1,1,13,3,10,10,0,0,1,23,13Z" transform="translate(-2.25 -2.25)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                <span class="nav-label">Tasks & Reminders</span>
+            </button>
+            <!-- Marketplace -->
+            <button class="nav-item"><div class="circle-bg"></div><div class="active-bar"></div>
+                <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 19.503 21.5"><path d="M15.927,10.712V6.1a3.8,3.8,0,1,0-7.6,0v4.615M19.837,8.667l1.281,12.308a1.148,1.148,0,0,1-1.135,1.275H4.266a1.135,1.135,0,0,1-.849-.381,1.162,1.162,0,0,1-.287-.893L4.412,8.667A1.146,1.146,0,0,1,5.546,7.635H18.7A1.146,1.146,0,0,1,19.837,8.667ZM8.7,10.712a.38.38,0,1,1-.38-.385A.382.382,0,0,1,8.7,10.712Zm7.6,0a.38.38,0,1,1-.38-.385A.382.382,0,0,1,16.307,10.712Z" transform="translate(-2.372 -1.5)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                <span class="nav-label">Marketplace</span>
+            </button>
+            <!-- Plans Shared With Me -->
+            <div>
+                <button class="nav-item" onclick="toggleNav(this, 'shared-sub')">
+                    <div class="circle-bg"></div>
+                    <div class="active-bar"></div>
+                    <div class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 21.5 15.5"><path d="M2.25,7.167A1.161,1.161,0,0,1,3.4,6H9.558a1.161,1.161,0,0,1,1.154,1.167v3.889a1.161,1.161,0,0,1-1.154,1.167H3.4A1.16,1.16,0,0,1,2.25,11.056ZM14.558,8.722a1.161,1.161,0,0,1,1.154-1.167H21.1A1.161,1.161,0,0,1,22.25,8.722v8.556A1.161,1.161,0,0,1,21.1,18.444H15.712a1.16,1.16,0,0,1-1.154-1.167ZM3.788,16.5a1.161,1.161,0,0,1,1.154-1.167h5.385A1.161,1.161,0,0,1,11.481,16.5v2.333A1.161,1.161,0,0,1,10.327,20H4.942a1.16,1.16,0,0,1-1.154-1.167Z" transform="translate(-1.5 -5.25)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+                    <span class="nav-label">Plans Shared With Me</span>
+                    <div class="nav-chevron"><svg width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 0.5L4 3.5L7 0.5"/></svg></div>
+                </button>
+                <div class="sub-items" id="shared-sub">
+                    <div class="module-row with-avatar"><div class="dot" style="color:#000"></div><div class="avatar-initials">VM</div><span class="mod-label">Villi's Plan</span><span class="mod-subtext">You are Beneficiary</span></div>
+                    <div class="module-row with-avatar"><div class="dot" style="color:#000"></div><div class="avatar-initials">NM</div><span class="mod-label">Nadya's Plan</span><span class="mod-subtext">You are Executor</span></div>
+                    <div class="module-row with-avatar"><div class="dot" style="color:#000"></div><div class="avatar-initials">AA</div><span class="mod-label">Alexsander's Plan</span><span class="mod-subtext">You are Contributor</span></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ========== RIGHT PANEL ========== -->
+    <aside class="rightpanel-fixed" id="rightPanel">
+        <div style="display:flex;flex-direction:column;gap:10px;width:300px;">
+            <div class="progress-overview sidebar-surface">
+                <div class="progress-title">Your PlanAfter Progress</div>
+                <div class="progress-meta">
+                    <span class="progress-meta-label">Overall</span>
+                    <span class="progress-meta-value">34<span>%</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:34%;background:#000;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(0,0,0,0.4);"></div>
+                </div>
+                <button class="collapse-btn" onclick="toggleCategories()">
+                    <svg id="collapseChevron" width="8" height="4" fill="none" stroke="currentColor" viewBox="0 0 8 4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(180deg);transition:transform 0.3s ease-out"><path d="M1 0.5L4 3.5L7 0.5"/></svg>
+                </button>
+            </div>
+            <div id="categoryCards" style="display:flex;flex-direction:column;gap:5px;width:300px;max-height:calc(100vh - 350px);overflow-y:auto;transition:all 0.5s;">
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#BC8D53"><div class="cat-bg"></div><span class="cat-label">Assets & Liabilities</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:52%;background:#BC8D53;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(188,141,83,0.5)"></div></div><span class="cat-percent" style="color:#BC8D53">52%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#D75C5C"><div class="cat-bg"></div><span class="cat-label">Emotional Legacy</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:20%;background:#D75C5C;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(215,92,92,0.5)"></div></div><span class="cat-percent" style="color:#D75C5C">20%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#3E8B70"><div class="cat-bg"></div><span class="cat-label">Body & Health</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:69%;background:#3E8B70;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(62,139,112,0.5)"></div></div><span class="cat-percent" style="color:#3E8B70">69%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#826B96"><div class="cat-bg"></div><span class="cat-label">Goals & Aspirations</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:15%;background:#826B96;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(130,107,150,0.5)"></div></div><span class="cat-percent" style="color:#826B96">15%</span><span class="cat-complete">Complete Now</span></div>
+                <div class="cat-progress" onclick="toggleCat(this)" data-color="#B62818"><div class="cat-bg"></div><span class="cat-label">Will & Legal Actions</span><div class="cat-dots"><svg width="13" height="3" viewBox="0 0 13 3" fill="none"><circle cx="1.5" cy="1.5" r="1.5" fill="black"/><circle cx="6.5" cy="1.5" r="1.5" fill="black"/><circle cx="11.5" cy="1.5" r="1.5" fill="black"/></svg></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:10%;background:#B62818;box-shadow:inset 0px 1px 0px rgba(255,255,255,0.28),0px 0px 6px rgba(182,40,24,0.5)"></div></div><span class="cat-percent" style="color:#B62818">10%</span><span class="cat-complete">Complete Now</span></div>
+            </div>
+        </div>
+        <!-- AI Assistant -->
+        <div class="ai-card-col4" id="aiCardCol4">
+            <div class="ai-bg"></div>
+            <div class="ai-particles">
+                <div class="ai-p" style="width:2px;height:2px;top:30%;left:18%;--dur:5s;--del:0s;--mx:5px"></div>
+                <div class="ai-p" style="width:2px;height:2px;top:50%;left:60%;--dur:6s;--del:1s;--mx:-6px"></div>
+                <div class="ai-p" style="width:1.5px;height:1.5px;top:25%;left:75%;--dur:4.5s;--del:2s;--mx:4px"></div>
+                <div class="ai-p" style="width:2px;height:2px;top:45%;left:35%;--dur:7s;--del:0.5s;--mx:-5px"></div>
+                <div class="ai-p" style="width:1px;height:1px;top:60%;left:50%;--dur:5.5s;--del:1.5s;--mx:3px"></div>
+            </div>
+            <div class="ai-vignette"></div>
+            <div class="ai-header">
+                <div class="ai-title">PlanAfter AI Assistant</div>
+                <div class="ai-subtitle">Ready to help with your planning</div>
+            </div>
+            <div class="ai-chat" id="col4AiChat">
+                <div class="ai-message">
+                    <div class="ai-status-dot"></div>
+                    <div class="ai-bubble">
+                        <p>Hi <b>Sarah</b>! I'm here to help you navigate your PlanAfter journey.
+
+What would you like to know?</p>
+                    </div>
+                </div>
+                <div class="ai-typing-msg" id="col4Typing">
+                    <div class="ai-status-dot"></div>
+                    <div class="ai-typing-dots"><span></span><span></span><span></span></div>
+                </div>
+            </div>
+            <button class="ai-scroll-btn" id="col4ScrollBtn" onclick="scrollAiBottom('col4')" title="Scroll to bottom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><div class="new-dot"></div></button>
+            <div class="ai-drop-zone" id="col4Drop"><div class="ai-drop-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>Drop files here</div></div>
+
+            <div class="ai-input-area">
+                <input type="file" class="ai-file-input" id="col4FileInput" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" multiple onchange="handleAiFiles(event,'col4')">
+                <button class="ai-attach" title="Attach document" onclick="document.getElementById('col4FileInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><span class="ai-attach-badge" id="col4AttBadge"></span></button>
+                <div class="ai-input-composite" id="col4Composite">
+                    <div class="ai-fc-grid" id="col4FcGrid"></div>
+                    <div class="ai-fc-sep"></div>
+                    <textarea class="ai-input" id="col4AiInput" placeholder="How can I help you?" rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiMsg('col4')}" oninput="toggleSendBtn('col4');autoGrowTextarea(this)"></textarea>
+                </div>
+                <span class="ai-enter-hint">Press Enter &#8629;</span>
+                <button class="ai-send disabled" id="col4SendBtn" onclick="sendAiMsg('col4')"><svg xmlns="http://www.w3.org/2000/svg" width="21.5" height="21.572" viewBox="0 0 21.5 21.572"><g transform="translate(66.25 1.295)"><path d="M7.142,1.794a3.178,3.178,0,0,1,5.721,0l6.75,13.2A3.429,3.429,0,0,1,16.753,20c-2.4.039-3.286-2.351-6.662-2.351S5.66,20.012,3.253,20a3.419,3.419,0,0,1-2.86-5.006Z" transform="translate(-45.5 -0.509) rotate(90)" fill="none" stroke="#FFF" stroke-width="1.5"/><line x2="5" transform="translate(-58.5 9.494)" fill="none" stroke="#FFF" stroke-linecap="round" stroke-width="1.5"/></g></svg></button>
+            </div>
+            <div class="ai-resize"><div class="ai-resize-handle"></div></div>
+        </div>
+    </aside>
+
+    <!-- ========== SCROLLABLE MIDDLE ZONE ========== -->
+    <div class="scroll-container no-scrollbar" id="scroll-container">
+    <div class="scroll-inner">
+        <div class="col-placeholder"></div>
+        <div class="middle-col">
+
+            <!-- ===== PAGE HEADER ===== -->
+            <div style="margin-top: 20px;">
+                <a class="dir-back" href="post-loss.html">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    Back to Post-Loss Support
+                </a>
+                <h1 class="dir-page-title" id="dirPageTitle">Support &amp; Guidance</h1>
+                <p class="dir-page-subtitle" id="dirPageSubtitle">You don't have to navigate this alone</p>
+            </div>
+
+            <!-- ===== MODE TOGGLE ===== -->
+            <div class="mode-toggle">
+                <button class="mode-btn active" data-mode="guided" onclick="switchMode('guided')">Guided</button>
+                <button class="mode-btn" data-mode="browse" onclick="switchMode('browse')">Browse</button>
+            </div>
+
+            <!-- ===== GUIDED MODE ===== -->
+            <div class="mode-guided" id="modeGuided">
+
+                <!-- Mood Check-In Card -->
+                <div class="glass-card">
+                    <div class="mood-title">How are you feeling right now?</div>
+                    <div class="mood-grid">
+                        <div class="mood-card selected" data-mood="overwhelmed" data-color="#FF2C55" onclick="selectMood(this)">
+                            <div class="mood-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF2C55" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2-3 4-6 6-6s4 6 6 6 4-6 6-6"/><path d="M2 18c2-3 4-6 6-6s4 6 6 6 4-6 6-6"/></svg>
+                            </div>
+                            <div class="mood-text">
+                                <div class="mood-label">Overwhelmed</div>
+                                <div class="mood-desc">Everything feels like too much</div>
+                            </div>
+                        </div>
+                        <div class="mood-card" data-mood="numb" data-color="#999" onclick="selectMood(this)">
+                            <div class="mood-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14c0 0 2-4 8-4s8 4 8 4"/><path d="M4 10c0 0 2-4 8-4s8 4 8 4"/></svg>
+                            </div>
+                            <div class="mood-text">
+                                <div class="mood-label">Numb</div>
+                                <div class="mood-desc">I can't feel anything right now</div>
+                            </div>
+                        </div>
+                        <div class="mood-card" data-mood="angry" data-color="#FF9500" onclick="selectMood(this)">
+                            <div class="mood-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF9500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                            </div>
+                            <div class="mood-text">
+                                <div class="mood-label">Angry</div>
+                                <div class="mood-desc">This feels unfair</div>
+                            </div>
+                        </div>
+                        <div class="mood-card" data-mood="sad" data-color="#667EEA" onclick="selectMood(this)">
+                            <div class="mood-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#667EEA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M12 12v0"/><circle cx="12" cy="18" r="1" fill="#667EEA"/><path d="M8 8c1 4 3 6 4 8"/><path d="M16 8c-1 4-3 6-4 8"/></svg>
+                            </div>
+                            <div class="mood-text">
+                                <div class="mood-label">Sad</div>
+                                <div class="mood-desc">The weight of loss is heavy</div>
+                            </div>
+                        </div>
+                        <div class="mood-card" data-mood="anxious" data-color="#BC8D53" onclick="selectMood(this)">
+                            <div class="mood-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#BC8D53" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-1.5 3-3 5-3 8a3 3 0 006 0c0-3-1.5-5-3-8z"/><circle cx="12" cy="18" r="3"/></svg>
+                            </div>
+                            <div class="mood-text">
+                                <div class="mood-label">Anxious</div>
+                                <div class="mood-desc">Worried about what comes next</div>
+                            </div>
+                        </div>
+                        <div class="mood-card" data-mood="okay" data-color="#61C553" onclick="selectMood(this)">
+                            <div class="mood-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#61C553" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+                            </div>
+                            <div class="mood-text">
+                                <div class="mood-label">I'm okay today</div>
+                                <div class="mood-desc">A small step forward</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personalized Recommendations -->
+                <div id="moodRecommendations">
+                    <p class="mood-message">When everything feels like too much, focus on just one small thing. Here's what we recommend right now.</p>
+
+                    <div class="rec-heading">Recommended for you</div>
+
+                    <div class="resource-card" data-accent="#826B96" onclick="void(0)">
+                        <div class="resource-icon wellness">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#826B96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Take a Breathing Pause</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Wellness</span>
+                                <span>3 min</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#667EEA" onclick="void(0)">
+                        <div class="resource-icon article">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667EEA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">One Thing at a Time: Managing Grief Overwhelm</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Article</span>
+                                <span>5 min read</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#FF2C55" onclick="void(0)">
+                        <div class="resource-icon professional">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF2C55" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Connect with a Grief Counselor</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Professional</span>
+                                <span>Immediate</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <a class="see-more-link" href="#">See more resources for this feeling</a>
+                </div>
+            </div>
+
+            <!-- ===== BROWSE MODE ===== -->
+            <div class="mode-browse" id="modeBrowse">
+
+                <!-- Category Filter Pills -->
+                <div class="category-filters">
+                    <button class="cat-pill active" data-cat="all" onclick="filterCategory('all', this)">All</button>
+                    <button class="cat-pill" data-cat="emotional" onclick="filterCategory('emotional', this)">Emotional</button>
+                    <button class="cat-pill" data-cat="practical" onclick="filterCategory('practical', this)">Practical</button>
+                    <button class="cat-pill" data-cat="legal" onclick="filterCategory('legal', this)">Legal & Admin</button>
+                    <button class="cat-pill" data-cat="financial" onclick="filterCategory('financial', this)">Financial</button>
+                    <button class="cat-pill" data-cat="children" onclick="filterCategory('children', this)">Children & Family</button>
+                </div>
+
+                <!-- Emotional Support Section -->
+                <div class="glass-card browse-section" data-section="emotional">
+                    <div class="browse-section-title">
+                        <span class="browse-section-dot" style="background:#826B96;"></span>
+                        Emotional Support
+                    </div>
+                    <div class="browse-section-count">4 resources</div>
+
+                    <div class="resource-card" data-accent="#826B96" onclick="void(0)">
+                        <div class="resource-icon article">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#826B96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Understanding the Stages of Grief</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Article</span>
+                                <span>8 min read</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#826B96" onclick="void(0)">
+                        <div class="resource-icon directory">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#826B96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Finding a Grief Support Group Near You</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Directory</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#826B96" onclick="void(0)">
+                        <div class="resource-icon exercise">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#826B96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Journaling Through Loss: A Guided Practice</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Exercise</span>
+                                <span>15 min</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#826B96" onclick="void(0)">
+                        <div class="resource-icon article">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#826B96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">When Grief Hits at Unexpected Moments</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Article</span>
+                                <span>4 min read</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Practical Guidance Section -->
+                <div class="glass-card browse-section" data-section="practical">
+                    <div class="browse-section-title">
+                        <span class="browse-section-dot" style="background:#3E8B70;"></span>
+                        Practical Guidance
+                    </div>
+                    <div class="browse-section-count">4 resources</div>
+
+                    <div class="resource-card" data-accent="#3E8B70" onclick="void(0)">
+                        <div class="resource-icon checklist">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E8B70" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">The First 48 Hours: What to Do</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Checklist</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#3E8B70" onclick="void(0)">
+                        <div class="resource-icon guide">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E8B70" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Notifying Organizations After a Death</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Template</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#3E8B70" onclick="void(0)">
+                        <div class="resource-icon guide">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E8B70" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Managing the Estate: A Beginner's Guide</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Guide</span>
+                                <span>12 min read</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#3E8B70" onclick="void(0)">
+                        <div class="resource-icon guide">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E8B70" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Dealing with a Loved One's Digital Accounts</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Guide</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legal & Administrative Section -->
+                <div class="glass-card browse-section" data-section="legal">
+                    <div class="browse-section-title">
+                        <span class="browse-section-dot" style="background:#BC8D53;"></span>
+                        Legal & Administrative
+                    </div>
+                    <div class="browse-section-count">3 resources</div>
+
+                    <div class="resource-card" data-accent="#BC8D53" onclick="void(0)">
+                        <div class="resource-icon article">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BC8D53" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Understanding Probate: What You Need to Know</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Article</span>
+                                <span>10 min read</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#BC8D53" onclick="void(0)">
+                        <div class="resource-icon article">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BC8D53" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Power of Attorney vs. Executor: Key Differences</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Article</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="resource-card" data-accent="#BC8D53" onclick="void(0)">
+                        <div class="resource-icon guide">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BC8D53" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                        </div>
+                        <div class="resource-body">
+                            <div class="resource-title">Tax Implications After a Death</div>
+                            <div class="resource-meta">
+                                <span class="resource-type-badge">Guide</span>
+                            </div>
+                        </div>
+                        <div class="resource-arrow">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PROFESSIONAL HELP (always visible) ===== -->
+            <div class="pro-help-card">
+                <h2 class="pro-help-title">Talk to a Professional</h2>
+                <p class="pro-help-desc">Sometimes you need more than articles. Connect with verified grief counselors and therapists.</p>
+                <div class="pro-help-actions">
+                    <button class="pro-help-btn" onclick="void(0)">Find a Counselor Near You</button>
+                    <a class="pro-help-crisis" href="tel:+1800273825">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                        24/7 Crisis Helpline
+                    </a>
+                </div>
+                <p class="pro-help-disclaimer">PlanAfter partners with licensed professionals. We do not provide medical advice.</p>
+            </div>
+
+            <!-- ===== MICRO-JOURNALING ===== -->
+            <div class="glass-card">
+                <h2 class="journal-title">Daily Reflection</h2>
+                <p class="journal-prompt">What's one thing you want to remember about today?</p>
+                <textarea class="journal-textarea" id="journalTextarea" placeholder="Write your thoughts here..." rows="3"></textarea>
+                <div class="journal-actions">
+                    <button class="journal-save-btn" onclick="saveJournal()">Save to Your Private Journal</button>
+                    <div class="journal-success" id="journalSuccess">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#61C553" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Saved
+                    </div>
+                    <span class="journal-private-note">Only you can see your journal entries</span>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-placeholder"></div>
+    </div>
+    </div>
+
+    <!-- ========== MOBILE BOTTOM NAV ========== -->
+    <nav class="mobile-bottom-nav">
+        <a class="bnav-item bnav-menu" onclick="toggleSidebar()">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <span class="bnav-label">Menu</span>
+        </a>
+        <a class="bnav-item" onclick="goHome()">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            <span class="bnav-label">Home</span>
+        </a>
+        <a class="bnav-item" onclick="navigateTo('profile')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="bnav-label">Profile</span>
+        </a>
+        <a class="bnav-item" onclick="navigateTo('my-plan')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="bnav-label">My Plan</span>
+        </a>
+        <a class="bnav-item" onclick="navigateTo('vault')">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span class="bnav-label">Vault</span>
+        </a>
+    </nav>
+
+    <!-- ========== MORE BOTTOM SHEET (mobile) ========== -->
+    <div class="more-sheet-overlay" id="moreSheetOverlay" onclick="toggleMoreSheet()">
+        <div class="more-sheet" onclick="event.stopPropagation()">
+            <div class="more-sheet-handle"></div>
+            <a class="more-sheet-item" onclick="navigateTo('tasks')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>Tasks & Reminders</span>
+            </a>
+            <a class="more-sheet-item" onclick="navigateTo('marketplace')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 7v13a2 2 0 002 2h14a2 2 0 002-2V7l-3-5z"/><line x1="3" y1="7" x2="21" y2="7"/><path d="M16 11a4 4 0 01-8 0"/></svg>
+                <span>Marketplace</span>
+            </a>
+            <a class="more-sheet-item" onclick="navigateTo('shared')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span>Plans Shared With Me</span>
+            </a>
+            <a class="more-sheet-item" onclick="document.getElementById('col4AiInput')?.focus(); toggleMoreSheet();">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>AI Assistant</span>
+            </a>
+            <div class="more-sheet-divider"></div>
+            <a class="more-sheet-item" onclick="navigateTo('settings')">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                <span>Settings</span>
+            </a>
+            <a class="more-sheet-item" style="color:#E53935">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke="#E53935"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Log Out</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== SEARCH OVERLAY ========== -->
+    <div class="search-overlay" id="searchOverlay" onclick="closeSearch()">
+        <div class="search-pad" onclick="closeSearch()"></div>
+        <div class="search-body" onclick="event.stopPropagation()">
+            <button class="search-close-btn" onclick="closeSearch()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="search-label">Search</div>
+            <div class="search-input-wrap">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search PlanAfter" oninput="onSearchInput(this)">
+                <button class="search-clear" id="searchClear" onclick="clearSearch()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="last-searches">
+                <div class="last-searches-label">Recent Searches</div>
+                <div class="last-search-item" onclick="document.getElementById('searchInput').value='Grief Support'; onSearchInput(document.getElementById('searchInput'))">Grief Support</div>
+                <div class="last-search-item" onclick="document.getElementById('searchInput').value='Counselor'; onSearchInput(document.getElementById('searchInput'))">Counselor</div>
+                <div class="last-search-item" onclick="document.getElementById('searchInput').value='Probate'; onSearchInput(document.getElementById('searchInput'))">Probate</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Voice FAB -->
+    <div class="voice-fab" id="voiceFab" onclick="toggleVoiceFab()">
+        <svg class="fab-speaker" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        <div class="fab-player"><div class="fab-waves"><div class="fab-w"></div><div class="fab-w"></div><div class="fab-w"></div><div class="fab-w"></div><div class="fab-w"></div></div><div class="fab-time" id="fabTime">0:00</div><button class="fab-pause" onclick="event.stopPropagation();toggleVoiceFab()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></button></div>
+    </div>
+
+    <script src="_shared.js?v=20260518fr110"></script>
+    <script>
+        /* ========== CATEGORY-AWARE TITLE (PRD §6.5–6.6) ==========
+           The Directory page can show one of 3 support categories:
+           ?cat=practical → Practical Support
+           ?cat=emotional → Emotional Support
+           ?cat=legal     → Legal & Administrative Support
+           No param → default "Support & Guidance" hub overview. */
+        (function setCategoryTitle() {
+            var params = new URLSearchParams(window.location.search);
+            var cat = params.get('cat');
+            var titles = {
+                practical: { title: 'Practical Support', subtitle: 'Real-world tasks, coordination, and follow-through' },
+                emotional: { title: 'Emotional Support', subtitle: 'Grief, coping, and adjustment — at your pace' },
+                legal:     { title: 'Legal & Administrative Support', subtitle: 'Death registration, certificates, inheritance, and notifications' }
+            };
+            if (cat && titles[cat]) {
+                var t = document.getElementById('dirPageTitle');
+                var s = document.getElementById('dirPageSubtitle');
+                if (t) t.textContent = titles[cat].title;
+                if (s) s.textContent = titles[cat].subtitle;
+                document.title = titles[cat].title + ' — PlanAfter';
+                document.body.setAttribute('data-pl-category', cat);
+            }
+        })();
+
+        /* ========== MODE TOGGLE ========== */
+        function switchMode(mode) {
+            var btns = document.querySelectorAll('.mode-btn');
+            btns.forEach(function(b) { b.classList.toggle('active', b.dataset.mode === mode); });
+            document.getElementById('modeGuided').style.display = mode === 'guided' ? 'block' : 'none';
+            document.getElementById('modeBrowse').style.display = mode === 'browse' ? 'block' : 'none';
+        }
+
+        /* ========== MOOD SELECTION ========== */
+        var moodMessages = {
+            overwhelmed: 'When everything feels like too much, focus on just one small thing. Here\'s what we recommend right now.',
+            numb: 'Feeling numb is your mind\'s way of protecting you. Be gentle with yourself. These may help.',
+            angry: 'Anger is a natural part of grief. It means you loved deeply. Here are ways to channel it.',
+            sad: 'It\'s okay to feel the weight of this. Let yourself grieve. We\'re here with you.',
+            anxious: 'Uncertainty can feel overwhelming. Let\'s break things into small, manageable pieces.',
+            okay: 'It\'s good to have a calmer day. Here are some ways to make the most of it.'
+        };
+
+        function selectMood(el) {
+            document.querySelectorAll('.mood-card').forEach(function(c) { c.classList.remove('selected'); });
+            el.classList.add('selected');
+            var mood = el.dataset.mood;
+            var msgEl = document.querySelector('.mood-message');
+            if (msgEl && moodMessages[mood]) {
+                msgEl.textContent = moodMessages[mood];
+            }
+            var rec = document.getElementById('moodRecommendations');
+            if (rec) {
+                rec.style.opacity = '0';
+                setTimeout(function() { rec.style.opacity = '1'; }, 150);
+                rec.style.transition = 'opacity 0.3s ease';
+            }
+            setTimeout(function() {
+                rec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 200);
+        }
+
+        /* ========== CATEGORY FILTER (BROWSE MODE) ========== */
+        function filterCategory(cat, pill) {
+            document.querySelectorAll('.cat-pill').forEach(function(p) { p.classList.remove('active'); });
+            pill.classList.add('active');
+            document.querySelectorAll('.browse-section').forEach(function(s) {
+                if (cat === 'all') {
+                    s.style.display = 'block';
+                } else {
+                    s.style.display = s.dataset.section === cat ? 'block' : 'none';
+                }
+            });
+        }
+
+        /* ========== JOURNAL SAVE ========== */
+        function saveJournal() {
+            var textarea = document.getElementById('journalTextarea');
+            var success = document.getElementById('journalSuccess');
+            if (!textarea.value.trim()) return;
+            success.classList.add('show');
+            setTimeout(function() {
+                textarea.value = '';
+                setTimeout(function() { success.classList.remove('show'); }, 1500);
+            }, 800);
+        }
+    </script>
+</body>
+</html>

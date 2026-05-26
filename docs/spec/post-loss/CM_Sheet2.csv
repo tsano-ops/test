@@ -1,0 +1,55 @@
+
+SPECIAL CASES (Dynamic Timing)
+
+These override timing:
+
+Example:
+
+Child loss → delay “moving forward” steps
+Miscarriage → surface validation earlier
+Pet loss → shorten timeline
+
+HOW THIS LOOKS IN UX (CRITICAL)
+In Step List (Emotional Support)
+
+Each step has a soft timing label:
+
+Example:
+
+Pause and Ground Yourself
+→ Helpful in the first days
+
+Understand What You’re Feeling
+→ Often helpful in the first days
+
+Set Boundaries with Others
+→ May become important in the coming weeks
+
+No dates. No countdowns.
+
+In Step Detail Page
+
+Under title:
+
+Helpful timing:
+
+“This may be especially helpful in the first weeks after a loss.”
+
+🤖AI BEHAVIOR (IMPORTANT BUT SIMPLE)
+
+You don’t need “emotional readiness detection”.
+
+Instead use:
+
+Passive Signals:
+
+Time since loss
+
+Steps opened / ignored
+
+Time spent in module
+Result:
+
+Reorder steps
+
+Highlight 2–3 “Suggested for you now”

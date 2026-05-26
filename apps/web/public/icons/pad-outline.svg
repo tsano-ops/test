@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="215" height="60" viewBox="0 0 215 60">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.463" x2="0.537" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="0.184" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.825" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+  </defs>
+  <path id="pad_-_Outline" data-name="pad - Outline" d="M30,1A29.008,29.008,0,0,0,18.712,56.721,28.817,28.817,0,0,0,30,59H185A29.008,29.008,0,0,0,196.288,3.279,28.817,28.817,0,0,0,185,1H30m0-1H185a30,30,0,0,1,0,60H30A30,30,0,0,1,30,0Z" fill="url(#linear-gradient)"/>
+</svg>

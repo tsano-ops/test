@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "meFamilyNetwork": "Me, Family & Network",
+    "myPlan": "My Plan",
+    "postLossSupport": "Post-Loss Support",
+    "vault": "Vault",
+    "tasksReminders": "Tasks & Reminders",
+    "marketplace": "Marketplace",
+    "plansSharedWithMe": "Plans Shared with Me",
+    "myProfile": "My Profile",
+    "myFamily": "My Family",
+    "myNetwork": "My Network",
+    "assetsLiabilities": "Assets & Liabilities",
+    "emotionalLegacy": "Emotional Legacy",
+    "bodyHealth": "Body & Health",
+    "goalsAspirations": "Goals & Aspirations",
+    "willLegalActions": "Will & Legal Actions"
+  },
+  "dashboard": {
+    "goodMorning": "Good morning",
+    "todaysTasks": "Today's Tasks",
+    "recentActivity": "Recent Activity",
+    "viewAllTasks": "View All Tasks",
+    "viewAllActivity": "View All Activity",
+    "noPendingTasks": "No pending tasks",
+    "noRecentActivity": "No recent activity",
+    "keyPeople": "Key People",
+    "noKeyPeople": "No key people added yet",
+    "yourProgress": "Your Progress"
+  },
+  "common": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading",
+    "noData": "No data available",
+    "search": "Search",
+    "filter": "Filter"
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "logIn": "Log In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password"
+  },
+  "pages": {
+    "tasks": "Tasks",
+    "vault": "Vault",
+    "health": "Health",
+    "assets": "Assets",
+    "family": "Family",
+    "legacy": "Legacy",
+    "goals": "Goals",
+    "will": "Will",
+    "shared": "Shared",
+    "postLoss": "Post-Loss",
+    "settings": "Settings"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "planafter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PlanAfter - Life & Estate Planning Platform",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=apps/api && npm run build --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:web": "npm run build --workspace=apps/web",
+    "db:generate": "npx prisma generate --schema=prisma/schema.prisma",
+    "db:migrate": "npx prisma migrate dev --schema=prisma/schema.prisma",
+    "db:push": "npx prisma db push --schema=prisma/schema.prisma",
+    "db:studio": "npx prisma studio --schema=prisma/schema.prisma",
+    "db:seed": "npx prisma db seed",
+    "lint": "npm run lint --workspaces --if-present",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "npx tsx prisma/seed.ts"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

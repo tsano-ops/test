@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Person Record — PlanAfter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="_shared.css">
+    <style>
+        /* Minimal page chrome — leverages canonical _shared.css for cards/avatars/buttons */
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #F5F5F7;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #000;
+        }
+        .pa-record-bg {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #E8EBF0 0%, #DDE2EA 50%, #D5DBE5 100%);
+            z-index: -1;
+        }
+        .pa-record-container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 30px 20px 80px;
+        }
+        /* Top bar — back link + breadcrumb */
+        .pa-record-topbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .pa-record-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 100px;
+            padding: 10px 18px;
+            cursor: pointer;
+            font: 600 13px/16px 'Inter', sans-serif;
+            color: #000;
+            text-decoration: none;
+            transition: background 0.2s ease-out;
+        }
+        .pa-record-back:hover { background: #FFFFFF; }
+        .pa-record-back svg { display: block; }
+        .pa-record-breadcrumb {
+            font: 400 13px/16px 'Inter', sans-serif;
+            color: #000;
+            opacity: 0.6;
+        }
+        /* Hero — avatar + name + role + life status */
+        .pa-record-hero {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        }
+        .pa-record-hero-avatar {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,1);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+        .pa-record-hero-avatar img {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .pa-record-hero-avatar .lsc-avatar-monogram {
+            width: 100%; height: 100%;
+            font: 600 38px/1 'Source Serif 4', serif;
+            color: rgba(0,0,0,0.4);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent;
+        }
+        .pa-record-hero-life-dot {
+            position: absolute;
+            bottom: 8px; right: 8px;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            border: 3px solid #FFFFFF;
+        }
+        .pa-record-hero-life-dot.alive    { background: #61C553; }
+        .pa-record-hero-life-dot.deceased { background: #FF2C55; }
+        .pa-record-hero-life-dot.unknown  { background: #9C9C9C; }
+        /* "In Memory" styling — applied to whole hero when Life Status = Deceased.
+           Per spec: greyscale + In Memory banner + soft tint. */
+        .pa-record-hero.in-memory {
+            background: rgba(248, 240, 240, 0.85);
+        }
+        .pa-record-hero.in-memory .pa-record-hero-avatar img {
+            filter: grayscale(0.85);
+        }
+        .pa-record-in-memory-banner {
+            background: linear-gradient(135deg, rgba(255, 240, 240, 0.9), rgba(248, 232, 232, 0.9));
+            border: 1px solid rgba(255, 44, 85, 0.20);
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font: 600 13px/16px 'Inter', sans-serif;
+            color: #8B2545;
+        }
+        .pa-record-in-memory-banner::before {
+            content: '🕊️';
+            font-size: 16px;
+        }
+        .pa-record-hero-info { flex: 1; min-width: 0; }
+        .pa-record-hero-name {
+            font: 600 28px/34px 'Source Serif 4', serif;
+            color: #000;
+            margin-bottom: 6px;
+        }
+        .pa-record-hero-meta {
+            font: 400 14px/20px 'Inter', sans-serif;
+            color: #000;
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+        .pa-record-hero-meta strong {
+            font-weight: 600;
+            color: #000;
+            opacity: 1;
+        }
+        .pa-record-hero-badges {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .pa-record-hero-badge {
+            background: rgba(0,0,0,0.06);
+            color: #000;
+            border-radius: 100px;
+            padding: 4px 10px;
+            font: 600 11px/14px 'Inter', sans-serif;
+        }
+        .pa-record-hero-badge.deceased { background: rgba(255,44,85,0.10); color: #FF2C55; }
+        .pa-record-hero-badge.unknown  { background: rgba(0,0,0,0.06);    color: #555; }
+        /* Death Information Block — Empathy banner + grouped read-only fields */
+        .pa-record-death-block {
+            background: linear-gradient(135deg, rgba(255, 248, 248, 0.7), rgba(252, 240, 240, 0.7));
+            border: 1px solid rgba(255, 44, 85, 0.14);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .pa-record-death-block-empathy {
+            font: 400 13px/19px 'Inter', sans-serif;
+            color: #5A2030;
+            margin-bottom: 16px;
+            font-style: italic;
+            opacity: 0.85;
+        }
+        .pa-record-death-block-title {
+            font: 600 14px/18px 'Inter', sans-serif;
+            color: #5A2030;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            opacity: 0.7;
+        }
+        /* Card section — canonical white pad */
+        .pa-record-card {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        }
+        .pa-record-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .pa-record-card-title {
+            font: 600 18px/22px 'Source Serif 4', serif;
+            color: #000;
+        }
+        .pa-record-card-count {
+            background: rgba(0,0,0,0.06);
+            color: #000;
+            border-radius: 100px;
+            padding: 4px 12px;
+            font: 600 12px/15px 'Inter', sans-serif;
+        }
+        .pa-record-card-subtitle {
+            font: 400 13px/18px 'Inter', sans-serif;
+            color: #000;
+            opacity: 0.5;
+            margin-bottom: 18px;
+        }
+        /* Identity rows inside Essential / Contact */
+        .pa-record-data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font: 400 14px/20px 'Inter', sans-serif;
+        }
+        .pa-record-data-row:last-child { border-bottom: none; }
+        .pa-record-data-label { opacity: 0.6; }
+        .pa-record-data-value { font-weight: 600; text-align: right; max-width: 60%; }
+        /* Linked / Shared entries list */
+        .pa-record-entry {
+            background: #FFFFFF;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s ease-out, transform 0.2s ease-out;
+        }
+        .pa-record-entry:hover {
+            border-color: rgba(0,0,0,0.18);
+            transform: translateY(-1px);
+        }
+        .pa-record-entry-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .pa-record-entry-title-block { flex: 1; min-width: 0; }
+        .pa-record-entry-title {
+            font: 600 15px/20px 'Inter', sans-serif;
+            color: #000;
+            margin-bottom: 4px;
+        }
+        .pa-record-entry-meta {
+            font: 400 12px/15px 'Inter', sans-serif;
+            color: #000;
+            opacity: 0.6;
+        }
+        .pa-record-entry-source {
+            background: rgba(0,0,0,0.04);
+            color: #000;
+            border-radius: 100px;
+            padding: 4px 10px;
+            font: 600 10px/14px 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            opacity: 0.7;
+            white-space: nowrap;
+        }
+        .pa-record-entry-readonly {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font: 400 11px/14px 'Inter', sans-serif;
+            color: #000;
+            opacity: 0.4;
+            margin-top: 6px;
+        }
+        .pa-record-entry-readonly::before {
+            content: '🔒';
+            font-size: 11px;
+        }
+        /* Empty state */
+        .pa-record-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #000;
+            opacity: 0.5;
+            font: 400 13px/18px 'Inter', sans-serif;
+        }
+        /* Share status chips for "Shared with me" */
+        .pa-record-share-chip {
+            display: inline-block;
+            border-radius: 100px;
+            padding: 3px 10px;
+            font: 600 10px/14px 'Inter', sans-serif;
+            margin-left: 6px;
+        }
+        .pa-record-share-chip.scope-view    { background: rgba(94,167,75,0.12); color: #2E7D2E; }
+        .pa-record-share-chip.scope-comment { background: rgba(63,118,255,0.12); color: #1E5BCC; }
+        .pa-record-share-chip.scope-edit    { background: rgba(255,107,30,0.12); color: #C04D00; }
+        .pa-record-share-chip.vis-now           { background: rgba(94,167,75,0.12); color: #2E7D2E; }
+        .pa-record-share-chip.vis-post_mortem   { background: rgba(255,196,0,0.18);  color: #8B6E00; }
+        .pa-record-share-chip.vis-specific_date { background: rgba(255,107,30,0.12); color: #C04D00; }
+        .pa-record-share-chip.vis-specific_event{ background: rgba(180,0,200,0.12); color: #7A0090; }
+    </style>
+</head>
+<body>
+    <div class="pa-record-bg"></div>
+
+    <div class="pa-record-container">
+        <!-- Top bar — Back + breadcrumb -->
+        <div class="pa-record-topbar">
+            <a href="profile.html" class="pa-record-back">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 1L2 7l6.5 6"/></svg>
+                <span>Back to Sarah's profile</span>
+            </a>
+            <span class="pa-record-breadcrumb" id="paBreadcrumb">Loading…</span>
+        </div>
+
+        <!-- Person hero card -->
+        <div class="pa-record-hero" id="paHero">
+            <!-- Filled by JS -->
+        </div>
+
+        <!-- Essential Info card -->
+        <div class="pa-record-card">
+            <div class="pa-record-card-header">
+                <div class="pa-record-card-title">Essential Info</div>
+            </div>
+            <div class="pa-record-card-subtitle">Identity &amp; key details (read-only projection from Sarah's record)</div>
+            <div id="paEssentialInfo">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <!-- Contact Info card -->
+        <div class="pa-record-card">
+            <div class="pa-record-card-header">
+                <div class="pa-record-card-title">Contact Info</div>
+            </div>
+            <div class="pa-record-card-subtitle">Email, phone, address, social media (read-only)</div>
+            <div id="paContactInfo">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <!-- Their own records — one accordion-style card per cardKey, mirroring Sarah's My Profile structure -->
+        <div id="paOwnRecordsContainer">
+            <!-- Filled by JS — separate card per cardKey (Medical / Education / Employment / Beliefs / Family / Documents) -->
+        </div>
+
+        <!-- Linked Entries card (cross-record projections from My Profile) -->
+        <div class="pa-record-card">
+            <div class="pa-record-card-header">
+                <div class="pa-record-card-title">Linked from Sarah's profile</div>
+                <div class="pa-record-card-count" id="paLinkedCount">0</div>
+            </div>
+            <div class="pa-record-card-subtitle">Entries from Sarah's records where this person is tagged in People &amp; Contacts. Read-only projections.</div>
+            <div id="paLinkedEntries">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <!-- Shared With Me card (entries explicitly shared) -->
+        <div class="pa-record-card">
+            <div class="pa-record-card-header">
+                <div class="pa-record-card-title">Shared with this person</div>
+                <div class="pa-record-card-count" id="paSharedCount">0</div>
+            </div>
+            <div class="pa-record-card-subtitle">Entries Sarah has explicitly shared with this person via the Share modal.</div>
+            <div id="paSharedEntries">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Data layers — same as profile.html so peopleStore + entriesStore + persistence load -->
+    <script src="_data/entryRules.js"></script>
+    <script src="_data/peopleStore.js"></script>
+    <script src="_data/entriesStore.js"></script>
+    <!-- Persistence layer — must load AFTER peopleStore + entriesStore so the
+         default seeds are set first, then overridden from localStorage if any. -->
+    <script src="_data/persistence.js"></script>
+    <!-- Seed sample entries owned by non-Sarah persons so this record can show
+         "Their own records" cards. Idempotent — skips ids already in store. -->
+    <script src="_data/people-records-seed.js"></script>
+
+    <script>
+    (function() {
+        'use strict';
+        // ── Read person id from URL ──────────────────────────────────────
+        function getPersonIdFromUrl() {
+            const url = new URL(window.location.href);
+            return url.searchParams.get('id') || (location.hash || '').replace(/^#/, '') || '';
+        }
+        function escHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+                return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+            });
+        }
+        function ageFromDob(dobStr) {
+            if (!dobStr) return null;
+            const parts = String(dobStr).split('-');
+            if (parts.length < 1 || !parts[0]) return null;
+            const birthYear = parseInt(parts[0], 10);
+            const currentYear = new Date().getFullYear();
+            if (!birthYear || birthYear < 1800) return null;
+            return currentYear - birthYear;
+        }
+        function formatDate(dStr) {
+            if (!dStr) return '';
+            const parts = String(dStr).split('-');
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
+                const m = parseInt(parts[1], 10);
+                return `${months[m - 1] || parts[1]} ${parseInt(parts[2], 10)}, ${parts[0]}`;
+            }
+            return dStr;
+        }
+
+        // Wait for persistence layer to load + apply
+        function init() {
+            const personId = getPersonIdFromUrl();
+            if (!personId) {
+                renderError('No person id provided. Append ?id=PERSON_ID to the URL.');
+                return;
+            }
+            // Wait for paLoadAll (DOMContentLoaded) AND people-records-seed (DOMContentLoaded + 100ms)
+            // to both finish before reading entriesStore.
+            setTimeout(() => {
+                const person = (window.peopleById && window.peopleById(personId))
+                            || (window.peopleStore || []).find(p => p.id === personId);
+                if (!person) {
+                    renderError(`Person not found: "${personId}". Check the id in peopleStore.`);
+                    return;
+                }
+                document.title = `${person.name} — PlanAfter`;
+                renderPerson(person);
+            }, 200);
+        }
+
+        function renderError(msg) {
+            document.getElementById('paHero').innerHTML =
+                `<div style="padding:20px;color:#FF2C55;font-weight:600">${escHtml(msg)}</div>`;
+        }
+
+        function renderPerson(person) {
+            renderBreadcrumb(person);
+            renderHero(person);
+            renderEssentialInfo(person);
+            renderContactInfo(person);
+            renderOwnRecords(person);
+            renderLinkedEntries(person);
+            renderSharedEntries(person);
+        }
+
+        // Per spec: every Person Record has its own My Profile-style card structure.
+        // We render one card per cardKey (Medical, Education, Employment, Beliefs, Family,
+        // Documents, etc.) — each with that person's own entries inside.
+        // Empty cards are shown too so the structure mirrors profile.html.
+        function renderOwnRecords(person) {
+            const all = Array.isArray(window.entriesStore) ? window.entriesStore : [];
+            const own = all.filter(e => e.ownerId === person.id);
+            // Card spec — same set as Sarah's My Profile (per CLAUDE.md / spec 2.1)
+            const cardSpec = [
+                { key: 'medical',     title: 'Medical Info',                subtitle: 'Allergies, conditions, medications, blood type, vaccinations.' },
+                { key: 'education',   title: 'Education',                   subtitle: 'Schools, degrees, certifications, languages.' },
+                { key: 'employment',  title: 'Employment & Affiliations',   subtitle: 'Jobs, businesses, memberships.' },
+                { key: 'beliefs',     title: 'Beliefs, Hobbies & Interests',subtitle: 'Faith, traditions, hobbies, causes.' },
+                { key: 'family',      title: 'Family & Relationships',      subtitle: 'Significant relationships and ties.' }
+            ];
+            const container = document.getElementById('paOwnRecordsContainer');
+            // Group own entries by cardKey
+            const byCard = {};
+            own.forEach(e => {
+                const k = e.cardKey || 'other';
+                if (!byCard[k]) byCard[k] = [];
+                byCard[k].push(e);
+            });
+            // Render only cards that have entries (keeping the page light for empty records)
+            const html = cardSpec
+                .filter(c => (byCard[c.key] || []).length > 0)
+                .map(c => renderOwnRecordCard(c, byCard[c.key], person))
+                .join('');
+            // If person has zero own entries, show a single placeholder card to make
+            // the structural intent clear (per spec — every Person Record has cards)
+            if (!html) {
+                container.innerHTML = `
+                    <div class="pa-record-card">
+                        <div class="pa-record-card-header">
+                            <div class="pa-record-card-title">${escHtml(person.firstName || person.name)}'s own records</div>
+                        </div>
+                        <div class="pa-record-card-subtitle">Per spec, every Person Record has its own My Profile-style card structure (Medical, Education, Employment, Beliefs, etc.). No entries on file yet.</div>
+                        <div class="pa-record-empty">No own entries yet. Sarah may have linked this person to her own records below.</div>
+                    </div>`;
+                return;
+            }
+            container.innerHTML = `
+                <div style="margin: 30px 0 14px; font: 600 13px/16px 'Inter', sans-serif; color: #000; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.04em;">
+                    ${escHtml(person.firstName || person.name)}'s own records
+                </div>` + html;
+        }
+
+        function renderOwnRecordCard(cardDef, entries, person) {
+            const items = (entries || []).map(e => `
+                <div class="pa-record-entry">
+                    <div class="pa-record-entry-head">
+                        <div class="pa-record-entry-title-block">
+                            <div class="pa-record-entry-title">${escHtml(e.title || '(Untitled)')}</div>
+                            <div class="pa-record-entry-meta">${escHtml(e.subcategory || e.category || cardDef.title)}${e.fields && e.fields.length ? ' · ' + escHtml((e.fields[0].value || '').toString().slice(0, 60)) : ''}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            return `
+                <div class="pa-record-card">
+                    <div class="pa-record-card-header">
+                        <div class="pa-record-card-title">${escHtml(cardDef.title)}</div>
+                        <div class="pa-record-card-count">${(entries || []).length}</div>
+                    </div>
+                    <div class="pa-record-card-subtitle">${escHtml(cardDef.subtitle)}</div>
+                    ${items}
+                </div>
+            `;
+        }
+
+        function renderBreadcrumb(person) {
+            const dir = (person.categories || []).includes('network') ? 'My Network' : 'My Family';
+            document.getElementById('paBreadcrumb').textContent = `Sarah Johnson → ${dir} → ${person.name}`;
+        }
+
+        function renderHero(person) {
+            const photo = window.peoplePhoto ? window.peoplePhoto(person) : person.photo;
+            const initials = window.peopleInitials ? window.peopleInitials(person) : '';
+            const dir = (person.categories || []).includes('network') ? 'My Network' : 'My Family';
+            // Per spec 3.9 — Life Status is 3-state: Living / Deceased / Unknown.
+            // Reads from person.lifeStatus first; falls back to alive flag.
+            const status = (person.lifeStatus || (person.alive === false ? 'Deceased' : 'Living')).toLowerCase();
+            const lifeDotClass = status === 'deceased' ? 'deceased' : status === 'unknown' ? 'unknown' : 'alive';
+            const statusLabel = status === 'deceased' ? 'Deceased' : status === 'unknown' ? 'Unknown' : 'Living';
+            const role = person.roleLayer2 || person.roleLayer1 || person.role || '';
+            const dobFormatted = formatDate(person.dob);
+            const age = ageFromDob(person.dob);
+            const dodFormatted = formatDate(person.dod);
+            // "Age at Passing" recalculation when deceased (per spec 3.9 If Life Status = DECEASED)
+            let ageAtPassing = null;
+            if (status === 'deceased' && person.dob && person.dod) {
+                const birthY = parseInt(String(person.dob).split('-')[0], 10);
+                const dodY   = parseInt(String(person.dod).split('-')[0], 10);
+                if (birthY && dodY) ageAtPassing = dodY - birthY;
+            }
+            const heroEl = document.getElementById('paHero');
+            heroEl.classList.toggle('in-memory', status === 'deceased');
+            const html = `
+                ${status === 'deceased' ? '<div class="pa-record-in-memory-banner">In Memory of ' + escHtml(person.name) + '</div>' : ''}
+                <div style="display:flex;gap:24px;align-items:center;width:100%">
+                    <div class="pa-record-hero-avatar">
+                        ${photo
+                            ? `<img src="${escHtml(photo)}" alt="${escHtml(person.name)}">`
+                            : `<div class="lsc-avatar-monogram">${escHtml(initials)}</div>`}
+                        <div class="pa-record-hero-life-dot ${lifeDotClass}"></div>
+                    </div>
+                    <div class="pa-record-hero-info">
+                        <div class="pa-record-hero-name">${escHtml(person.name)}</div>
+                        <div class="pa-record-hero-meta"><strong>${escHtml(role || 'Contact')}</strong> · ${escHtml(dir)}</div>
+                        ${dobFormatted ? `<div class="pa-record-hero-meta">Born ${escHtml(dobFormatted)}${age != null && status !== 'deceased' ? ` · Age ${age}` : ''}</div>` : ''}
+                        ${dodFormatted ? `<div class="pa-record-hero-meta">Passed ${escHtml(dodFormatted)}${ageAtPassing != null ? ` · Age at passing ${ageAtPassing}` : ''}</div>` : ''}
+                        <div class="pa-record-hero-badges">
+                            <span class="pa-record-hero-badge ${lifeDotClass === 'alive' ? '' : lifeDotClass}">${escHtml(statusLabel)}</span>
+                            ${person.gender ? `<span class="pa-record-hero-badge">${escHtml(person.gender)}</span>` : ''}
+                            <span class="pa-record-hero-badge">${escHtml(dir)}</span>
+                            ${(person.sharedTo || []).map(r => `<span class="pa-record-hero-badge">${escHtml(r.charAt(0).toUpperCase() + r.slice(1))}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            heroEl.innerHTML = html;
+            // Toggle hero flex direction so banner stacks above row
+            heroEl.style.flexDirection = 'column';
+            heroEl.style.alignItems = 'stretch';
+        }
+
+        function dataRow(label, value) {
+            if (!value && value !== 0) return '';
+            return `<div class="pa-record-data-row">
+                        <span class="pa-record-data-label">${escHtml(label)}</span>
+                        <span class="pa-record-data-value">${escHtml(value)}</span>
+                    </div>`;
+        }
+
+        function renderEssentialInfo(person) {
+            const status = (person.lifeStatus || (person.alive === false ? 'Deceased' : 'Living'));
+            const isDeceased = status.toLowerCase() === 'deceased';
+            const baseRows = [
+                dataRow('Full Name', person.name),
+                dataRow('First Name', person.firstName),
+                dataRow('Family Name', person.familyName),
+                dataRow('Gender', person.gender),
+                dataRow('Date of Birth', formatDate(person.dob)),
+                dataRow('Relationship', person.role || person.roleLayer2 || person.roleLayer1),
+                dataRow('Life Status', status),
+                dataRow('Notes', person.notes)
+            ].join('');
+            // Per spec 3.9.1 — Unified Death Information Block visible ONLY when
+            // Life Status = Deceased. Empathy banner + Date/Place/Cause/Burial/Notes.
+            const deathBlock = isDeceased ? `
+                <div class="pa-record-death-block">
+                    <div class="pa-record-death-block-empathy">
+                        We're deeply sorry for your loss. Nothing here is urgent — only what feels right is recorded.
+                    </div>
+                    <div class="pa-record-death-block-title">Death Information</div>
+                    ${dataRow('Date of Death', formatDate(person.dod)) || ''}
+                    ${dataRow('Place of Death', person.placeOfDeath)}
+                    ${dataRow('Cause of Death', person.causeOfDeath)}
+                    ${person.causeOfDeath === 'Other' ? dataRow('Cause description', person.causeOfDeathOther) : ''}
+                    ${dataRow('Burial / Cemetery Location', person.burialLocation)}
+                    ${dataRow('Additional Notes', person.deathNotes)}
+                </div>` : '';
+            document.getElementById('paEssentialInfo').innerHTML =
+                (baseRows ? baseRows : '<div class="pa-record-empty">No essential info on file.</div>') + deathBlock;
+        }
+
+        function renderContactInfo(person) {
+            const emails = (person.emails || []).map(e => e.value || e.address).filter(Boolean);
+            const phones = (person.phones || []).map(p => p.value || p.number).filter(Boolean);
+            const socials = (person.socials || []).map(s => `${s.platform}: ${s.handle || s.url}`);
+            const addr = person.address && (person.address.street || person.address.city)
+                ? [person.address.street, person.address.city, person.address.country].filter(Boolean).join(', ')
+                : '';
+            const html = [
+                emails.length ? dataRow(emails.length > 1 ? 'Emails' : 'Email', emails.join(', ')) : '',
+                phones.length ? dataRow(phones.length > 1 ? 'Phones' : 'Phone', phones.join(', ')) : '',
+                addr ? dataRow('Address', addr) : '',
+                socials.length ? dataRow('Social Media', socials.join(' · ')) : ''
+            ].join('');
+            document.getElementById('paContactInfo').innerHTML = html ||
+                '<div class="pa-record-empty">No contact info on file.</div>';
+        }
+
+        // Cross-record: entries from entriesStore where this person is tagged
+        // (linkedContactIds includes person.id OR person.name matches).
+        function renderLinkedEntries(person) {
+            const all = Array.isArray(window.entriesStore) ? window.entriesStore : [];
+            const linked = all.filter(e => {
+                const ids = e.linkedContactIds || [];
+                if (ids.includes(person.id)) return true;
+                // Fallback — by name match (legacy seeds without ids)
+                if (e.person && e.person.name && e.person.name === person.name) return true;
+                return false;
+            });
+            document.getElementById('paLinkedCount').textContent = String(linked.length);
+            if (!linked.length) {
+                document.getElementById('paLinkedEntries').innerHTML =
+                    '<div class="pa-record-empty">No entries are linked to this person yet.</div>';
+                return;
+            }
+            const html = linked.map(e => `
+                <div class="pa-record-entry" onclick="alert('Open source entry — TODO: navigate to Sarah\\'s ${escHtml(e.cardKey || 'entry')} card with this entry expanded')">
+                    <div class="pa-record-entry-head">
+                        <div class="pa-record-entry-title-block">
+                            <div class="pa-record-entry-title">${escHtml(e.title || '(Untitled)')}</div>
+                            <div class="pa-record-entry-meta">${escHtml(e.subcategory || e.category || '')} · From: Sarah Johnson → ${escHtml(formatCard(e.cardKey))}</div>
+                        </div>
+                        <span class="pa-record-entry-source">${escHtml(formatCard(e.cardKey))}</span>
+                    </div>
+                    <div class="pa-record-entry-readonly">Read-only projection</div>
+                </div>
+            `).join('');
+            document.getElementById('paLinkedEntries').innerHTML = html;
+        }
+
+        // Shared with me — entries with shares.recipientId === person.id
+        function renderSharedEntries(person) {
+            const all = Array.isArray(window.entriesStore) ? window.entriesStore : [];
+            const shared = [];
+            all.forEach(e => {
+                (e.shares || []).forEach(s => {
+                    if (s.recipientId === person.id || s.recipientEmail && (person.emails || []).some(em => (em.value || em.address) === s.recipientEmail)) {
+                        shared.push({ entry: e, share: s });
+                    }
+                });
+            });
+            document.getElementById('paSharedCount').textContent = String(shared.length);
+            if (!shared.length) {
+                document.getElementById('paSharedEntries').innerHTML =
+                    '<div class="pa-record-empty">No entries have been shared with this person.</div>';
+                return;
+            }
+            const html = shared.map(({ entry, share }) => {
+                const visLabel = {
+                    now: 'Available now',
+                    post_mortem: 'Post-mortem unlock',
+                    specific_date: share.triggerDate ? `Unlocks on ${share.triggerDate}` : 'Unlocks on date',
+                    specific_event: 'Unlocks on event'
+                }[share.visibilityTrigger] || 'Available now';
+                return `
+                    <div class="pa-record-entry" onclick="alert('Open invitation — TODO: open magic link ${escHtml(share.magicLinkUrl || '')}')">
+                        <div class="pa-record-entry-head">
+                            <div class="pa-record-entry-title-block">
+                                <div class="pa-record-entry-title">${escHtml(entry.title || '(Untitled)')}</div>
+                                <div class="pa-record-entry-meta">${escHtml(entry.subcategory || entry.category || '')} · Shared by Sarah Johnson</div>
+                            </div>
+                            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+                                <span class="pa-record-entry-source">${escHtml(formatCard(entry.cardKey))}</span>
+                            </div>
+                        </div>
+                        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+                            <span class="pa-record-share-chip scope-${escHtml(share.scope)}">${(share.scope || 'view').toUpperCase()}</span>
+                            <span class="pa-record-share-chip vis-${escHtml(share.visibilityTrigger)}">${escHtml(visLabel)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('paSharedEntries').innerHTML = html;
+        }
+
+        function formatCard(cardKey) {
+            const map = {
+                essential: 'Essential Info',
+                medical: 'Medical Info',
+                education: 'Education',
+                employment: 'Employment & Affiliations',
+                beliefs: 'Beliefs, Hobbies & Interests',
+                family: 'Family & Relationships',
+                'life-story': 'Life Story',
+                contact: 'Contact Info'
+            };
+            return map[cardKey] || (cardKey ? cardKey.charAt(0).toUpperCase() + cardKey.slice(1) : 'My Profile');
+        }
+
+        // Boot
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
+</body>
+</html>

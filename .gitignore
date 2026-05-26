@@ -1,0 +1,74 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Prisma
+prisma/migrations/**/migration_lock.toml
+
+# Testing
+coverage/
+.nyc_output/
+
+# Docker volumes
+postgres_data/
+redis_data/
+
+# Claude Code local config (may contain credentials/tokens)
+.claude/
+
+# Claude session transcripts (heavy, local-only)
+_session_archive/
+
+# Prototype version backups (heavy, local-only — managed by health-check scripts)
+html-prototype/_versions/
+
+# Runtime upload directories
+apps/uploads/
+
+# Build artifacts
+*.tsbuildinfo
+
+# Backup files
+*.bak
+
+# Stray shell-output capture
+/_
+
+# Backup of old git history (kept locally; never push to GitHub)
+.git.backup-before-github-push/
+
+# Adobe XD design files — heavy binaries, kept local only
+*.xd
+
+# Sensitive internal documents — kept local only, never pushed to GitHub
+# (contain equity %, investor amounts, XD passwords, internal strategy)
+CLAUDE.md
+docs/CONTEXT.md
+docs/business/

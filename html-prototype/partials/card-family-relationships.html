@@ -1,0 +1,56 @@
+<!--
+    Family & Relationships card — bidirectional links to other peopleStore
+    records. Each relationship rendered as a Linked Summary Card (same pattern
+    as Medical Info People & Contacts). Categories: Spouses/Partners, Former
+    Partners, Children, Parents, Siblings, Grandparents, Grandchildren,
+    Extended Family, Pets. Read mode lists by group, edit mode allows add/
+    update/remove with proper bidirectional sync.
+
+    Entries (Marriage / Divorce / Civil Partnership / Adoption certificates)
+    are document entries linked to a relationship — rendered inline under
+    the relationship card they belong to.
+-->
+<div class="accordion-section family-relationships-card">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div>
+            <div class="accordion-title">Family &amp; Relationships</div>
+            <div class="accordion-subtitle" data-fr-subtitle>The family structure that shapes your plan</div>
+        </div>
+        <svg class="accordion-chevron" width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M0.5 0.5L4 3.5L7.5 0.5"/></svg>
+    </div>
+    <div class="accordion-body">
+        <div class="accordion-inner">
+            <p class="section-desc" data-fr-narrative>All family connections and legal relationships for this person are gathered here in one structured view.</p>
+
+            <div class="ei-edit-btn-row">
+                <div class="edit-btn" onclick="toggleFamilyEdit && toggleFamilyEdit(true, this)">
+                    <span>Edit</span>
+                    <div class="edit-btn-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linked Summary Cards grouped by relationship category -->
+            <div class="ei-read-mode">
+                <div data-fr-groups></div>
+            </div>
+
+            <!-- Document entries linked to relationships (Marriage Cert, Divorce, etc.) -->
+            <div class="ei-entries-section" data-fr-entries></div>
+
+            <!-- LOCKED canonical Add New Entry button -->
+            <div class="emc-add-entry-btn" onclick="openEntryForm && openEntryForm('family')">
+                <div class="emc-add-entry-label">Add Family Member</div>
+                <div class="emc-add-entry-row">
+                    <div class="emc-add-entry-line"></div>
+                    <div class="emc-add-entry-plus-wrap">
+                        <div class="emc-add-entry-plus-inner"></div>
+                        <svg class="emc-add-entry-plus-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"><path d="M10 3v14M3 10h14"/></svg>
+                    </div>
+                    <div class="emc-add-entry-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

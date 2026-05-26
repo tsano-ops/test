@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="21.5" height="21.572" viewBox="0 0 21.5 21.572">
+  <g id="Arrow" transform="translate(66.25 1.295)">
+    <path id="path" d="M7.142,1.794a3.178,3.178,0,0,1,5.721,0l6.75,13.2A3.429,3.429,0,0,1,16.753,20c-2.4.039-3.286-2.351-6.662-2.351S5.66,20.012,3.253,20a3.419,3.419,0,0,1-2.86-5.006Z" transform="translate(-45.5 -0.509) rotate(90)" fill="none" stroke="#667eea" stroke-width="1.5"/>
+    <line id="line" x2="4" transform="translate(-57.971 9.491)" fill="none" stroke="#667eea" stroke-linecap="round" stroke-width="1.5"/>
+  </g>
+</svg>

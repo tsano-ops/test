@@ -1,0 +1,33 @@
+<!--
+    Education card — Educational Qualifications (Bachelor's/Master's/PhD),
+    Professional Certifications, Other Education (bootcamps, courses).
+    Each entry has start/end dates, institution, optional file (diploma).
+-->
+<div class="accordion-section education-card">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div>
+            <div class="accordion-title">Education</div>
+            <div class="accordion-subtitle" data-ed-subtitle>Education &amp; qualifications</div>
+        </div>
+        <svg class="accordion-chevron" width="8" height="4" viewBox="0 0 8 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M0.5 0.5L4 3.5L7.5 0.5"/></svg>
+    </div>
+    <div class="accordion-body">
+        <div class="accordion-inner">
+            <p class="section-desc" data-ed-narrative>Diplomas, certificates and learning milestones are gathered in one organised place.</p>
+
+            <div class="ei-entries-section" data-ed-entries></div>
+
+            <div class="emc-add-entry-btn" onclick="openEntryForm && openEntryForm('education')">
+                <div class="emc-add-entry-label">Add New Entry</div>
+                <div class="emc-add-entry-row">
+                    <div class="emc-add-entry-line"></div>
+                    <div class="emc-add-entry-plus-wrap">
+                        <div class="emc-add-entry-plus-inner"></div>
+                        <svg class="emc-add-entry-plus-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"><path d="M10 3v14M3 10h14"/></svg>
+                    </div>
+                    <div class="emc-add-entry-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

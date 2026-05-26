@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Arrow Button Spec Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #e8eaf0; min-height: 100vh; display: flex; }
+
+/* PANEL */
+.panel {
+  width: 360px; min-height: 100vh; flex-shrink: 0;
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(0,0,0,0.08);
+  padding: 30px 24px; display: flex; flex-direction: column; gap: 22px;
+  overflow-y: auto;
+}
+.panel-title { font: 700 17px/22px 'Inter'; }
+.panel-sub   { font: 400 12px/15px 'Inter'; color: rgba(0,0,0,0.4); margin-top:3px; }
+.sec-title   { font: 600 10px/13px 'Inter'; color: rgba(0,0,0,0.4); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:4px; }
+.sec { display:flex; flex-direction:column; gap:10px; }
+
+/* label input */
+.txt-field { border:none; border-bottom:1.5px solid rgba(0,0,0,0.14); background:transparent; font:600 15px/22px 'Inter'; color:#000; outline:none; padding:5px 0; width:100%; transition:border-color .2s; }
+.txt-field:focus { border-bottom-color:#000; }
+.field-lbl { font:400 12px/15px 'Inter'; color:rgba(0,0,0,0.5); margin-bottom:4px; }
+
+/* color picker row */
+.color-target { display:flex; flex-direction:column; gap:6px; }
+.color-target .name { font:600 12px/15px 'Inter'; color:#000; }
+.swatches { display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+.sw {
+  width:28px; height:28px; border-radius:50%; cursor:pointer; flex-shrink:0;
+  border:3px solid transparent; transition:border-color .15s, transform .15s;
+}
+.sw:hover { transform:scale(1.12); }
+.sw.on { border-color:#000; }
+.sw.white { border:2px solid rgba(0,0,0,0.15) !important; }
+.sw.white.on { border:3px solid #000 !important; }
+.custom-sw { position:relative; width:28px; height:28px; border-radius:50%; overflow:hidden; flex-shrink:0; border:3px solid transparent; cursor:pointer; background: conic-gradient(red,yellow,lime,cyan,blue,magenta,red); }
+.custom-sw.on { border-color:#000; }
+.custom-sw input { opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer; }
+
+/* spec */
+.spec-box { background:rgba(0,0,0,0.04); border-radius:16px; padding:14px; font:400 11px/17px 'Inter'; color:rgba(0,0,0,0.7); white-space:pre-wrap; word-break:break-all; max-height:260px; overflow-y:auto; }
+.copy-btn { height:42px; border-radius:21px; border:1.5px solid rgba(0,0,0,0.16); background:transparent; font:600 13px/16px 'Inter'; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:background .2s, border-color .2s; width:100%; }
+.copy-btn:hover { background:#FFF; border-color:#000; }
+.copy-btn.ok { background:#61C553; border-color:#61C553; color:#FFF; }
+
+/* STAGE */
+.stage { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:60px; padding:60px; }
+.stage-row { display:flex; flex-direction:column; gap:12px; }
+.state-lbl { font:400 11px/14px 'Inter'; color:rgba(0,0,0,0.35); }
+
+/* ARROW BUTTON */
+.ab { position:relative; height:60px; cursor:pointer; }
+.ab::before { content:''; position:absolute; top:0; height:60px; border-radius:30px; background:transparent; z-index:0; transition:left .2s ease-out, width .2s ease-out, background .2s ease-out, box-shadow .2s ease-out; }
+.ab:hover::before { box-shadow:0 4px 24px rgba(0,0,0,0.12); }
+.ab-lbl  { position:absolute; left:0; top:50%; transform:translateY(-50%); font:400 16px/24px 'Inter'; white-space:nowrap; z-index:1; transition:color .2s; }
+.ab-dash { position:absolute; top:50%; transform:translateY(-50%); height:1.5px; width:10px; transform-origin:left center; z-index:1; transition:width .2s, background .2s; }
+.ab-circle { position:absolute; top:50%; transform:translateY(-50%); width:60px; height:60px; border-radius:30px; border:1px solid; background:transparent; display:flex; align-items:center; justify-content:center; z-index:1; pointer-events:none; transition:border-color .2s, background .2s; }
+.ab:hover .ab-dash { width:30px; }
+.ab:hover .ab-circle { border-color:transparent !important; }
+.ab-arrow { width:9px; height:16px; transition:transform .2s; }
+.ab:hover .ab-arrow { transform:translateX(-5px); }
+.ab.hp::before { box-shadow:0 4px 24px rgba(0,0,0,0.12); }
+.ab.hp .ab-dash { width:30px; }
+.ab.hp .ab-circle { border-color:transparent !important; }
+.ab.hp .ab-arrow { transform:translateX(-5px); }
+
+#measurer { position:absolute; visibility:hidden; white-space:nowrap; font:400 16px/24px 'Inter'; top:-9999px; left:-9999px; }
+</style>
+</head>
+<body>
+<div id="measurer"></div>
+
+<div class="panel">
+  <div>
+    <div class="panel-title">Arrow Button Builder</div>
+    <div class="panel-sub">Spec per element — locked component</div>
+  </div>
+
+  <!-- LABEL TEXT -->
+  <div class="sec">
+    <div class="sec-title">Label</div>
+    <div>
+      <div class="field-lbl">Button text</div>
+      <input class="txt-field" id="txtLabel" value="Save" oninput="update()">
+    </div>
+  </div>
+
+  <!-- PER-ELEMENT COLORS -->
+  <div class="sec">
+    <div class="sec-title">Default state — element colors</div>
+
+    <div class="color-target">
+      <div class="name">Label text</div>
+      <div class="swatches" id="sw-label"></div>
+    </div>
+    <div class="color-target">
+      <div class="name">Dash (line)</div>
+      <div class="swatches" id="sw-dash"></div>
+    </div>
+    <div class="color-target">
+      <div class="name">Circle border</div>
+      <div class="swatches" id="sw-border"></div>
+    </div>
+    <div class="color-target">
+      <div class="name">Circle fill</div>
+      <div class="swatches" id="sw-fill"></div>
+    </div>
+    <div class="color-target">
+      <div class="name">Arrow (inside circle)</div>
+      <div class="swatches" id="sw-arrow"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Hover state</div>
+    <div class="color-target">
+      <div class="name">Pill background</div>
+      <div class="swatches" id="sw-pill"></div>
+    </div>
+    <div class="color-target">
+      <div class="name">Label on hover</div>
+      <div class="swatches" id="sw-hlabel"></div>
+    </div>
+    <div class="color-target">
+      <div class="name">Dash on hover</div>
+      <div class="swatches" id="sw-hdash"></div>
+    </div>
+    <div class="color-target">
+      <div class="name">Arrow on hover</div>
+      <div class="swatches" id="sw-harrow"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Spec</div>
+    <div class="spec-box" id="specBox"></div>
+    <button class="copy-btn" id="copyBtn" onclick="copySpec()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Copy spec
+    </button>
+  </div>
+</div>
+
+<!-- STAGE -->
+<div class="stage">
+  <div class="stage-row">
+    <div class="state-lbl">Default</div>
+    <div class="ab" id="abLive">
+      <div class="ab-lbl" id="lblLive">Save</div>
+      <div class="ab-dash" id="dashLive"></div>
+      <div class="ab-circle" id="circleLive">
+        <svg class="ab-arrow" viewBox="0 0 9 16" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l7 7-7 7" id="arrowLive"/></svg>
+      </div>
+    </div>
+  </div>
+  <div class="stage-row">
+    <div class="state-lbl">Hover</div>
+    <div class="ab hp" id="abHover" style="pointer-events:none">
+      <div class="ab-lbl" id="lblHover">Save</div>
+      <div class="ab-dash" id="dashHover" style="width:30px"></div>
+      <div class="ab-circle" id="circleHover" style="border-color:transparent">
+        <svg class="ab-arrow" style="transform:translateX(-5px)" viewBox="0 0 9 16" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l7 7-7 7" id="arrowHover"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var PALETTE = [
+  {c:'#000000'}, {c:'#FFFFFF',cls:'white'}, {c:'#FF2C55'}, {c:'#657EEA'},
+  {c:'#61C553'}, {c:'#FF9500'}, {c:'#826B96'}, {c:'#3E8B70'},
+  {c:'#BC8D53'}, {c:'#B62818'}, {c:'#020B66'}
+];
+
+var state = {
+  label:   '#000000',
+  dash:    '#000000',
+  border:  '#000000',
+  fill:    'transparent',
+  arrow:   '#000000',
+  pill:    '#000000',
+  hlabel:  '#FFFFFF',
+  hdash:   '#FFFFFF',
+  harrow:  '#FFFFFF',
+};
+
+function buildSwatches(containerId, key, defaultColor) {
+  var el = document.getElementById(containerId);
+  state[key] = defaultColor;
+  PALETTE.forEach(function(p) {
+    var div = document.createElement('div');
+    div.className = 'sw' + (p.cls ? ' '+p.cls : '') + (p.c === defaultColor ? ' on' : '');
+    div.style.background = p.c;
+    div.dataset.c = p.c;
+    div.dataset.key = key;
+    div.onclick = function() { pickSw(this); };
+    el.appendChild(div);
+  });
+  // custom
+  var cw = document.createElement('div');
+  cw.className = 'custom-sw' + (defaultColor === 'custom' ? ' on' : '');
+  cw.dataset.key = key;
+  var inp = document.createElement('input');
+  inp.type = 'color'; inp.value = defaultColor.startsWith('#') ? defaultColor : '#000000';
+  inp.oninput = function() { pickCustom(key, this.value, cw); };
+  cw.appendChild(inp);
+  el.appendChild(cw);
+}
+
+function pickSw(el) {
+  var key = el.dataset.key;
+  var cont = el.closest('.swatches');
+  cont.querySelectorAll('.sw,.custom-sw').forEach(function(e){ e.classList.remove('on'); });
+  el.classList.add('on');
+  state[key] = el.dataset.c;
+  update();
+}
+
+function pickCustom(key, val, cw) {
+  var cont = cw.closest('.swatches');
+  cont.querySelectorAll('.sw,.custom-sw').forEach(function(e){ e.classList.remove('on'); });
+  cw.classList.add('on');
+  state[key] = val;
+  update();
+}
+
+function measureText(txt) {
+  var m = document.getElementById('measurer');
+  m.textContent = txt;
+  return m.offsetWidth;
+}
+
+function update() {
+  var label = document.getElementById('txtLabel').value || 'Button';
+  var lw = measureText(label);
+  var dashLeft   = lw + 10;
+  var circleLeft = lw + 30;
+  var wrapW      = circleLeft + 60;
+  var pillW      = wrapW + 30;
+
+  // DEFAULT state
+  var abLive = document.getElementById('abLive');
+  abLive.style.width = wrapW + 'px';
+  document.getElementById('lblLive').textContent  = label;
+  document.getElementById('lblLive').style.color  = state.label;
+  document.getElementById('dashLive').style.left  = dashLeft + 'px';
+  document.getElementById('dashLive').style.background = state.dash;
+  document.getElementById('circleLive').style.left        = circleLeft + 'px';
+  document.getElementById('circleLive').style.borderColor = state.border;
+  document.getElementById('circleLive').style.background  = state.fill === 'transparent' ? 'transparent' : state.fill;
+  document.getElementById('arrowLive').setAttribute('stroke', state.arrow);
+
+  // HOVER state
+  var abHover = document.getElementById('abHover');
+  abHover.style.width = wrapW + 'px';
+  document.getElementById('lblHover').textContent  = label;
+  document.getElementById('lblHover').style.color  = state.hlabel;
+  document.getElementById('dashHover').style.left  = dashLeft + 'px';
+  document.getElementById('dashHover').style.background = state.hdash;
+  document.getElementById('circleHover').style.left = circleLeft + 'px';
+  document.getElementById('arrowHover').setAttribute('stroke', state.harrow);
+
+  // Dynamic CSS for live hover + pill
+  var st = document.getElementById('_dyn');
+  if (!st) { st = document.createElement('style'); st.id = '_dyn'; document.head.appendChild(st); }
+  st.textContent =
+    '#abLive::before { left:0; width:' + wrapW + 'px; }' +
+    '#abLive:hover::before { left:-30px; width:' + pillW + 'px; background:' + state.pill + '; }' +
+    '#abLive:hover .ab-lbl  { color:' + state.hlabel + ' !important; }' +
+    '#abLive:hover .ab-dash { background:' + state.hdash + ' !important; }' +
+    '#abLive:hover #arrowLive { stroke:' + state.harrow + ' !important; }' +
+    '#abHover::before { left:-30px; width:' + pillW + 'px; background:' + state.pill + '; }';
+
+  // Spec
+  document.getElementById('specBox').textContent = [
+    'label:          "' + label + '"',
+    'wrap_width:     ' + wrapW + 'px',
+    'label_left:     0',
+    'dash_left:      ' + dashLeft + 'px',
+    'circle_left:    ' + circleLeft + 'px',
+    '',
+    '── default ──',
+    'label_color:    ' + state.label,
+    'dash_color:     ' + state.dash,
+    'circle_border:  ' + state.border,
+    'circle_fill:    ' + (state.fill === 'transparent' ? 'transparent' : state.fill),
+    'arrow_color:    ' + state.arrow,
+    '',
+    '── hover ──',
+    'pill_left:      -30px',
+    'pill_width:     ' + pillW + 'px',
+    'pill_bg:        ' + state.pill,
+    'label_color:    ' + state.hlabel,
+    'dash_color:     ' + state.hdash,
+    'arrow_color:    ' + state.harrow,
+    'dash_width:     30px',
+    'circle_border:  transparent',
+    '',
+    'transition:     0.2s ease-out',
+  ].join('\n');
+}
+
+// Init swatches
+buildSwatches('sw-label',  'label',  '#000000');
+buildSwatches('sw-dash',   'dash',   '#000000');
+buildSwatches('sw-border', 'border', '#000000');
+buildSwatches('sw-fill',   'fill',   'transparent');
+buildSwatches('sw-arrow',  'arrow',  '#000000');
+buildSwatches('sw-pill',   'pill',   '#000000');
+buildSwatches('sw-hlabel', 'hlabel', '#FFFFFF');
+buildSwatches('sw-hdash',  'hdash',  '#FFFFFF');
+buildSwatches('sw-harrow', 'harrow', '#FFFFFF');
+
+// Fix transparent option for fill
+var fillSwatches = document.getElementById('sw-fill');
+var transSw = document.createElement('div');
+transSw.className = 'sw on';
+transSw.style.background = 'transparent';
+transSw.style.border = '2px dashed rgba(0,0,0,0.3)';
+transSw.dataset.c = 'transparent';
+transSw.dataset.key = 'fill';
+transSw.onclick = function(){ pickSw(this); };
+transSw.title = 'Transparent';
+fillSwatches.insertBefore(transSw, fillSwatches.firstChild);
+// deselect auto-selected black
+fillSwatches.querySelectorAll('.sw').forEach(function(e){ if(e.dataset.c==='#000000') e.classList.remove('on'); });
+
+update();
+
+function copySpec() {
+  navigator.clipboard.writeText(document.getElementById('specBox').textContent).then(function(){
+    var btn = document.getElementById('copyBtn');
+    btn.classList.add('ok'); btn.textContent = '✓ Copied!';
+    setTimeout(function(){ btn.classList.remove('ok'); btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy spec'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
