@@ -11,7 +11,7 @@
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
     "dev:api": "npm run dev --workspace=apps/api",
     "dev:web": "npm run dev --workspace=apps/web",
-    "postinstall": "npm run db:generate && cd apps/api && npx prisma generate --schema=../../prisma/schema.prisma",
+    "postinstall": "npm run db:generate && mkdir -p apps/api/node_modules/@prisma && cp -R node_modules/@prisma/client apps/api/node_modules/@prisma/",
     "build": "npm run build --workspace=apps/api && npm run build --workspace=apps/web",
     "build:api": "npm run build --workspace=apps/api",
     "build:web": "npm run build --workspace=apps/web",
