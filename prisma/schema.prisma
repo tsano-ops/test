@@ -167,6 +167,11 @@ enum InvitationStatus {
   REVOKED
 }
 
+enum PhotoPrivacy {
+  PUBLIC
+  PRIVATE
+}
+
 // ─── MODELS ──────────────────────────────────────────────────
 
 /// Core user account
